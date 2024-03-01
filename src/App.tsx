@@ -1,15 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { NavBar } from './components/NavBar'
+import { SettingsPage } from './pages/SettingsPage'
 
-function App() {
-
+export const App = (): JSX.Element => {
   return (
     <>
-
+      <NavBar></NavBar>
+      <div id='app' className='container'>
+        <SettingsPage></SettingsPage>
+      </div>
     </>
   )
 }
-
-export default App

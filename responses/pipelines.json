@@ -1,0 +1,33 @@
+{
+    "next_page_token": "AO9ui99z00D0GZsoRotRHJVt-8kbRQ_ILCfms4tEIYNUcYqmJ7Ry2mnabh-f4d5qg0NnEMfD35RgNJ6n4Uuc7phcfwPRsJRUczzxtKWt6i3D1V-f8BhUMo7PW98eS_ofTDSiRy8JwZ3x",
+    "items": [
+        {
+            "id": "1856f6c5-734f-4a16-b6bf-169aa91e1b22",
+            "errors": [],
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "updated_at": "2024-02-27T17:25:25.896Z",
+            "number": 527,
+            "state": "created",
+            "created_at": "2024-02-27T17:25:25.896Z",
+            "trigger": {
+                "received_at": "2024-02-27T17:25:25.596Z",
+                "type": "webhook",
+                "actor": {
+                    "login": "jessicacarneiro",
+                    "avatar_url": "https://avatars.githubusercontent.com/u/1782626?v=4"
+                }
+            },
+            "vcs": {
+                "origin_repository_url": "https://github.com/Jackinthebox-IT/store-data-hub-api",
+                "target_repository_url": "https://github.com/Jackinthebox-IT/store-data-hub-api",
+                "revision": "7363388a5eadfc5098a640fac2c6613b2228ed50",
+                "provider_name": "GitHub",
+                "commit": {
+                    "body": "* Test new Dockerfile\r\n\r\n* Remove main branch filter\r\n\r\n* Put back old arg and env for image version\r\n\r\n* Put filter back",
+                    "subject": "[SPF2-1350] Update Dockerfile (#84)"
+                },
+                "branch": "main"
+            }
+        },
+    ]
+}

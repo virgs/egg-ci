@@ -1,0 +1,163 @@
+{
+    "next_page_token": null,
+    "items": [
+        {
+            "dependencies": [],
+            "job_number": 1812,
+            "id": "9d29576c-05de-4fb0-8c66-d2a1cdde52ed",
+            "started_at": "2023-10-20T20:23:28Z",
+            "name": "Clone repository",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:23:35Z"
+        },
+        {
+            "dependencies": [
+                "9d29576c-05de-4fb0-8c66-d2a1cdde52ed"
+            ],
+            "job_number": 1813,
+            "id": "2ca22b1f-f7f4-42c0-9e36-d9098b13858a",
+            "started_at": "2023-10-20T20:24:07Z",
+            "name": "Run Unit Tests",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:24:49Z"
+        },
+        {
+            "dependencies": [
+                "2ca22b1f-f7f4-42c0-9e36-d9098b13858a"
+            ],
+            "job_number": 1814,
+            "id": "c3a9ad7e-c748-4677-a88c-e1d093be2081",
+            "started_at": "2023-10-20T20:25:48Z",
+            "name": "Build and Push Image for Dev Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:26:41Z"
+        },
+        {
+            "dependencies": [
+                "c3a9ad7e-c748-4677-a88c-e1d093be2081"
+            ],
+            "job_number": 1815,
+            "id": "3d1cce86-fad5-42a0-aa76-97f27fffb6c8",
+            "started_at": "2023-10-20T20:26:44Z",
+            "name": "Make Live Dev",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:29:28Z"
+        },
+        {
+            "dependencies": [
+                "3d1cce86-fad5-42a0-aa76-97f27fffb6c8"
+            ],
+            "id": "ea9e4bee-34e3-43eb-b46e-f13297948f6a",
+            "started_at": "2023-10-20T20:29:28Z",
+            "name": "Approve For Test Env",
+            "approved_by": "f397fd16-d8c3-4be7-9cb4-4d860c2db418",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "approval",
+            "stopped_at": "2023-10-20T20:29:51Z",
+            "approval_request_id": "ea9e4bee-34e3-43eb-b46e-f13297948f6a"
+        },
+        {
+            "dependencies": [
+                "ea9e4bee-34e3-43eb-b46e-f13297948f6a"
+            ],
+            "job_number": 1817,
+            "id": "ac4885c7-ff7c-4949-b3f9-5af1cb6c8893",
+            "started_at": "2023-10-20T20:30:38Z",
+            "name": "Promote Image for Test Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:31:00Z"
+        },
+        {
+            "dependencies": [
+                "ac4885c7-ff7c-4949-b3f9-5af1cb6c8893"
+            ],
+            "job_number": 1818,
+            "id": "d1b8fa9a-a33f-4c30-86b7-04e1cae89372",
+            "started_at": "2023-10-20T20:31:05Z",
+            "name": "Make Live Test",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "status": "success",
+            "type": "build",
+            "stopped_at": "2023-10-20T20:34:08Z"
+        },
+        {
+            "started_at": "2023-10-20T20:34:08Z",
+            "name": "Approve For Pre-Prod Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "approval",
+            "approval_request_id": "9abc7aae-fc7c-4e9b-bdde-a82936359c78",
+            "status": "on_hold",
+            "id": "9abc7aae-fc7c-4e9b-bdde-a82936359c78",
+            "dependencies": [
+                "d1b8fa9a-a33f-4c30-86b7-04e1cae89372"
+            ]
+        },
+        {
+            "started_at": null,
+            "name": "Promote Image for Pre-Prod Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "build",
+            "status": "blocked",
+            "id": "fbab5af9-fc72-41ed-a03a-fa8277df1809",
+            "dependencies": [
+                "9abc7aae-fc7c-4e9b-bdde-a82936359c78"
+            ]
+        },
+        {
+            "started_at": null,
+            "name": "Make Live Pre-Prod",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "build",
+            "status": "blocked",
+            "id": "3898ea9d-ef56-4d68-996c-31b55ebbd659",
+            "dependencies": [
+                "fbab5af9-fc72-41ed-a03a-fa8277df1809"
+            ]
+        },
+        {
+            "started_at": null,
+            "name": "Approve For Prod Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "approval",
+            "approval_request_id": "ac43c50b-3e05-423d-86a2-36d5d0e03fec",
+            "status": "blocked",
+            "id": "ac43c50b-3e05-423d-86a2-36d5d0e03fec",
+            "dependencies": [
+                "3898ea9d-ef56-4d68-996c-31b55ebbd659"
+            ]
+        },
+        {
+            "started_at": null,
+            "name": "Promote Image for Prod Env",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "build",
+            "status": "blocked",
+            "id": "dce1ed8e-e78f-4217-9bd6-1aafd0faf04b",
+            "dependencies": [
+                "ac43c50b-3e05-423d-86a2-36d5d0e03fec"
+            ]
+        },
+        {
+            "started_at": null,
+            "name": "Make Live Prod",
+            "project_slug": "gh/Jackinthebox-IT/store-data-hub-api",
+            "type": "build",
+            "status": "blocked",
+            "id": "4db21f38-270a-4157-b83f-ced2d9466d29",
+            "dependencies": [
+                "dce1ed8e-e78f-4217-9bd6-1aafd0faf04b"
+            ]
+        }
+    ]
+}
