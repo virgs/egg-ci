@@ -6,18 +6,22 @@ export interface TrackedProject {
     data: ProjectsResponse;
 }
 
-type SettingsData = {
+export type SettingsData = {
     token?: string;
     trackedProjects: TrackedProject[]
 }
 
+type RepositoryListener = (payload: object) => void
+
 export interface Repository {
     persist(key: string, data: object): void;
     load(key: string): object | undefined;
+    onChange(listener: RepositoryListener): void;
 }
 
-export abstract class CachedRepository implements Repository {
+export abstract class LocalStorageRepository implements Repository {
     private readonly cryptData: boolean = !import.meta.env.DEV
+    private listeners: RepositoryListener[] = []
 
     public persist(key: string, data: object) {
         if (this.cryptData) {
@@ -25,6 +29,7 @@ export abstract class CachedRepository implements Repository {
         } else {
             localStorage.setItem(key, JSON.stringify(data))
         }
+        this.listeners.forEach(listener => listener(data))
     }
 
     public load(key: string): object | undefined {
@@ -39,9 +44,14 @@ export abstract class CachedRepository implements Repository {
         }
         return undefined
     }
+
+    public onChange(listener: RepositoryListener) {
+        this.listeners.push(listener)
+    }
+
 }
 
-export class SettingsRepository extends CachedRepository {
+export class SettingsRepository extends LocalStorageRepository {
     private settings: SettingsData = {
         token: undefined,
         trackedProjects: []

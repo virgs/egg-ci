@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ProjectsResponse } from "./models/ProjectsResponse";
+import { PipelinesReponse } from "./models/PipelinesResponse";
 
 const apiV1 = "https://circleci.com/api/v1.1";
 const apiV2 = "https://circleci.com/api/v2";
@@ -16,12 +17,16 @@ export class CircleCiClient {
         return (await axios.get(`${v1BaseUrl}/projects`, { withCredentials: false })).data
     }
 
-    public async listPipelines(projectSlug: string, branch?: string): Promise<any[]> {
+    public async listPipelines(projectSlug: string, branch?: string): Promise<PipelinesReponse> {
+        //https://circleci.com/api/v2/project/gh/Jackinthebox-IT/store-data-hub-api/pipeline
         let url = `${v2BaseUrl}/project/${projectSlug}/pipeline`
+        console.log(url)
         if (branch) {
             url += `?branch=${branch}`;
         }
-        return (await axios.get(url)).data;
+        const response = await axios.get(url, { withCredentials: false });
+        console.log(response)
+        return (response).data;
     }
 
     public async triggerPipelines(projectSlug: string): Promise<any[]> {

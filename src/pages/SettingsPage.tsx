@@ -3,14 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { CircleCiClient } from '../circleci/CircleCiClient'
 import { MapVersionControlFromString, VersionControlComponent } from '../components/VersionControl'
-import { SettingsRepository, TrackedProject } from '../settings/SettingsRepository'
+import { SettingsData, SettingsRepository, TrackedProject } from '../settings/SettingsRepository'
 import "./SettingsPage.css"
 
 let circleCiClient: CircleCiClient
 let settingsRepository: SettingsRepository
 // setData(JSON.stringify(await circleCiClient.listPipelines('gh/Jackinthebox-IT/store-data-hub-api', 'main'), null, 2))
+type Props = {
+  onSettingsChanged: (settings: SettingsData) => void
+}
 
-export const SettingsPage = (): JSX.Element => {
+export const SettingsPage = (props: Props): JSX.Element => {
   const [apiToken, setApiToken] = useState<string>('')
   const [projects, setProjects] = useState<TrackedProject[]>([])
 
@@ -20,6 +23,7 @@ export const SettingsPage = (): JSX.Element => {
       setApiToken(settingsRepository.data.token)
     }
     setProjects(settingsRepository.data.trackedProjects)
+    settingsRepository.onChange(payload => props.onSettingsChanged(payload as SettingsData));
   }, [])
 
   const renderProjects = () => {
@@ -29,6 +33,7 @@ export const SettingsPage = (): JSX.Element => {
           const project = trackedProject.data;
           const label = `${project.vcs_type}/${project.username}/${project.reponame}`;
           const versionControl = MapVersionControlFromString(project.vcs_type);
+          console.log('key', label)
           const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
 
           return <li key={label} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
@@ -59,11 +64,13 @@ export const SettingsPage = (): JSX.Element => {
     circleCiClient = new CircleCiClient(apiToken)
     const projects = await circleCiClient.listProjects()
     projects
-      .filter(project => {
+      .filter(async project => {
         const versionControl = MapVersionControlFromString(project.vcs_type);
         if (versionControl !== undefined) {
           const slug = `${new VersionControlComponent(versionControl).getSlug()}/${project.username}/${project.reponame}`;
           settingsRepository.addProject(slug, project)
+          const pipelines = await circleCiClient.listPipelines(slug)
+          console.log('pipelines', slug, typeof pipelines, pipelines)
           return true
         }
         return false

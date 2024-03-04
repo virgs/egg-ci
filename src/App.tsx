@@ -1,14 +1,36 @@
+import { createContext, useState } from 'react'
 import './App.css'
 import { NavBar } from './components/NavBar'
 import { SettingsPage } from './pages/SettingsPage'
+import { SettingsData } from './settings/SettingsRepository'
+
+export let ProjectsContext: React.Context<SettingsData>
 
 export const App = (): JSX.Element => {
-  return (
-    <>
+  const [_settings, setSettings] = useState<SettingsData | undefined>(undefined)
+
+  const onSettingsChanged = (newSettings: SettingsData) => {
+    setSettings(newSettings)
+    ProjectsContext = createContext(newSettings)
+  }
+
+  const render = () => {
+    // if (settings) {
+    return <>
+      {/* <ProjectsContext.Provider value={settings!}> */}
       <NavBar></NavBar>
       <div id='app' className='container'>
-        <SettingsPage></SettingsPage>
+        <SettingsPage onSettingsChanged={onSettingsChanged} />
       </div>
+    </>
+    // </ProjectsContext.Provider>
+    // }
+    // return <></>
+  }
+
+  return (
+    <>
+      {render()}
     </>
   )
 }
