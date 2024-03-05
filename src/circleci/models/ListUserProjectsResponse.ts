@@ -1,4 +1,4 @@
-export type ProjectsResponse = {
+export type ListUserProjectsResponse = {
     branches: {
         [branchName: string]: Branch;
     };
@@ -13,7 +13,7 @@ export type ProjectsResponse = {
     default_branch: string;
 };
 
-type Workflow = {
+type ProjectWorkflow = {
     id: string;
     status: "failed" | "success";
     created_at: string;
@@ -38,11 +38,11 @@ type Branch = {
     last_success: Build;
     last_non_success: Build;
     latest_workflows: {
-        merge_workflow: Workflow;
-        pipeline_workflow: Workflow;
+        merge_workflow: ProjectWorkflow;
+        pipeline_workflow: ProjectWorkflow;
     };
     latest_completed_workflows: {
-        merge_workflow: Workflow;
-        pipeline_workflow: Workflow;
+        merge_workflow: ProjectWorkflow;
+        pipeline_workflow: ProjectWorkflow;
     };
 };

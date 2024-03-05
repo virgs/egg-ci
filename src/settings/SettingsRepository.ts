@@ -1,10 +1,10 @@
-import { ProjectsResponse } from "../circleci/models/ProjectsResponse";
+import { ListUserProjectsResponse } from "../circleci/models/ListUserProjectsResponse";
 
 export interface TrackedProject {
     lastSync: number;
     slug: string;
     enabled: boolean;
-    data: ProjectsResponse;
+    data: ListUserProjectsResponse;
 }
 
 export type SettingsData = {
@@ -72,7 +72,7 @@ export class SettingsRepository extends LocalStorageRepository {
         this.persist();
     }
 
-    public addProject(projectSlug: string, project: ProjectsResponse) {
+    public addProject(projectSlug: string, project: ListUserProjectsResponse) {
         if (this.settings.trackedProjects
             .some(project => project.slug === projectSlug)) {
             return;

@@ -1,12 +1,12 @@
 //https://circleci.com/docs/api/v2/index.html#operation/listPipelinesForProject
 
 
-export type PipelinesReponse = {
+export type ListProjectPipelinesReponse = {
     next_page_token: string;
-    items: Pipeline[]
+    items: ProjectPipeline[]
 }
 
-type Pipeline = {
+type ProjectPipeline = {
     id: string;
     errors: Error[];
     project_slug: string;

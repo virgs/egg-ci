@@ -1,12 +1,11 @@
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
-import { CircleCiClient } from '../circleci/CircleCiClient'
+import { CircleCiClient, circleCiClient, initializeCircleCiClient } from '../circleci/CircleCiClient'
 import { MapVersionControlFromString, VersionControlComponent } from '../components/VersionControl'
 import { SettingsData, SettingsRepository, TrackedProject } from '../settings/SettingsRepository'
 import "./SettingsPage.css"
 
-let circleCiClient: CircleCiClient
 let settingsRepository: SettingsRepository
 // setData(JSON.stringify(await circleCiClient.listPipelines('gh/Jackinthebox-IT/store-data-hub-api', 'main'), null, 2))
 type Props = {
@@ -31,23 +30,31 @@ export const SettingsPage = (props: Props): JSX.Element => {
       {(projects || [])
         .map(trackedProject => {
           const project = trackedProject.data;
-          const label = `${project.vcs_type}/${project.username}/${project.reponame}`;
           const versionControl = MapVersionControlFromString(project.vcs_type);
           const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
 
-          return <li key={label} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
-            <input className="form-check-input" type="checkbox" id={label.concat('-checkbox')}
+          return <li key={trackedProject.slug} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
+            <input className="form-check-input" type="checkbox" id={trackedProject.slug.concat('-checkbox')}
               checked={trackedProject.enabled}
-              onChange={() => {
+              onChange={async () => {
                 if (trackedProject.enabled) {
                   settingsRepository.disableProject(trackedProject.slug)
                 } else {
                   settingsRepository.enableProject(trackedProject.slug)
+
+                  const pipelines = await circleCiClient.listPipelines(trackedProject.slug)
+                  pipelines.items
+                    .filter((_, index) => index === 0)
+                    .forEach(pipeline => {
+                      circleCiClient.listPipelineWorkflows(pipeline.id)
+                    })
+
+
                 }
                 setProjects(settingsRepository.data.trackedProjects)
               }}
             />
-            <label className="form-check-label ms-2" htmlFor={label.concat('-checkbox')}>
+            <label className="form-check-label ms-2" htmlFor={trackedProject.slug.concat('-checkbox')}>
               <span className='mx-2'>{versionControlComponent}</span>
               <span>
                 {project.username}/{project.reponame}
@@ -60,7 +67,7 @@ export const SettingsPage = (props: Props): JSX.Element => {
 
   const refresh = async () => {
     settingsRepository.setApiToken(apiToken)
-    circleCiClient = new CircleCiClient(apiToken)
+    initializeCircleCiClient(apiToken)
     const projects = await circleCiClient.listProjects()
     projects
       .filter(async project => {
@@ -68,12 +75,11 @@ export const SettingsPage = (props: Props): JSX.Element => {
         if (versionControl !== undefined) {
           const slug = `${new VersionControlComponent(versionControl).getSlug()}/${project.username}/${project.reponame}`;
           settingsRepository.addProject(slug, project)
-          const pipelines = await circleCiClient.listPipelines(slug)
-          console.log('pipelines', slug, typeof pipelines, pipelines)
           return true
         }
         return false
       })
+
     setProjects(settingsRepository.data.trackedProjects)
   }
 
