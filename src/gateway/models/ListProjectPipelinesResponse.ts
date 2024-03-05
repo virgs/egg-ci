@@ -6,8 +6,9 @@ export type ListProjectPipelinesReponse = {
     items: ProjectPipeline[]
 }
 
-type ProjectPipeline = {
+export type ProjectPipeline = {
     id: string;
+    name: string;
     errors: Error[];
     project_slug: string;
     updated_at: string;

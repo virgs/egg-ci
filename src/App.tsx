@@ -1,6 +1,5 @@
 import { createContext, useState } from 'react'
 import './App.css'
-import { NavBar } from './components/NavBar'
 import { SettingsPage } from './pages/SettingsPage'
 import { SettingsData } from './settings/SettingsRepository'
 
@@ -18,7 +17,6 @@ export const App = (): JSX.Element => {
     // if (settings) {
     return <>
       {/* <ProjectsContext.Provider value={settings!}> */}
-      <NavBar></NavBar>
       <div id='app' className='container'>
         <SettingsPage onSettingsChanged={onSettingsChanged} />
       </div>

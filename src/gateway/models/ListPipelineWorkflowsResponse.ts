@@ -3,7 +3,7 @@ export type ListPipelineWorkflowsResponse = {
     next_page_token: string;
 }
 
-type PipelineWorkflow = {
+export type PipelineWorkflow = {
     pipeline_id: string;
     canceled_by?: string;
     id: string;

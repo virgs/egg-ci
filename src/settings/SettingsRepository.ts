@@ -1,61 +1,19 @@
-import { ListUserProjectsResponse } from "../circleci/models/ListUserProjectsResponse";
+import { LocalStorageRepository } from "../db/LocalStorageRepository";
+import { Project } from "../project/Project";
 
-export interface TrackedProject {
-    lastSync: number;
-    slug: string;
-    enabled: boolean;
-    data: ListUserProjectsResponse;
-}
+export type SettingProject = (Project & {
+    id: string;
+});
 
 export type SettingsData = {
     token?: string;
-    trackedProjects: TrackedProject[]
-}
-
-type RepositoryListener = (payload: object) => void
-
-export interface Repository {
-    persist(key: string, data: object): void;
-    load(key: string): object | undefined;
-    onChange(listener: RepositoryListener): void;
-}
-
-export abstract class LocalStorageRepository implements Repository {
-    private readonly cryptData: boolean = !import.meta.env.DEV
-    private listeners: RepositoryListener[] = []
-
-    public persist(key: string, data: object) {
-        if (this.cryptData) {
-            localStorage.setItem(btoa(key), btoa(JSON.stringify(data)))
-        } else {
-            localStorage.setItem(key, JSON.stringify(data))
-        }
-        this.listeners.forEach(listener => listener(data))
-    }
-
-    public load(key: string): object | undefined {
-        const decodedKey = this.cryptData ? btoa(key) : key
-        const persisted = localStorage.getItem(decodedKey)
-        if (persisted) {
-            if (this.cryptData) {
-                return JSON.parse(atob(persisted))
-            } else {
-                return JSON.parse(persisted)
-            }
-        }
-        return undefined
-    }
-
-    public onChange(listener: RepositoryListener) {
-        this.listeners.push(listener)
-    }
-
+    projects: SettingProject[]
 }
 
 export class SettingsRepository extends LocalStorageRepository {
     private settings: SettingsData = {
         token: undefined,
-        trackedProjects: []
+        projects: []
     }
 
     public constructor() {
@@ -72,24 +30,23 @@ export class SettingsRepository extends LocalStorageRepository {
         this.persist();
     }
 
-    public addProject(projectSlug: string, project: ListUserProjectsResponse) {
-        if (this.settings.trackedProjects
-            .some(project => project.slug === projectSlug)) {
+    public addProject(project: Project) {
+        const id = `${project.vcs_type}/${project.username}/${project.reponame}`;
+        if (this.settings.projects
+            .some(trackedProject => trackedProject.id === id)) {
             return;
         }
-        this.settings.trackedProjects.push({
-            lastSync: Date.now(),
-            enabled: false,
-            slug: projectSlug,
-            data: project
+        this.settings.projects.push({
+            ...project,
+            id: id
         })
         this.persist();
     }
 
-    public enableProject(projectSlug: string) {
-        this.settings.trackedProjects = this.settings.trackedProjects
+    public enableProject(id: string) {
+        this.settings.projects = this.settings.projects
             .map(project => {
-                if (project.slug === projectSlug) {
+                if (project.id === id) {
                     project.enabled = true;
                 }
                 return project;
@@ -97,10 +54,10 @@ export class SettingsRepository extends LocalStorageRepository {
         this.persist();
     }
 
-    public disableProject(projectSlug: string) {
-        this.settings.trackedProjects = this.settings.trackedProjects
+    public disableProject(id: string) {
+        this.settings.projects = this.settings.projects
             .map(project => {
-                if (project.slug === projectSlug) {
+                if (project.id === id) {
                     project.enabled = false;
                 }
                 return project;
@@ -118,7 +75,7 @@ export class SettingsRepository extends LocalStorageRepository {
             return persisted as SettingsData
         }
         return {
-            trackedProjects: []
+            projects: []
         }
     }
 }

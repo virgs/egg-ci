@@ -1,60 +1,60 @@
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
-import { CircleCiClient, circleCiClient, initializeCircleCiClient } from '../circleci/CircleCiClient'
-import { MapVersionControlFromString, VersionControlComponent } from '../components/VersionControl'
-import { SettingsData, SettingsRepository, TrackedProject } from '../settings/SettingsRepository'
+import { VersionControlComponent } from '../components/VersionControlComponent'
+import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
+import { ProjectService } from '../project/ProjectService'
+import { SettingProject, SettingsData, SettingsRepository } from '../settings/SettingsRepository'
 import "./SettingsPage.css"
+import { mapVersionControlFromString } from '../version-control/VersionControl'
 
-let settingsRepository: SettingsRepository
-// setData(JSON.stringify(await circleCiClient.listPipelines('gh/Jackinthebox-IT/store-data-hub-api', 'main'), null, 2))
 type Props = {
   onSettingsChanged: (settings: SettingsData) => void
 }
 
+const settingsRepository: SettingsRepository = new SettingsRepository();
+const projectService: ProjectService = new ProjectService();
+
 export const SettingsPage = (props: Props): JSX.Element => {
-  const [apiToken, setApiToken] = useState<string>('')
-  const [projects, setProjects] = useState<TrackedProject[]>([])
+  const [token, setToken] = useState<string>('')
+  const [projects, setProjects] = useState<SettingProject[]>([])
 
   useEffect(() => {
-    settingsRepository = new SettingsRepository();
-    if (settingsRepository.data.token) {
-      setApiToken(settingsRepository.data.token)
+    if (settingsRepository.data) {
+      setProjects(settingsRepository.data.projects)
     }
-    setProjects(settingsRepository.data.trackedProjects)
-    settingsRepository.onChange(payload => props.onSettingsChanged(payload as SettingsData));
+    if (settingsRepository.data.token) {
+      initializeCircleCiClient(settingsRepository.data.token)
+      setToken(settingsRepository.data.token)
+    }
+    settingsRepository.onChange(payload => {
+      const castedPayload = payload as SettingsData
+      setProjects(castedPayload.projects)
+      setProjects(castedPayload.projects)
+      props.onSettingsChanged(castedPayload)
+    });
   }, [])
 
   const renderProjects = () => {
     return <ul className="list-group list-group-flush">
       {(projects || [])
-        .map(trackedProject => {
-          const project = trackedProject.data;
-          const versionControl = MapVersionControlFromString(project.vcs_type);
+        .map(project => {
+          const versionControl = mapVersionControlFromString(project.vcs_type);
           const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
 
-          return <li key={trackedProject.slug} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
-            <input className="form-check-input" type="checkbox" id={trackedProject.slug.concat('-checkbox')}
-              checked={trackedProject.enabled}
+          return <li key={project.id} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
+            <input className="form-check-input" type="checkbox" id={project.id.concat('-checkbox')}
+              checked={project.enabled}
               onChange={async () => {
-                if (trackedProject.enabled) {
-                  settingsRepository.disableProject(trackedProject.slug)
+                if (project.enabled) {
+                  settingsRepository.disableProject(project.id)
                 } else {
-                  settingsRepository.enableProject(trackedProject.slug)
-
-                  const pipelines = await circleCiClient.listPipelines(trackedProject.slug)
-                  pipelines.items
-                    .filter((_, index) => index === 0)
-                    .forEach(pipeline => {
-                      circleCiClient.listPipelineWorkflows(pipeline.id)
-                    })
-
-
+                  settingsRepository.enableProject(project.id)
+                  projectService.sync(project)
                 }
-                setProjects(settingsRepository.data.trackedProjects)
               }}
             />
-            <label className="form-check-label ms-2" htmlFor={trackedProject.slug.concat('-checkbox')}>
+            <label className="form-check-label ms-2" htmlFor={project.id.concat('-checkbox')}>
               <span className='mx-2'>{versionControlComponent}</span>
               <span>
                 {project.username}/{project.reponame}
@@ -66,21 +66,25 @@ export const SettingsPage = (props: Props): JSX.Element => {
   }
 
   const refresh = async () => {
-    settingsRepository.setApiToken(apiToken)
-    initializeCircleCiClient(apiToken)
-    const projects = await circleCiClient.listProjects()
+    settingsRepository.setApiToken(token)
+    initializeCircleCiClient(token)
+    const projects = await circleCiClient.listUserProjects()
     projects
       .filter(async project => {
-        const versionControl = MapVersionControlFromString(project.vcs_type);
+        const versionControl = mapVersionControlFromString(project.vcs_type);
         if (versionControl !== undefined) {
-          const slug = `${new VersionControlComponent(versionControl).getSlug()}/${project.username}/${project.reponame}`;
-          settingsRepository.addProject(slug, project)
+          settingsRepository.addProject({
+            enabled: false,
+            vcs_type: project.vcs_type,
+            reponame: project.reponame,
+            username: project.username,
+            branch: project.default_branch
+          })
           return true
         }
         return false
       })
 
-    setProjects(settingsRepository.data.trackedProjects)
   }
 
   return (
@@ -92,8 +96,8 @@ export const SettingsPage = (props: Props): JSX.Element => {
         </div>
         <div className="col">
           <label htmlFor="apiToken" className="visually-hidden"></label>
-          <input type="password" className="form-control" id="apiToken" value={apiToken ?? ''}
-            onChange={event => setApiToken(event.target.value)}
+          <input type="password" className="form-control" id="apiToken" value={token}
+            onChange={event => setToken(event.target.value)}
           />
         </div>
         <div className="col-auto">

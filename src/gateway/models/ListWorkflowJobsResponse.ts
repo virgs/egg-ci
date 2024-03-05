@@ -3,12 +3,12 @@ export type ListWorkflowJobsResponse = {
     next_page_token: string;
 }
 
-type WorkflowJob = {
+export type WorkflowJob = {
     canceled_by?: string;
     dependencies: string[]
     job_number?: number;
     id: string;
-    started_at: string;
+    started_at?: string;
     name: string;
     approved_by?: string;
     project_slug: string;
