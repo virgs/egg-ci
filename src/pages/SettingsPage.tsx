@@ -28,12 +28,11 @@ export const SettingsPage = (props: Props): JSX.Element => {
 
   const renderProjects = () => {
     return <ul className="list-group list-group-flush">
-      {(projects.sort() || [])
+      {(projects || [])
         .map(trackedProject => {
           const project = trackedProject.data;
           const label = `${project.vcs_type}/${project.username}/${project.reponame}`;
           const versionControl = MapVersionControlFromString(project.vcs_type);
-          console.log('key', label)
           const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
 
           return <li key={label} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>

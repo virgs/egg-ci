@@ -1,6 +1,7 @@
 import { ProjectsResponse } from "../circleci/models/ProjectsResponse";
 
 export interface TrackedProject {
+    lastSync: number;
     slug: string;
     enabled: boolean;
     data: ProjectsResponse;
@@ -72,7 +73,12 @@ export class SettingsRepository extends LocalStorageRepository {
     }
 
     public addProject(projectSlug: string, project: ProjectsResponse) {
+        if (this.settings.trackedProjects
+            .some(project => project.slug === projectSlug)) {
+            return;
+        }
         this.settings.trackedProjects.push({
+            lastSync: Date.now(),
             enabled: false,
             slug: projectSlug,
             data: project
