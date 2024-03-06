@@ -10,6 +10,7 @@ export class SettingsRepository extends LocalStorageRepository {
     public getApiToken(): string | undefined {
         return super.load('token');
     }
+
     public setUserInformation(userInformation: UserInformationResponse) {
         return this.persist('userInformation', userInformation)
     }

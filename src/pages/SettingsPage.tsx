@@ -9,6 +9,7 @@ import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import "./SettingsPage.css"
+import { emitUserInformationChanged } from '../events/Events'
 
 const settingsRepository: SettingsRepository = new SettingsRepository();
 const projectService: ProjectService = new ProjectService();
@@ -71,6 +72,7 @@ export const SettingsPage = (): JSX.Element => {
     console.log(userInformation, projects)
     settingsRepository.setApiToken(token)
     settingsRepository.setUserInformation(userInformation)
+    emitUserInformationChanged(userInformation)
     projects.forEach(project => projectService.trackProject(project))
     updateComponentStates()
   }

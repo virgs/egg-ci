@@ -21,18 +21,4 @@ export default defineConfig({
       '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
     }
   },
-  server: {
-    proxy: {
-      "/v1/proxy": {
-        target: "http://localhost:23123", // Replace with your API URL
-        changeOrigin: true,
-        rewrite: (path) => path.replace("/v1/proxy", ""),
-      },
-      "/v2/proxy": {
-        target: "http://localhost:23123", // Replace with your API URL
-        changeOrigin: true,
-        rewrite: (path) => path.replace("/v2/proxy", ""),
-      },
-    },
-  },
 })

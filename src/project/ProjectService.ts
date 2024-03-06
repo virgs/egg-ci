@@ -6,7 +6,7 @@ import { getVersionControlSlug, mapVersionControlFromString } from "../version-c
 import { ProjectConfiguration } from "./ProjectConfiguration";
 
 const SETUP_WORKFLOW = 'setup';
-const JOB_MAX_HISTORY = 5;
+const JOB_EXECUTIONS_MAX_HISTORY = 500;
 
 export class ProjectService {
 
@@ -26,6 +26,12 @@ export class ProjectService {
 
     public loadTrackedProjects(): ProjectConfiguration[] {
         return this.dashboardRepository.loadTrackedProjects()
+    }
+
+    public loadProjectWorkflows(project: ProjectConfiguration): WorkflowData[] {
+        return project.workflows
+            .map(workflow => this.dashboardRepository.loadWorkflow(project, workflow))
+            .filter(workflow => workflow !== undefined) as WorkflowData[]
     }
 
     public async syncProjectData(project: ProjectConfiguration) {
@@ -63,35 +69,42 @@ export class ProjectService {
         if (pipelines.items.length === 0) {
             return
         }
+        console.log(pipelines)
         const mostRecentPipeline = pipelines.items[0];
         //TODO compare against the most recent persisted pipele to check which ones are new
 
         const jobsMap = await this.initializePipelineJobsMap(mostRecentPipeline)
 
         console.log('syncWorkflow', workflowName)
-
+        let index = 0;
         for (let pipeline of pipelines.items) {
+            ++index
             const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
             const workflow = pipelineWorkflows.items
                 .find(pipelineWorkflow => pipelineWorkflow.name === workflowName)
             if (!workflow) {
                 break;
             }
-            (await circleCiClient.listWorkflowJobs(workflow.id))
+            const workflowJobs = await circleCiClient.listWorkflowJobs(workflow.id);
+            (workflowJobs)
                 .items
                 .forEach(workflowJob => jobsMap
                     .find(job => job.name === workflowJob.name)
                     ?.executions.push(workflowJob));
-            if (workflow.status === 'success') {
+            if (jobsMap
+                .every(job => job.executions.some(execution => execution.status === 'success'))) {
                 break;
             }
         }
+        console.log(index)
 
         const dashboardWorkflow: WorkflowData = {
             name: workflowName,
             project: project,
             mostRecentPipeline: mostRecentPipeline,
             jobs: jobsMap
+                .map(job => ({ name: job.name, executions: job.executions.filter((_, index) => index < JOB_EXECUTIONS_MAX_HISTORY) }))
+                .reverse()
         }
 
         const dashboardRepository = new DashboardRepository()

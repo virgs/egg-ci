@@ -1,40 +1,44 @@
 import './App.css';
+import { NavBarComponent } from './components/NavBarComponent';
 import { initializeCircleCiClient } from './gateway/CircleCiClient';
+import { DashboardsPage } from './pages/DashboardsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { SettingsRepository } from './settings/SettingsRepository';
 
-// export let ProjectsContext: React.Context<SettingsData>
+import { RouterProvider, createHashRouter } from 'react-router-dom';
+
+const router = createHashRouter([
+  //ghpage doesnt work with browser router: https://stackoverflow.com/a/71985764
+  {
+    path: '/settings',
+    element: (
+      <>
+        <SettingsPage />
+      </>
+    ),
+  },
+  {
+    path: '/*',
+    element: (
+      <>
+        <DashboardsPage />
+      </>
+    ),
+  },
+])
 
 const settingsRepository: SettingsRepository = new SettingsRepository();
-// console.log(settingsRepository.data)
 if (settingsRepository.getApiToken()) {
   initializeCircleCiClient(settingsRepository.getApiToken()!)
 }
 
 export const App = (): JSX.Element => {
-  // const [_settings, setSettings] = useState<SettingsData | undefined>(undefined)
-
-  // const onSettingsChanged = (newSettings: SettingsData) => {
-  //   setSettings(newSettings)
-  //   ProjectsContext = createContext(newSettings)
-  // }
-
-  const render = () => {
-    // if (settings) {
-    return <>
-      {/* <ProjectsContext.Provider value={settings!}> */}
-      <div id='app' className='container'>
-        <SettingsPage />
-      </div>
-    </>
-    // </ProjectsContext.Provider>
-    // }
-    // return <></>
-  }
-
   return (
     <>
-      {render()}
+      <NavBarComponent></NavBarComponent>
+      <div id='app' className='container'>
+        <RouterProvider router={router} />
+      </div>
     </>
   )
 }

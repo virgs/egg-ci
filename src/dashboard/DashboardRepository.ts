@@ -68,7 +68,7 @@ export class DashboardRepository extends LocalStorageRepository {
         return this.persist(key, dashboardWorkflow)
     }
 
-    public loadWorkflow(project: ProjectConfiguration, workflowName: string) {
+    public loadWorkflow(project: ProjectConfiguration, workflowName: string): WorkflowData | undefined {
         const key = `${WORKFLOW_PREFIX_KEY}:${this.projectIdentifier(project)}:${workflowName}`
         return this.load(key)
     }
