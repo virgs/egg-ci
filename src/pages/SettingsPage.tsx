@@ -3,58 +3,58 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { VersionControlComponent } from '../components/VersionControlComponent'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
+import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
+import { ProjectConfiguration } from '../project/ProjectConfiguration'
 import { ProjectService } from '../project/ProjectService'
-import { SettingProject, SettingsData, SettingsRepository } from '../settings/SettingsRepository'
-import "./SettingsPage.css"
+import { SettingsRepository } from '../settings/SettingsRepository'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
-
-type Props = {
-  onSettingsChanged: (settings: SettingsData) => void
-}
+import "./SettingsPage.css"
 
 const settingsRepository: SettingsRepository = new SettingsRepository();
 const projectService: ProjectService = new ProjectService();
 
-export const SettingsPage = (props: Props): JSX.Element => {
+export const SettingsPage = (): JSX.Element => {
   const [token, setToken] = useState<string>('')
-  const [projects, setProjects] = useState<SettingProject[]>([])
+  const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
+  const [projects, setProjects] = useState<ProjectConfiguration[]>([])
+
+  const updateComponentStates = () => {
+    if (settingsRepository.getApiToken()) {
+      setToken(settingsRepository.getApiToken()!)
+    }
+    if (settingsRepository.getUserInformation()) {
+      setUserInformation(settingsRepository.getUserInformation())
+    }
+    if (projectService.loadTrackedProjects()) {
+      setProjects(projectService.loadTrackedProjects())
+    }
+  }
 
   useEffect(() => {
-    if (settingsRepository.data) {
-      setProjects(settingsRepository.data.projects)
-    }
-    if (settingsRepository.data.token) {
-      initializeCircleCiClient(settingsRepository.data.token)
-      setToken(settingsRepository.data.token)
-    }
-    settingsRepository.onChange(payload => {
-      const castedPayload = payload as SettingsData
-      setProjects(castedPayload.projects)
-      setProjects(castedPayload.projects)
-      props.onSettingsChanged(castedPayload)
-    });
+    updateComponentStates()
   }, [])
 
   const renderProjects = () => {
     return <ul className="list-group list-group-flush">
       {(projects || [])
         .map(project => {
-          const versionControl = mapVersionControlFromString(project.vcs_type);
+          const versionControl = mapVersionControlFromString(project.vcsType);
           const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
-
-          return <li key={project.id} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
-            <input className="form-check-input" type="checkbox" id={project.id.concat('-checkbox')}
+          const id = `${project.vcsType}/${project.username}/${project.reponame}`;
+          return <li key={id} className="list-group-item d-flex align-items-center" style={{ height: '80px' }}>
+            <input className="form-check-input" type="checkbox" id={id.concat('-checkbox')}
               checked={project.enabled}
               onChange={async () => {
                 if (project.enabled) {
-                  settingsRepository.disableProject(project.id)
+                  projectService.disableProject(project)
                 } else {
-                  settingsRepository.enableProject(project.id)
-                  projectService.sync(project)
+                  projectService.enableProject(project)
+                  projectService.syncProjectData(project)
                 }
+                updateComponentStates()
               }}
             />
-            <label className="form-check-label ms-2" htmlFor={project.id.concat('-checkbox')}>
+            <label className="form-check-label ms-2" htmlFor={id.concat('-checkbox')}>
               <span className='mx-2'>{versionControlComponent}</span>
               <span>
                 {project.username}/{project.reponame}
@@ -66,25 +66,13 @@ export const SettingsPage = (props: Props): JSX.Element => {
   }
 
   const refresh = async () => {
-    settingsRepository.setApiToken(token)
     initializeCircleCiClient(token)
-    const projects = await circleCiClient.listUserProjects()
-    projects
-      .filter(async project => {
-        const versionControl = mapVersionControlFromString(project.vcs_type);
-        if (versionControl !== undefined) {
-          settingsRepository.addProject({
-            enabled: false,
-            vcs_type: project.vcs_type,
-            reponame: project.reponame,
-            username: project.username,
-            branch: project.default_branch
-          })
-          return true
-        }
-        return false
-      })
-
+    const [userInformation, projects] = await Promise.all([circleCiClient.getUserInformation(), projectService.listProjectsConfigurations()]);
+    console.log(userInformation, projects)
+    settingsRepository.setApiToken(token)
+    settingsRepository.setUserInformation(userInformation)
+    projects.forEach(project => projectService.trackProject(project))
+    updateComponentStates()
   }
 
   return (
@@ -106,7 +94,10 @@ export const SettingsPage = (props: Props): JSX.Element => {
           </button>
         </div>
       </div>
-      {renderProjects()}
+      <div>
+        <h1>Projects</h1>
+        {renderProjects()}
+      </div>
     </>
   )
 }

@@ -5,7 +5,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/circleci-skin',
+  base: '/egg-ci',
   build: {
     target: 'esnext',
     rollupOptions: {

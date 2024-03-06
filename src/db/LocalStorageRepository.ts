@@ -4,7 +4,7 @@ export abstract class LocalStorageRepository {
     private readonly cryptData: boolean = !import.meta.env.DEV;
     private listeners: RepositoryListener[] = [];
 
-    public persist(key: string, data: object) {
+    public persist(key: string, data: any) {
         if (this.cryptData) {
             localStorage.setItem(btoa(key), btoa(JSON.stringify(data)));
         } else {
@@ -13,7 +13,7 @@ export abstract class LocalStorageRepository {
         this.listeners.forEach(listener => listener(data));
     }
 
-    public load(key: string): object | undefined {
+    public load(key: string): any | undefined {
         const decodedKey = this.cryptData ? btoa(key) : key;
         const persisted = localStorage.getItem(decodedKey);
         if (persisted) {
