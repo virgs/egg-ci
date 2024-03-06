@@ -77,29 +77,27 @@ export const SettingsPage = (): JSX.Element => {
     updateComponentStates()
   }
 
-  return (
-    <>
-      <div className="row gx-2 py-4">
-        <div className="col-auto">
-          <label htmlFor="apiTokenLabel" className="visually-hidden"></label>
-          <input type="text" readOnly={true} className="form-control-plaintext" id="apiTokenLabel" value={"API Token"} />
-        </div>
-        <div className="col">
-          <label htmlFor="apiToken" className="visually-hidden"></label>
-          <input type="password" className="form-control" id="apiToken" value={token}
-            onChange={event => setToken(event.target.value)}
-          />
-        </div>
-        <div className="col-auto">
-          <button onClick={refresh} type="button" className="btn btn-primary">
-            <FontAwesomeIcon icon={faRightToBracket} />
-          </button>
-        </div>
+  return <>
+    <div className="row gx-2 py-4">
+      <div className="col-auto">
+        <label htmlFor="apiTokenLabel" className="visually-hidden"></label>
+        <input type="text" readOnly={true} className="form-control-plaintext" id="apiTokenLabel" value={"API Token"} />
       </div>
-      <div>
-        <h1>Projects</h1>
-        {renderProjects()}
+      <div className="col">
+        <label htmlFor="apiToken" className="visually-hidden"></label>
+        <input type="password" className="form-control" id="apiToken" value={token}
+          onChange={event => setToken(event.target.value)}
+        />
       </div>
-    </>
-  )
+      <div className="col-auto">
+        <button onClick={refresh} type="button" className="btn btn-primary">
+          <FontAwesomeIcon icon={faRightToBracket} />
+        </button>
+      </div>
+    </div>
+    <div>
+      <h1>Projects</h1>
+      {renderProjects()}
+    </div>
+  </>
 }

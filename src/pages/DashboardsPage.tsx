@@ -16,18 +16,23 @@ export const DashboardsPage = (): JSX.Element => {
         const trackedProjects = projectService.loadTrackedProjects()
         setWorkflows(trackedProjects
             .map(project => projectService.loadProjectWorkflows(project))
-            .flat())
+            .flat()
+            .filter(workflow => workflow !== undefined)
+            .map(workflow => workflow as WorkflowData))
     }
 
     const renderWorkflows = () => {
         return workflows
             .map((workflow, index) => {
-                console.log(workflow)
-                return <div key={`workflow-child-${index}`} className="mb-4">
-                    <WorkflowComponent workflow={workflow}></WorkflowComponent>
+                const id = `workflow-${workflow.name}`;
+                return <div key={id} id={id}>
+                    <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
                 </div>
             })
     }
 
-    return <>{renderWorkflows()}</>
+    return <>
+        <h1>Dashboards</h1>
+        {renderWorkflows()}
+    </>
 }

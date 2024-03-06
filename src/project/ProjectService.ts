@@ -28,10 +28,9 @@ export class ProjectService {
         return this.dashboardRepository.loadTrackedProjects()
     }
 
-    public loadProjectWorkflows(project: ProjectConfiguration): WorkflowData[] {
+    public loadProjectWorkflows(project: ProjectConfiguration): (WorkflowData | undefined)[] {
         return project.workflows
             .map(workflow => this.dashboardRepository.loadWorkflow(project, workflow))
-            .filter(workflow => workflow !== undefined) as WorkflowData[]
     }
 
     public async syncProjectData(project: ProjectConfiguration) {
@@ -104,7 +103,6 @@ export class ProjectService {
             mostRecentPipeline: mostRecentPipeline,
             jobs: jobsMap
                 .map(job => ({ name: job.name, executions: job.executions.filter((_, index) => index < JOB_EXECUTIONS_MAX_HISTORY) }))
-                .reverse()
         }
 
         const dashboardRepository = new DashboardRepository()

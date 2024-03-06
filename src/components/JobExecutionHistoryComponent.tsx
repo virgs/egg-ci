@@ -38,10 +38,10 @@ export const JobExecutionHistoryComponent = (props: Props): JSX.Element[] => {
     }
 
     useEffect(() => {
-        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-        Array.from(popoverTriggerList).map(popoverTriggerEl => new Popover(popoverTriggerEl, {
-            trigger: 'focus'
-        }))
+        Array.from(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            .map(popoverTriggerEl => new Popover(popoverTriggerEl, {
+                trigger: 'focus'
+            }))
     }, [])
 
     return props.job.executions
@@ -51,10 +51,10 @@ export const JobExecutionHistoryComponent = (props: Props): JSX.Element[] => {
                 style={{
                     cursor: 'pointer',
                     width: `calc((100% / ${props.historySize}) - 3px)`,
-                    height: '5px',
+                    height: '7.5px',
                     display: 'inline-flex',
                     marginRight: '3px',
-                    borderRadius: '5px'
+                    borderRadius: '3px'
                 }}>
                 <div tabIndex={0} className={`progress-bar w-100 ${color}`} data-bs-toggle="popover" data-bs-title={execution.job_number}
                     data-bs-content={`Status: ${execution.status}; Date ${new Date(execution.stopped_at!).toLocaleDateString()}`}>

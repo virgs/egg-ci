@@ -1,4 +1,6 @@
 :root {
+  --bs-border-radius: 1px;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -28,7 +30,6 @@ body {
   display: flex;
   place-items: center;
   min-width: 320px;
-  width: 100svw;
   min-height: 100svh;
 }
 
