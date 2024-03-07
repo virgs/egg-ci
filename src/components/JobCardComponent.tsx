@@ -1,9 +1,8 @@
 import { JobData } from '../dashboard/DashboardRepository'
-import { formatDuration } from '../time/Time'
-import { JobCardHeaderComponent } from './JobCardHeaderComponent'
-import { JobCardFooterComponent } from './JobCardFooterComponent'
-import './JobComponent.scss'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
+import { JobCardFooterComponent } from './JobCardFooterComponent'
+import { JobCardHeaderComponent } from './JobCardHeaderComponent'
+import './JobCardComponent.scss'
 
 export type Props = {
     job: JobData
@@ -11,11 +10,10 @@ export type Props = {
     projectUrl: string
 }
 
-
-export const JobComponent = (props: Props): JSX.Element => {
+export const JobCardComponent = (props: Props): JSX.Element => {
     return (
         <div className="col">
-            <div className={`card h-100`}>
+            <div className="card h-100">
                 <JobCardHeaderComponent {...props} />
                 <JobCardBodyComponent {...props} />
                 <JobCardFooterComponent {...props} />
@@ -23,5 +21,3 @@ export const JobComponent = (props: Props): JSX.Element => {
         </div >
     )
 }
-
-

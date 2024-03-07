@@ -32,15 +32,13 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
             </a>
             {getCommitMessage()}
         </p>
-        {/* TODO: move everything below to the bottom of the body */}
-        {/* <div className="card-details text-body-secondary">Type: {latestExecution.type}</div> */}
         <div className="card-details text-body-secondary">
             <strong>Duration:</strong> {latestExecution.stopped_at ? latestExecutionDurationInMinutes : '-'}
         </div>
         <div className="card-details text-body-secondary">
             <strong>Triggered by:</strong>
             <img
-                className="img-fluid mx-1"
+                className="img-fluid mx-2"
                 style={{ borderRadius: '100%', width: '16px' }}
                 alt="Pipeline author"
                 src={latestExecution.pipeline.trigger.actor.avatar_url}

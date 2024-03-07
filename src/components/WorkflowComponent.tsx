@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { JobData, WorkflowData } from '../dashboard/DashboardRepository'
-import { JobComponent } from './JobComponent'
+import { JobCardComponent } from './JobCardComponent'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
 
@@ -39,12 +39,12 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">
                 {jobs.map((job, index) => (
-                    <JobComponent
+                    <JobCardComponent
                         key={`${job.name}.${index}`}
                         job={job}
                         index={index}
                         projectUrl={projectUrl}
-                    ></JobComponent>
+                    ></JobCardComponent>
                 ))}
             </div>
         </>

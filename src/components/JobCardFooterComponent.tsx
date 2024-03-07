@@ -52,8 +52,8 @@ export const JobCardFooterComponent = (props: Props): JSX.Element => {
     }, [])
 
     const gap = '3px'
-    return <div className="card-footer card-details text-body-secondary">
-        <strong>
+    return <div className="card-footer p-1 pb-2 px-3 card-details">
+        <strong className="text-body-secondary">
             <div>History</div>
         </strong>
         {executions.map((execution) => {

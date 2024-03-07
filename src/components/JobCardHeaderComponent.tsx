@@ -44,39 +44,53 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     const latestExecution = props.job.executions[0]
     const jobUrl = `${props.projectUrl}/${latestExecution.pipeline.number}/workflows/${latestExecution.workflow.id}/jobs/${latestExecution.job_number}`
 
+    const renderTitle = () => {
+        const content = <>{props.index + 1}. {latestExecution.name}</>
+        if (latestExecution.type === 'build') {
+            return <a href={jobUrl}>{content}</a>
+        }
+        return content
+    }
+    const renderInfoButton = () => {
+        if (latestExecution.type === 'build') {
+            return <FontAwesomeIcon style={{ float: 'right' }} icon={faCircleInfo} />
+        }
+        return <></>
+    }
+    const renderActionButton = () => {
+        if (latestExecution.type === 'build') {
+            return <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon>
+        }
+        return <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
+    }
     return (
         <div className="card-header p-1 pt-2 px-3">
             <div className='row h-100 align-items-center g-0'>
                 <div className='col-10'>
                     <h6 className="card-title m-0">
-                        <a href={jobUrl}>
-                            {props.index + 1}. {latestExecution.name}
-                        </a>
+                        {renderTitle()}
                     </h6>
                 </div>
                 <div className='col-2'>
-                    <FontAwesomeIcon style={{ float: 'right' }} icon={faCircleInfo} />
+                    {renderInfoButton()}
                 </div>
                 <div className='w-100 mb-2'></div>
                 <div className='col card-header-details'>
                     #{latestExecution.workflow.pipeline_number}
                 </div>
                 <div className='col-4 card-header-details' style={{ textAlign: 'center' }}>
-                    <div className="btn-group btn-group-sm" role="group" aria-label="Job Controls">
-                        <button type="button" className="btn btn-outline-primary p-1 px-2" style={{ fontSize: '8px' }}>
-                            <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon>
-                        </button>
-                        <button type="button" className="btn btn-outline-primary p-1 px-2" style={{ fontSize: '8px' }}>
-                            <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
-                        </button>
-                    </div>
+                    <button type="button" className="btn btn-outline-primary p-1 px-2" style={{ fontSize: '8px' }}>
+                        {renderActionButton()}
+                    </button>
                 </div>
                 <div className='col card-header-details'>
                     <div style={{ float: 'right' }}>
                         <small className='me-1' style={{ textTransform: 'capitalize' }}>
                             {getStatusDisplay(latestExecution.status)}
                         </small>
-                        {getBadge(latestExecution)}
+                        <span>
+                            {getBadge(latestExecution)}
+                        </span>
                     </div>
                 </div>
             </div>
