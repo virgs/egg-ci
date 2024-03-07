@@ -1,0 +1,14 @@
+.card-header {
+    background-color: var(--bs-card-bg) !important;
+}
+
+.card-header-details {
+    font-size: small;
+}
+
+.card-title {
+    // height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

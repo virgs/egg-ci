@@ -22,7 +22,7 @@ export const NavBarComponent = (): JSX.Element => {
                         src={eggIcon}
                         alt="Logo"
                         width="30"
-                        height="24"
+                        height="auto"
                         className="d-inline-block align-text-top me-2"
                     />
                     Egg CI

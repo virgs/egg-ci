@@ -26,6 +26,7 @@ export const DashboardsPage = (): JSX.Element => {
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
         const workflows = trackedProjects
+            .filter(project => project.enabled)
             .map((project) => projectService.loadProjectWorkflows(project))
             .flat()
             .filter((workflow) => workflow !== undefined)
