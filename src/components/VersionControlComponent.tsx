@@ -1,12 +1,12 @@
-import { faGithub, faGitlab, faBitbucket } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { VersionControlType } from "../version-control/VersionControl";
+import { faGithub, faGitlab, faBitbucket } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { VersionControlType } from '../version-control/VersionControl'
 
 export class VersionControlComponent {
-    private readonly versionControl: VersionControlType;
+    private readonly versionControl: VersionControlType
 
     public constructor(versionControl: VersionControlType) {
-        this.versionControl = versionControl;
+        this.versionControl = versionControl
     }
 
     public getIcon(): JSX.Element {
@@ -20,5 +20,4 @@ export class VersionControlComponent {
                 return <FontAwesomeIcon icon={faBitbucket} />
         }
     }
-
 }

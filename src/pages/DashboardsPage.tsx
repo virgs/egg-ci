@@ -1,38 +1,54 @@
-import { useEffect, useState } from "react";
-import { WorkflowComponent } from "../components/WorkflowComponent";
-import { WorkflowData } from "../dashboard/DashboardRepository";
-import { ProjectService } from "../project/ProjectService";
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { WorkflowComponent } from '../components/WorkflowComponent'
+import { WorkflowData } from '../dashboard/DashboardRepository'
+import { useWorkflowSynchedListener } from '../events/Events'
+import { ProjectService } from '../project/ProjectService'
 
-const projectService: ProjectService = new ProjectService();
+const projectService: ProjectService = new ProjectService()
 
 export const DashboardsPage = (): JSX.Element => {
+    const navigate = useNavigate()
+
     const [workflows, setWorkflows] = useState<WorkflowData[]>([])
 
-    useEffect(() => {
+    useWorkflowSynchedListener(() => {
         loadDashboards()
+    })
+
+    useEffect(() => {
+        const workflows = loadDashboards()
+        if (workflows.length === 0) {
+            navigate(`../settings`, { relative: 'route' })
+        }
     }, [])
 
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
-        setWorkflows(trackedProjects
-            .map(project => projectService.loadProjectWorkflows(project))
+        const workflows = trackedProjects
+            .map((project) => projectService.loadProjectWorkflows(project))
             .flat()
-            .filter(workflow => workflow !== undefined)
-            .map(workflow => workflow as WorkflowData))
+            .filter((workflow) => workflow !== undefined)
+            .map((workflow) => workflow as WorkflowData)
+        setWorkflows(workflows);
+        return workflows
     }
 
     const renderWorkflows = () => {
-        return workflows
-            .map((workflow, index) => {
-                const id = `workflow-${workflow.name}`;
-                return <div key={id} id={id}>
+        return workflows.map((workflow, index) => {
+            const id = `workflow-${workflow.name}-${index}`
+            return (
+                <div key={id} id={id}>
                     <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
                 </div>
-            })
+            )
+        })
     }
 
-    return <>
-        <h1>Dashboards</h1>
-        {renderWorkflows()}
-    </>
+    return (
+        <>
+            <h2>Dashboards</h2>
+            {renderWorkflows()}
+        </>
+    )
 }

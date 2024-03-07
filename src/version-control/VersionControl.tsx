@@ -2,15 +2,19 @@ export enum VersionControlType {
     GITLAB,
     GITHUB,
     BITBUCKET,
-    GITHUB_APP
+    GITHUB_APP,
 }
 
-export const mapVersionControlFromString = (text: string): (VersionControlType | undefined) => {
+export const mapVersionControlFromString = (text: string): VersionControlType | undefined => {
     switch (text.toLowerCase()) {
-        case 'githubapp': return VersionControlType.GITHUB_APP
-        case 'github': return VersionControlType.GITHUB
-        case 'gitlab': return VersionControlType.GITLAB
-        case 'bitbucket': return VersionControlType.BITBUCKET
+        case 'githubapp':
+            return VersionControlType.GITHUB_APP
+        case 'github':
+            return VersionControlType.GITHUB
+        case 'gitlab':
+            return VersionControlType.GITLAB
+        case 'bitbucket':
+            return VersionControlType.BITBUCKET
     }
 }
 

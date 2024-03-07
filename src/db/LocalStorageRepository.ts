@@ -1,33 +1,32 @@
-import { RepositoryListener } from "./Repository";
+import { RepositoryListener } from './Repository'
 
 export abstract class LocalStorageRepository {
-    private readonly cryptData: boolean = !import.meta.env.DEV;
-    private listeners: RepositoryListener[] = [];
+    private readonly cryptData: boolean = !import.meta.env.DEV
+    private listeners: RepositoryListener[] = []
 
     public persist(key: string, data: any) {
         if (this.cryptData) {
-            localStorage.setItem(btoa(key), btoa(JSON.stringify(data)));
+            localStorage.setItem(btoa(key), btoa(JSON.stringify(data)))
         } else {
-            localStorage.setItem(key, JSON.stringify(data));
+            localStorage.setItem(key, JSON.stringify(data))
         }
-        this.listeners.forEach(listener => listener(data));
+        this.listeners.forEach((listener) => listener(data))
     }
 
     public load(key: string): any | undefined {
-        const decodedKey = this.cryptData ? btoa(key) : key;
-        const persisted = localStorage.getItem(decodedKey);
+        const decodedKey = this.cryptData ? btoa(key) : key
+        const persisted = localStorage.getItem(decodedKey)
         if (persisted) {
             if (this.cryptData) {
-                return JSON.parse(atob(persisted));
+                return JSON.parse(atob(persisted))
             } else {
-                return JSON.parse(persisted);
+                return JSON.parse(persisted)
             }
         }
-        return undefined;
+        return undefined
     }
 
     public onChange(listener: RepositoryListener) {
-        this.listeners.push(listener);
+        this.listeners.push(listener)
     }
-
 }

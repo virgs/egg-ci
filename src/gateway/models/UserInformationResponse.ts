@@ -1,5 +1,5 @@
 export type UserInformationResponse = {
-    id: string;
-    login: string;
-    name: string;
+    id: string
+    login: string
+    name: string
 }
