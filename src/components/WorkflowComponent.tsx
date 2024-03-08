@@ -42,7 +42,7 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
                     <JobCardComponent
                         key={`${job.name}.${index}`}
                         job={job}
-                        index={index}
+                        jobOrder={index}
                         projectUrl={projectUrl}
                     ></JobCardComponent>
                 ))}

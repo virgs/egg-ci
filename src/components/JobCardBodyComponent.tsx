@@ -1,22 +1,19 @@
 import { faCodePullRequest } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { JobData } from '../dashboard/DashboardRepository';
+import { ExecutionData } from '../dashboard/DashboardRepository';
 import { formatDuration } from '../time/Time';
-import "./JobCardBodyComponent.scss"
+import "./JobCardBodyComponent.scss";
 
 type Props = {
-    job: JobData
-    index: number
-    projectUrl: string
+    job: ExecutionData
 }
 export const JobCardBodyComponent = (props: Props): JSX.Element => {
-    const latestExecution = props.job.executions[0]
     const latestExecutionDurationInMinutes = formatDuration(
-        new Date(latestExecution.stopped_at!).getTime() - new Date(latestExecution.started_at!).getTime()
+        new Date(props.job.stopped_at!).getTime() - new Date(props.job.started_at!).getTime()
     )
 
     const getCommitMessage = () => {
-        const message = latestExecution.pipeline.vcs?.commit?.body ?? latestExecution.pipeline.vcs?.commit?.subject;
+        const message = props.job.pipeline.vcs?.commit?.body ?? props.job.pipeline.vcs?.commit?.subject;
         if (message !== undefined && message.length > 0) {
             return message
         }
@@ -25,15 +22,15 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
 
     return <div className="card-body p-2 px-3">
         <p className="card-text">
-            <a href={latestExecution.pipeline.vcs?.origin_repository_url
+            <a href={props.job.pipeline.vcs?.origin_repository_url
                 .concat('/commit/')
-                .concat(latestExecution.pipeline.vcs?.revision)}>
+                .concat(props.job.pipeline.vcs?.revision)}>
                 <FontAwesomeIcon className="me-2" icon={faCodePullRequest} />
             </a>
             {getCommitMessage()}
         </p>
         <div className="card-details text-body-secondary">
-            <strong>Duration:</strong> {latestExecution.stopped_at ? latestExecutionDurationInMinutes : '-'}
+            <strong>Duration:</strong> {props.job.stopped_at ? latestExecutionDurationInMinutes : '-'}
         </div>
         <div className="card-details text-body-secondary">
             <strong>Triggered by:</strong>
@@ -41,13 +38,13 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
                 className="img-fluid mx-2"
                 style={{ borderRadius: '100%', width: '16px' }}
                 alt="Pipeline author"
-                src={latestExecution.pipeline.trigger.actor.avatar_url}
+                src={props.job.pipeline.trigger.actor.avatar_url}
             ></img>
-            {latestExecution.pipeline.trigger.actor.login}
+            {props.job.pipeline.trigger.actor.login}
         </div>
         <div className="card-details text-body-secondary">
             <strong>On: </strong>
-            {new Date(latestExecution.started_at!).toDateString()}
+            {new Date(props.job.started_at!).toDateString()}
         </div>
     </div>;
 }

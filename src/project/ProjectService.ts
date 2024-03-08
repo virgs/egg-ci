@@ -1,5 +1,5 @@
 import { DashboardRepository, JobData, WorkflowData } from '../dashboard/DashboardRepository'
-import { emitUserInformationChanged, emitWorkflowSynched } from '../events/Events'
+import { emitWorkflowSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
 import { PipelineWorkflow } from '../gateway/models/ListPipelineWorkflowsResponse'
 import { ProjectPipeline } from '../gateway/models/ListProjectPipelinesResponse'

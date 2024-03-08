@@ -4,9 +4,11 @@ import { ProjectPipeline } from '../gateway/models/ListProjectPipelinesResponse'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { ProjectConfiguration } from '../project/ProjectConfiguration'
 
+export type ExecutionData = (WorkflowJob & { pipeline: ProjectPipeline, workflow: PipelineWorkflow })
+
 export type JobData = {
     name: string
-    executions: (WorkflowJob & { pipeline: ProjectPipeline, workflow: PipelineWorkflow })[]
+    executions: ExecutionData[] //The first being the most recent one
 }
 
 export type WorkflowData = {

@@ -1,14 +1,15 @@
-import { faCheck, faCircleInfo, faEllipsis, faPause, faPlay, faRefresh, faRotate, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faEllipsis, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { JobData } from '../dashboard/DashboardRepository'
-import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
-import './JobCardHeaderComponent.scss'
-import { useEffect } from 'react'
 import * as bootstrap from 'bootstrap'
+import { useEffect } from 'react'
+import { ExecutionData } from '../dashboard/DashboardRepository'
+import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
+import { getClassesFromJobExecution } from './ClassesFromJobExecution'
+import './JobCardHeaderComponent.scss'
 
 type Props = {
-    job: JobData
-    index: number
+    job: ExecutionData
+    jobOrder: number
     projectUrl: string
 }
 
@@ -18,33 +19,12 @@ const getStatusDisplay = (status: string): string => {
         .replace('-', ' ');
 }
 const getBadge = (job: WorkflowJob): JSX.Element => {
-    switch (job.status) {
-        case 'success':
-            return <FontAwesomeIcon style={{ color: 'var(--bs-success)' }} icon={faCheck} />
-        case 'running':
-        case 'retried':
-            return <FontAwesomeIcon className="fa-spin" style={{ color: 'var(--bs-success)' }} icon={faRotate} />
-
-        case 'on_hold':
-        case 'blocked':
-        case 'queued':
-            return <FontAwesomeIcon style={{ color: 'var(--bs-info)' }} icon={faPause} />
-
-        case 'terminated-unknown':
-        case 'canceled':
-        case 'failed':
-        case 'not_running':
-        case 'infrastructure_fail':
-        case 'timedout':
-        case 'not_run':
-        case 'unauthorized':
-            return <FontAwesomeIcon style={{ color: 'var(--bs-danger)' }} icon={faXmark} />
-    }
+    const classes = getClassesFromJobExecution(job)
+    return <FontAwesomeIcon style={{ color: `var(--bs-${classes.color})` }} icon={classes.actionIcon} />
 }
 
 export const JobCardHeaderComponent = (props: Props): JSX.Element => {
-    const latestExecution = props.job.executions[0]
-    const jobUrl = `${props.projectUrl}/${latestExecution.pipeline.number}/workflows/${latestExecution.workflow.id}/jobs/${latestExecution.job_number}`
+    const jobUrl = `${props.projectUrl}/${props.job.pipeline.number}/workflows/${props.job.workflow.id}/jobs/${props.job.job_number}`
 
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -58,28 +38,27 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     }, [])
 
     const renderTitle = () => {
-        const content = <>{props.index + 1}. {latestExecution.name}</>
-        if (latestExecution.type === 'build') {
+        const content = <>{props.jobOrder + 1}. {props.job.name}</>
+        if (props.job.type === 'build') {
             return <a href={jobUrl}>{content}</a>
         }
         return content
     }
     const renderInfoButton = () => {
-        if (latestExecution.type === 'build') {
-            return <FontAwesomeIcon data-bs-toggle="tooltip" data-bs-title="Get more info"
-                style={{ float: 'right', cursor: 'pointer' }} icon={faEllipsis} />
+        if (props.job.type === 'build') {
+            return <FontAwesomeIcon style={{ float: 'right', cursor: 'pointer' }} icon={faBars} />
         }
         return <></>
     }
     const renderActionButton = () => {
-        if (latestExecution.type === 'build') {
+        if (props.job.type === 'build') {
             return <button type="button" data-bs-toggle="tooltip" data-bs-title="Rerun job"
                 className="btn btn-outline-primary py-0 px-2" style={{ fontSize: '8px' }}>
-                <FontAwesomeIcon icon={faRefresh}></FontAwesomeIcon>
+                <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon>
             </button>
         }
         return <button type="button" data-bs-toggle="tooltip" data-bs-title="Approve job"
-            disabled={latestExecution.status === 'success'}
+            disabled={props.job.status === 'success'}
             className="btn btn-outline-primary py-0 px-2" style={{ fontSize: '8px' }}>
             <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
         </button>
@@ -97,7 +76,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                 </div>
                 <div className='w-100 mb-2'></div>
                 <div className='col card-header-details'>
-                    #{latestExecution.workflow.pipeline_number}
+                    #{props.job.workflow.pipeline_number}
                 </div>
                 <div className='col-4 card-header-details' style={{ textAlign: 'center' }}>
                     {renderActionButton()}
@@ -105,10 +84,10 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                 <div className='col card-header-details'>
                     <div style={{ float: 'right', display: 'inline-flex', alignItems: 'center' }}>
                         <small className='me-1' style={{ textTransform: 'capitalize' }}>
-                            {getStatusDisplay(latestExecution.status)}
+                            {getStatusDisplay(props.job.status)}
                         </small>
                         <span>
-                            {getBadge(latestExecution)}
+                            {getBadge(props.job)}
                         </span>
                     </div>
                 </div>

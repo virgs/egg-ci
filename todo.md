@@ -1,7 +1,7 @@
 # TODO list
 
 1. [x] Scroll behavior
-2. [ ] Select item in job execution history
+2. [x] Select item in job execution history
 3. [ ] Create method in the service that checks if project has data persisted
 4. [ ] Toast event system
 5. [ ] Replace the info icon with the details dropdown
