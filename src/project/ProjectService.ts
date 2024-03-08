@@ -33,6 +33,7 @@ export class ProjectService {
     }
 
     public async syncProjectData(project: ProjectConfiguration) {
+        console.log('syncProjectData', project.reponame)
         await Promise.all(project.workflows.map((workflow) => this.syncWorkflow(workflow, project)))
     }
 
@@ -77,7 +78,6 @@ export class ProjectService {
         const jobsMap = await this.initializePipelineJobsMap(mostRecentPipeline)
         let mostRecentWorkflow: PipelineWorkflow | undefined
 
-        console.log('syncWorkflow', project.reponame, workflowName)
         for (let pipeline of pipelines.items) {
             const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
             const workflow = pipelineWorkflows.items.find((pipelineWorkflow) => pipelineWorkflow.name === workflowName)

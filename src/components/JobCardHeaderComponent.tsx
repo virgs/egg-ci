@@ -1,8 +1,10 @@
-import { faCheck, faCircleInfo, faPause, faPlay, faRotate, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCircleInfo, faPause, faPlay, faRefresh, faRotate, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../dashboard/DashboardRepository'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import './JobCardHeaderComponent.scss'
+import { useEffect } from 'react'
+import * as bootstrap from 'bootstrap'
 
 type Props = {
     job: JobData
@@ -44,6 +46,17 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     const latestExecution = props.job.executions[0]
     const jobUrl = `${props.projectUrl}/${latestExecution.pipeline.number}/workflows/${latestExecution.workflow.id}/jobs/${latestExecution.job_number}`
 
+    useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        Array.from(tooltipTriggerList)
+            .map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
+                delay: {
+                    show: 750,
+                    hide: 100
+                }
+            }))
+    }, [])
+
     const renderTitle = () => {
         const content = <>{props.index + 1}. {latestExecution.name}</>
         if (latestExecution.type === 'build') {
@@ -53,15 +66,23 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     }
     const renderInfoButton = () => {
         if (latestExecution.type === 'build') {
-            return <FontAwesomeIcon style={{ float: 'right' }} icon={faCircleInfo} />
+            return <FontAwesomeIcon data-bs-toggle="tooltip" data-bs-title="Get more info"
+                style={{ float: 'right', cursor: 'pointer' }} icon={faCircleInfo} />
         }
         return <></>
     }
     const renderActionButton = () => {
         if (latestExecution.type === 'build') {
-            return <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon>
+            return <button type="button" data-bs-toggle="tooltip" data-bs-title="Rerun job"
+                className="btn btn-outline-primary py-0 px-2" style={{ fontSize: '8px' }}>
+                <FontAwesomeIcon icon={faRefresh}></FontAwesomeIcon>
+            </button>
         }
-        return <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
+        return <button type="button" data-bs-toggle="tooltip" data-bs-title="Approve job"
+            disabled={latestExecution.status === 'success'}
+            className="btn btn-outline-primary py-0 px-2" style={{ fontSize: '8px' }}>
+            <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
+        </button>
     }
     return (
         <div className="card-header p-1 pt-2 px-3">
@@ -79,12 +100,10 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                     #{latestExecution.workflow.pipeline_number}
                 </div>
                 <div className='col-4 card-header-details' style={{ textAlign: 'center' }}>
-                    <button type="button" className="btn btn-outline-primary p-1 px-2" style={{ fontSize: '8px' }}>
-                        {renderActionButton()}
-                    </button>
+                    {renderActionButton()}
                 </div>
                 <div className='col card-header-details'>
-                    <div style={{ float: 'right' }}>
+                    <div style={{ float: 'right', display: 'inline-flex', alignItems: 'center' }}>
                         <small className='me-1' style={{ textTransform: 'capitalize' }}>
                             {getStatusDisplay(latestExecution.status)}
                         </small>

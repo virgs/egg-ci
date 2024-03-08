@@ -1,3 +1,5 @@
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
@@ -11,6 +13,7 @@ export const DashboardsPage = (): JSX.Element => {
     const navigate = useNavigate()
 
     const [workflows, setWorkflows] = useState<WorkflowData[]>([])
+    const [filterText, setFilterText] = useState<string>("")
 
     useWorkflowSynchedListener(() => {
         loadDashboards()
@@ -22,10 +25,17 @@ export const DashboardsPage = (): JSX.Element => {
             navigate(`../settings`, { relative: 'route' })
         }
     }, [])
+    useEffect(() => {
+        loadDashboards()
+    }, [filterText])
 
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
         const workflows = trackedProjects
+            .filter(project => project.reponame
+                .concat(project.username)
+                .concat(project.username)
+                .concat(project.workflows.join('')).includes(filterText))
             .filter(project => project.enabled)
             .map((project) => projectService.loadProjectWorkflows(project))
             .flat()
@@ -48,6 +58,31 @@ export const DashboardsPage = (): JSX.Element => {
 
     return (
         <>
+            <div className="row gx-2 py-4 align-items-center">
+                <div className="col-auto">
+                    <label htmlFor="searchLabel" className="visually-hidden"></label>
+                    <input
+                        type="text"
+                        readOnly={true}
+                        className="form-control-plaintext"
+                        id="searchLabel"
+                        value={'Filter'}
+                    />
+                </div>
+                <div className="col">
+                    <label htmlFor="searchInput" className="visually-hidden"></label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="searchInput"
+                        value={filterText}
+                        onChange={(event) => setFilterText(event.target.value)}
+                    />
+                </div>
+                <div className="col-auto">
+                    <FontAwesomeIcon icon={faSearch} />
+                </div>
+            </div>
             <h2>Dashboards</h2>
             {renderWorkflows()}
         </>
