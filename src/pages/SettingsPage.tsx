@@ -143,7 +143,7 @@ export const SettingsPage = (): JSX.Element => {
                 </div>
             </div>
             <div>
-                <h2>Projects</h2>
+                <h2>Projects ({projects.length})</h2>
                 {renderProjects()}
             </div>
         </>

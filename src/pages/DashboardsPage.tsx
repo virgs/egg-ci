@@ -31,7 +31,7 @@ export const DashboardsPage = (): JSX.Element => {
 
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
-        const workflows = trackedProjects
+        const workflows = (trackedProjects || [])
             .filter(project => project.reponame
                 .concat(project.username)
                 .concat(project.username)
@@ -48,11 +48,9 @@ export const DashboardsPage = (): JSX.Element => {
     const renderWorkflows = () => {
         return workflows.map((workflow, index) => {
             const id = `workflow-${workflow.name}-${index}`
-            return (
-                <div key={id} id={id}>
-                    <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
-                </div>
-            )
+            return <div key={id} id={id}>
+                <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
+            </div>
         })
     }
 
@@ -80,10 +78,10 @@ export const DashboardsPage = (): JSX.Element => {
                     />
                 </div>
                 <div className="col-auto">
-                    <FontAwesomeIcon icon={faSearch} />
+                    <FontAwesomeIcon flip='horizontal' icon={faSearch} />
                 </div>
             </div>
-            <h2>Dashboards</h2>
+            <h2>Projects ({workflows.length})</h2>
             {renderWorkflows()}
         </>
     )
