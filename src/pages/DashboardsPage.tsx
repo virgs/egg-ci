@@ -22,7 +22,7 @@ export const DashboardsPage = (): JSX.Element => {
     useEffect(() => {
         const workflows = loadDashboards()
         if (workflows.length === 0) {
-            navigate(`../settings`, { relative: 'route' })
+            // navigate(`../settings`, { relative: 'route' })
         }
     }, [])
     useEffect(() => {

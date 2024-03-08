@@ -29,7 +29,8 @@ export class ProjectService {
     }
 
     public loadProjectWorkflows(project: ProjectConfiguration): (WorkflowData | undefined)[] {
-        return project.workflows.map((workflow) => this.dashboardRepository.loadWorkflow(project, workflow))
+        return project.workflows
+            .map(workflow => this.dashboardRepository.loadWorkflow(project, workflow))
     }
 
     public async syncProjectData(project: ProjectConfiguration) {

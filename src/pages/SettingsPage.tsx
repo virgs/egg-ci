@@ -10,34 +10,57 @@ import { SettingsRepository } from '../settings/SettingsRepository'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import './SettingsPage.css'
 import { emitUserInformationChanged } from '../events/Events'
+import { useInterval } from '../time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
 
+const getProjectLabel = (project: ProjectConfiguration): string => {
+    return `${project.vcsType}/${project.username}/${project.reponame}`
+}
+
+const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000; // 30 seconds
 export const SettingsPage = (): JSX.Element => {
     const [token, setToken] = useState<string>('')
     const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
     const [projects, setProjects] = useState<(ProjectConfiguration)[]>([])
-    const [syncingProjects, setSyncingProjects] = useState<string[]>([])
+
+    const checkSyncingProjects = () => {
+        const newLocal = projects
+            .filter(project => project.enabled && projectService.loadProjectWorkflows(project)
+                .some(workflow => workflow === undefined))
+            .map(project => getProjectLabel(project))
+        return newLocal
+    }
+
+    const [syncingProjects, setSyncingProjects] = useState<string[]>(checkSyncingProjects())
 
     const updateComponentStates = () => {
         if (settingsRepository.getApiToken()) {
             setToken(settingsRepository.getApiToken()!)
         }
-        if (settingsRepository.getUserInformation()) {
-            setUserInformation(settingsRepository.getUserInformation())
+        const newUserInformation = settingsRepository.getUserInformation()
+        if (newUserInformation) {
+            emitUserInformationChanged(newUserInformation)
+            setUserInformation(newUserInformation)
         }
         if (projectService.loadTrackedProjects()) {
-            setProjects(projectService.loadTrackedProjects())
+            setProjects(projectService.loadTrackedProjects()
+                .sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b))))
         }
     }
+
+    useInterval(() => {
+        console.log('Autosync tracked projects')
+        refresh();
+    }, AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS)
 
     useEffect(() => {
         updateComponentStates()
     }, [])
 
     const onSwitchChange = (project: ProjectConfiguration) => {
-        const id = `${project.vcsType}/${project.username}/${project.reponame}`
+        const id = getProjectLabel(project)
         return () => {
             if (project.enabled) {
                 projectService.disableProject(project)
@@ -47,6 +70,7 @@ export const SettingsPage = (): JSX.Element => {
                 projectService.syncProjectData(project)
                     .then(() => {
                         setSyncingProjects(currentlySyncingProjects => currentlySyncingProjects.filter(item => item !== id))
+                        //TODO emit toast event
                         return console.log('Toast!')
                     })
             }
@@ -55,56 +79,58 @@ export const SettingsPage = (): JSX.Element => {
     }
 
     const refresh = async () => {
-        initializeCircleCiClient(token)
-        const [userInformation, projects] = await Promise.all([
-            circleCiClient.getUserInformation(),
-            projectService.listProjectsConfigurations(),
-        ])
-        settingsRepository.setApiToken(token)
-        settingsRepository.setUserInformation(userInformation)
-        emitUserInformationChanged(userInformation)
-        projects.forEach((project) => projectService.trackProject(project))
-        updateComponentStates()
+        if (token.length > 0) {
+            initializeCircleCiClient(token)
+            const [newUserInformation, projects] = await Promise.all([
+                circleCiClient.getUserInformation(),
+                projectService.listProjectsConfigurations(),
+            ])
+            settingsRepository.setApiToken(token)
+            settingsRepository.setUserInformation(newUserInformation)
+            projects.forEach((project) => projectService.trackProject(project))
+            updateComponentStates()
+        }
     }
 
     const renderProjects = () => {
         return (
             <ul className="list-group list-group-flush">
-                {(projects || []).map(project => {
-                    const renderVersionControlComponent = () => {
-                        const versionControl = mapVersionControlFromString(project.vcsType)
-                        if (versionControl) {
-                            return new VersionControlComponent(versionControl).getIcon()
+                {(projects || [])
+                    .map(project => {
+                        const renderVersionControlComponent = () => {
+                            const versionControl = mapVersionControlFromString(project.vcsType)
+                            if (versionControl) {
+                                return new VersionControlComponent(versionControl).getIcon()
+                            }
+                            return <></>
                         }
-                        return <></>
-                    }
-                    const id = `${project.vcsType}/${project.username}/${project.reponame}`
-                    const renderSpinner = () => {
-                        if (syncingProjects.includes(id)) {
-                            return <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </div>
+                        const id = getProjectLabel(project)
+                        const renderSpinner = () => {
+                            if (syncingProjects.includes(id)) {
+                                return <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            }
+                            return <></>
                         }
-                        return <></>
-                    }
-                    return (
-                        <li key={id} className="list-group-item d-flex align-items-center justify-content-between"
-                            style={{ backgroundColor: project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}>
-                            <div className="form-check form-switch">
-                                <input className="form-check-input" type="checkbox" id={id}
-                                    checked={project.enabled}
-                                    onChange={onSwitchChange(project)} />
-                                <label className="form-check-label" htmlFor={id}>
-                                    <span className="mx-2">{renderVersionControlComponent()}</span>
-                                    <span>
-                                        {project.username}/{project.reponame}
-                                    </span>
-                                </label>
-                            </div>
-                            <div>{renderSpinner()}</div>
-                        </li>
-                    )
-                })}
+                        return (
+                            <li key={id} className="list-group-item d-flex align-items-center justify-content-between"
+                                style={{ backgroundColor: project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}>
+                                <div className="form-check form-switch">
+                                    <input className="form-check-input" type="checkbox" id={id}
+                                        checked={project.enabled}
+                                        onChange={onSwitchChange(project)} />
+                                    <label className="form-check-label" htmlFor={id}>
+                                        <span className="mx-2">{renderVersionControlComponent()}</span>
+                                        <span>
+                                            {project.username}/{project.reponame}
+                                        </span>
+                                    </label>
+                                </div>
+                                <div>{renderSpinner()}</div>
+                            </li>
+                        )
+                    })}
             </ul>
         )
     }
