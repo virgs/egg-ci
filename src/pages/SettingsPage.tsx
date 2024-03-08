@@ -139,7 +139,7 @@ export const SettingsPage = (): JSX.Element => {
     return (
         <>
             <div>
-                <h2>Token</h2>
+                <h3>Token</h3>
                 <div className="row gx-2 py-4">
                     <div className="col-auto">
                         <label htmlFor="apiTokenLabel" className="visually-hidden"></label>
@@ -169,7 +169,7 @@ export const SettingsPage = (): JSX.Element => {
                 </div>
             </div>
             <div>
-                <h2>Projects ({projects.length})</h2>
+                <h3>Projects ({projects.length})</h3>
                 {renderProjects()}
             </div>
         </>

@@ -7,32 +7,42 @@ import { SettingsRepository } from './settings/SettingsRepository'
 
 import { RouterProvider, createHashRouter } from 'react-router-dom'
 import { useInterval } from './time/UseInterval'
-import { ProjectService } from './project/ProjectService'
+
+const settingsRepository: SettingsRepository = new SettingsRepository()
+if (settingsRepository.getApiToken()) {
+  initializeCircleCiClient(settingsRepository.getApiToken()!)
+}
+
+const AppShell = ({ children }: { children: JSX.Element }): JSX.Element => {
+  return <><NavBarComponent />
+    <div style={{ height: '100%', overflowY: 'auto' }}>
+      <div className='container py-2'>
+        {children}
+      </div>
+    </div>
+  </>
+}
+
 
 //ghpage doesnt work with browser router: https://stackoverflow.com/a/71985764
 const router = createHashRouter([
   {
     path: '/settings',
     element: (
-      <>
+      <AppShell>
         <SettingsPage />
-      </>
+      </AppShell>
     ),
   },
   {
     path: '/*',
     element: (
-      <>
+      <AppShell>
         <DashboardsPage />
-      </>
+      </AppShell>
     ),
   },
 ])
-
-const settingsRepository: SettingsRepository = new SettingsRepository()
-if (settingsRepository.getApiToken()) {
-  initializeCircleCiClient(settingsRepository.getApiToken()!)
-}
 
 const autoSyncInterval = 1000 * 30; //30 seconds
 
@@ -44,11 +54,15 @@ export const App = (): JSX.Element => {
     //   .forEach(project => projectService.syncProjectData(project))
     console.log('auto sync')
   }, autoSyncInterval)
+
   return (
     <>
-      <NavBarComponent />
-      <div id="app" className="container py-2">
-        <RouterProvider router={router} />
+      <div id="app" style={{
+        height: '100svh',
+        display: 'flex',
+        flexFlow: 'column'
+      }}>
+        <RouterProvider router={router} ></RouterProvider>
       </div>
     </>
   )

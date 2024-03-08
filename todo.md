@@ -1,6 +1,6 @@
 # TODO list
 
-1. [ ] Scroll behavior
+1. [x] Scroll behavior
 2. [ ] Select item in job execution history
 3. [ ] Create method in the service that checks if project has data persisted
 4. [ ] Toast event system

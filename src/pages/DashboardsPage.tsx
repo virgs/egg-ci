@@ -22,9 +22,10 @@ export const DashboardsPage = (): JSX.Element => {
     useEffect(() => {
         const workflows = loadDashboards()
         if (workflows.length === 0) {
-            // navigate(`../settings`, { relative: 'route' })
+            navigate(`../settings`, { relative: 'route' })
         }
     }, [])
+
     useEffect(() => {
         loadDashboards()
     }, [filterText])
@@ -46,16 +47,18 @@ export const DashboardsPage = (): JSX.Element => {
     }
 
     const renderWorkflows = () => {
-        return workflows.map((workflow, index) => {
-            const id = `workflow-${workflow.name}-${index}`
-            return <div key={id} id={id}>
-                <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
-            </div>
-        })
+        return workflows
+            .map((workflow, index) => {
+                const id = `workflow-${workflow.name}-${index}`
+                return <div key={id} id={id}>
+                    <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
+                </div>
+            })
     }
 
     return (
         <>
+            <h3>Projects ({workflows.length})</h3>
             <div className="row gx-2 py-4 align-items-center">
                 <div className="col-auto">
                     <label htmlFor="searchLabel" className="visually-hidden"></label>
@@ -81,7 +84,6 @@ export const DashboardsPage = (): JSX.Element => {
                     <FontAwesomeIcon flip='horizontal' icon={faSearch} />
                 </div>
             </div>
-            <h2>Projects ({workflows.length})</h2>
             {renderWorkflows()}
         </>
     )

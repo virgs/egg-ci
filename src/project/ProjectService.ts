@@ -28,6 +28,11 @@ export class ProjectService {
         return this.dashboardRepository.loadTrackedProjects()
     }
 
+    public everyWorkflowFromProjectIsPersisted(project: ProjectConfiguration): boolean {
+        return project.workflows
+            .every(workflow => this.dashboardRepository.loadWorkflow(project, workflow) !== undefined)
+    }
+
     public loadProjectWorkflows(project: ProjectConfiguration): (WorkflowData | undefined)[] {
         return project.workflows
             .map(workflow => this.dashboardRepository.loadWorkflow(project, workflow))

@@ -6,9 +6,12 @@ import { UserInformationResponse } from '../gateway/models/UserInformationRespon
 import { SettingsRepository } from '../settings/SettingsRepository'
 import eggIcon from '/egg-icon.png'
 import "./NavBarComponent.scss"
+import { useNavigate } from 'react-router-dom'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 export const NavBarComponent = (): JSX.Element => {
+    const navigate = useNavigate()
+
     const [userInformation, setUserInformation] = useState<UserInformationResponse | undefined>(
         settingsRepository.getUserInformation()
     )
@@ -31,7 +34,9 @@ export const NavBarComponent = (): JSX.Element => {
                 <div className='w-100'>
                     <ul className="navbar-nav w-100 justify-content-between align-items-center">
                         <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="#">Dashboard</a>
+                            <button className="nav-link active" aria-current="page"
+                                onPointerDown={() => navigate('/#', { relative: 'route' })}
+                            >Dashboard</button>
                         </li>
                         <li className="nav-item dropdown">
                             <div>
@@ -41,10 +46,11 @@ export const NavBarComponent = (): JSX.Element => {
                                 </span>
                                 <ul className="dropdown-menu">
                                     <li>
-                                        <a className="dropdown-item d-flex align-items-center" href="#/settings">
+                                        <button className="dropdown-item d-flex align-items-center"
+                                            onPointerDown={() => navigate('/settings', { relative: 'route' })}>
                                             <FontAwesomeIcon className="me-2" icon={faWrench} />
                                             Settings
-                                        </a>
+                                        </button>
                                     </li>
                                 </ul>
                             </div>

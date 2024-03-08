@@ -1,4 +1,4 @@
-import { faCheck, faCircleInfo, faPause, faPlay, faRefresh, faRotate, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCircleInfo, faEllipsis, faPause, faPlay, faRefresh, faRotate, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../dashboard/DashboardRepository'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
@@ -67,7 +67,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     const renderInfoButton = () => {
         if (latestExecution.type === 'build') {
             return <FontAwesomeIcon data-bs-toggle="tooltip" data-bs-title="Get more info"
-                style={{ float: 'right', cursor: 'pointer' }} icon={faCircleInfo} />
+                style={{ float: 'right', cursor: 'pointer' }} icon={faEllipsis} />
         }
         return <></>
     }
