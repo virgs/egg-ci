@@ -3,14 +3,13 @@ import { ExecutionData } from "../dashboard/DashboardRepository";
 import { WorkflowJob } from "../gateway/models/ListWorkflowJobsResponse";
 import "./JobCardFooterComponent.scss";
 import { getClassesFromJobExecution } from "./ClassesFromJobExecution";
+import { config } from "../config";
 
 type Props = {
     executions: ExecutionData[]
     onHighligthedExecutionIndexChanged: (index: number) => void,
     highligthedExecutionIndex: number
 }
-
-const columnsPerLine = 5
 
 export const JobCardFooterComponent = (props: Props): JSX.Element => {
     const [executions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions))
@@ -33,7 +32,7 @@ export const JobCardFooterComponent = (props: Props): JSX.Element => {
                         aria-label="Job status"
                         style={{
                             cursor: 'pointer',
-                            width: `calc((100% / ${columnsPerLine}) - ${gap})`,
+                            width: `calc((100% / ${config.jobHistoryColumnsPerLine}) - ${gap})`,
                             height: '10px',
                             display: 'inline-flex',
                             marginRight: gap,

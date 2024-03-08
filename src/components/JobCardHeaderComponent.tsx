@@ -1,4 +1,4 @@
-import { faBars, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faEyeSlash, faInfo, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
 import { useEffect } from 'react'
@@ -46,7 +46,20 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     }
     const renderInfoButton = () => {
         if (props.job.type === 'build') {
-            return <FontAwesomeIcon style={{ float: 'right', cursor: 'pointer' }} icon={faBars} />
+            return <div>
+                {/* <button className="btn btn-secondary dropdown-toggle" type="button"> */}
+                <FontAwesomeIcon data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"
+                    style={{ float: 'right', cursor: 'pointer' }} icon={faBars} />
+                {/* </button> */}
+                <ul className="dropdown-menu">
+                    <li><a className="dropdown-item disabled" href="#">
+                        Details</a></li>
+                    <li><a className="dropdown-item disabled" href="#">
+                        Hide
+                    </a></li>
+                </ul>
+            </div>
+            // return 
         }
         return <></>
     }

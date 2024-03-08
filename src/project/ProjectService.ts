@@ -1,3 +1,4 @@
+import { config } from '../config'
 import { DashboardRepository, JobData, WorkflowData } from '../dashboard/DashboardRepository'
 import { emitWorkflowSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
@@ -7,7 +8,6 @@ import { getVersionControlSlug, mapVersionControlFromString } from '../version-c
 import { ProjectConfiguration } from './ProjectConfiguration'
 
 const SETUP_WORKFLOW = 'setup'
-const JOB_EXECUTIONS_MAX_HISTORY = 10
 
 export class ProjectService {
     private readonly dashboardRepository = new DashboardRepository()
@@ -110,14 +110,13 @@ export class ProjectService {
                 name: job.name,
                 executions: job.executions
                     .filter((execution) => execution.started_at !== undefined && execution.started_at?.length > 0)
-                    .filter((_, index) => index < JOB_EXECUTIONS_MAX_HISTORY),
+                    .filter((_, index) => index < config.jobExecutionsMaxHistory),
             })),
         }
 
         const dashboardRepository = new DashboardRepository()
         dashboardRepository.persistWorkflow(dashboardWorkflow)
         emitWorkflowSynched({ project: project, workflowName: workflowName })
-        console.log('synced')
     }
 
     private async initializePipelineJobsMap(mostRecentPipeline: ProjectPipeline): Promise<JobData[]> {
