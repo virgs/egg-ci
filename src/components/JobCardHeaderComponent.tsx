@@ -1,4 +1,4 @@
-import { faBars, faEllipsis, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
 import { useEffect } from 'react'

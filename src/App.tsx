@@ -6,6 +6,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
 import { RouterProvider, createHashRouter } from 'react-router-dom'
+import { ToastsComponent } from './events/ToastsComponent'
 import { useInterval } from './time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -16,6 +17,7 @@ if (settingsRepository.getApiToken()) {
 const AppShell = ({ children }: { children: JSX.Element }): JSX.Element => {
   return <><NavBarComponent />
     <div style={{ height: '100%', overflowY: 'auto' }}>
+      <ToastsComponent></ToastsComponent>
       <div className='container py-2'>
         {children}
       </div>

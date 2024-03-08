@@ -9,7 +9,7 @@ import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import './SettingsPage.css'
-import { emitUserInformationChanged } from '../events/Events'
+import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
 import { useInterval } from '../time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -70,8 +70,7 @@ export const SettingsPage = (): JSX.Element => {
                 projectService.syncProjectData(project)
                     .then(() => {
                         setSyncingProjects(currentlySyncingProjects => currentlySyncingProjects.filter(item => item !== id))
-                        //TODO emit toast event
-                        return console.log('Toast!')
+                        emitNewNotification({ message: `Project ${project.reponame} successfuly synchronized` })
                     })
             }
             updateComponentStates()
