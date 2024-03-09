@@ -9,4 +9,4 @@
 7. [x] Replace the info icon with the details dropdown
 8. [ ] Create method in the service that checks if project has data persisted
 9. [ ] Be able to merge workflow data (autosync pipelines)
-10.[ ] Card placeholders
+10. [ ] Card placeholders

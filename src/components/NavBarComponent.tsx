@@ -1,4 +1,4 @@
-import { faUser, faWrench } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faUser, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
 import { useUserInformationChangedListener } from '../events/Events'
@@ -50,6 +50,17 @@ export const NavBarComponent = (): JSX.Element => {
                                             onPointerDown={() => navigate('/settings', { relative: 'route' })}>
                                             <FontAwesomeIcon className="me-2" icon={faWrench} />
                                             Settings
+                                        </button>
+                                    </li>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li>
+                                        <button className="dropdown-item d-flex align-items-center"
+                                            onPointerDown={() => {
+                                                localStorage.clear()
+                                                return navigate('/settings', { relative: 'route' })
+                                            }}>
+                                            <FontAwesomeIcon className="me-2" icon={faTrash} />
+                                            Log out
                                         </button>
                                     </li>
                                 </ul>
