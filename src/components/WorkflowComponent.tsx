@@ -20,7 +20,7 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
     const workflowUrl = `${projectUrl}/${mostRecentPipeline.number}/workflows/${mostRecentWorkflow.id}`
     return (
         <>
-            <div className="mt-4" style={{ height: '2px', backgroundColor: 'var(--bs-gray-200)' }}></div>
+            <div style={{ height: '2px', backgroundColor: 'var(--bs-gray-200)' }}></div>
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item d-flex align-items-center fs-4">

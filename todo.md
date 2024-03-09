@@ -7,6 +7,6 @@
 5. [x] Create configuration file
 6. [ ] Be able to hide non relevant jobs
 7. [x] Replace the info icon with the details dropdown
-8. [ ] Create method in the service that checks if project has data persisted
+8. [x] Create method in the service that checks if project has data persisted
 9. [ ] Be able to merge workflow data (autosync pipelines)
 10. [ ] Card placeholders

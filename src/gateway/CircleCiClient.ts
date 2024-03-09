@@ -36,7 +36,6 @@ export class CircleCiClient {
         branch: string
     ): Promise<ListProjectPipelinesReponse> {
         const url = `${apiV2}/project/${versionControlSlug}/${organization}/${repository}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
-        // const url = `${apiV2}/project/${versionControlSlug}/${organization}/${repository}/pipeline?circle-token=${this.apiToken}`
         const response = await fetch(url)
         return await response.json()
     }
@@ -54,6 +53,7 @@ export class CircleCiClient {
     }
 
     //Not every WorkflowJob has a number. This makes this url not viable. :/
+    //And only returns well succeeded workflows? 
     public async getJobDetails(jobNumber: number, projectSlug: string): Promise<JobDetailsResponse> {
         const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
         const response = await fetch(url, {

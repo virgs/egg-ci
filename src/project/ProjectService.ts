@@ -29,13 +29,13 @@ export class ProjectService {
     }
 
     public everyWorkflowFromProjectIsPersisted(project: ProjectConfiguration): boolean {
-        return project.workflows
-            .every(workflow => this.dashboardRepository.loadWorkflow(project, workflow) !== undefined)
+        return project.workflows.every(
+            (workflow) => this.dashboardRepository.loadWorkflow(project, workflow) !== undefined
+        )
     }
 
     public loadProjectWorkflows(project: ProjectConfiguration): (WorkflowData | undefined)[] {
-        return project.workflows
-            .map(workflow => this.dashboardRepository.loadWorkflow(project, workflow))
+        return project.workflows.map((workflow) => this.dashboardRepository.loadWorkflow(project, workflow))
     }
 
     public async syncProjectData(project: ProjectConfiguration) {
@@ -74,6 +74,8 @@ export class ProjectService {
             project.reponame,
             project.defaultBranch
         )
+        //sort pipelines in a way that the most recent is the first item (by updated_at attribute)
+
         // if (pipelines.items.length === 0) {
         //     return
         // }
@@ -86,6 +88,7 @@ export class ProjectService {
 
         for (let pipeline of pipelines.items) {
             const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
+            //TODO there can be multiple workflows with the same name in the same pipeline (when it reruns, for example)
             const workflow = pipelineWorkflows.items.find((pipelineWorkflow) => pipelineWorkflow.name === workflowName)
             if (!workflow) {
                 break
@@ -108,6 +111,7 @@ export class ProjectService {
             mostRecentWorkflow: mostRecentWorkflow!,
             jobs: jobsMap.map((job) => ({
                 name: job.name,
+                hidden: false,
                 executions: job.executions
                     .filter((execution) => execution.started_at !== undefined && execution.started_at?.length > 0)
                     .filter((_, index) => index < config.jobExecutionsMaxHistory),
@@ -124,8 +128,10 @@ export class ProjectService {
         if (pipelineWorkflows.items.length === 0) {
             return []
         }
-        return (await this.listWorkflowJobsName(pipelineWorkflows.items[0])).map((jobName) => ({
+        const mostRecentWorkflow = pipelineWorkflows.items[0]
+        return (await this.listWorkflowJobsName(mostRecentWorkflow)).map((jobName) => ({
             name: jobName,
+            hidden: false,
             executions: [],
             history: [],
         }))
@@ -133,9 +139,13 @@ export class ProjectService {
 
     private async listPipelineWorkflows(mostRecentPipeline: ProjectPipeline): Promise<string[]> {
         const workflowsDetails = await circleCiClient.listPipelineWorkflows(mostRecentPipeline.id)
-        return workflowsDetails.items
-            .filter((workflow) => workflow?.tag !== SETUP_WORKFLOW)
-            .map((workflow) => workflow.name)
+        return Array.from(
+            new Set(
+                workflowsDetails.items
+                    .filter((workflow) => workflow?.tag !== SETUP_WORKFLOW)
+                    .map((workflow) => workflow.name)
+            )
+        )
     }
 
     private async listWorkflowJobsName(mostRecentWorkflow: PipelineWorkflow): Promise<string[]> {

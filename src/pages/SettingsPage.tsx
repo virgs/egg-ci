@@ -9,7 +9,12 @@ import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import './SettingsPage.css'
-import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
+import {
+    emitNewNotification,
+    emitUserInformationChanged,
+    useLoggedOutListener,
+    useWorkflowSynchedListener,
+} from '../events/Events'
 import { useInterval } from '../time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -19,21 +24,26 @@ const getProjectLabel = (project: ProjectConfiguration): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
 }
 
-const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000; // 30 seconds
+const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
+
 export const SettingsPage = (): JSX.Element => {
     const [token, setToken] = useState<string>('')
     const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
-    const [projects, setProjects] = useState<(ProjectConfiguration)[]>([])
+    const [projects, setProjects] = useState<ProjectConfiguration[]>([])
 
-    const checkSyncingProjects = () => {
-        const newLocal = projects
-            .filter(project => project.enabled && projectService.loadProjectWorkflows(project)
-                .some(workflow => workflow === undefined))
-            .map(project => getProjectLabel(project))
-        return newLocal
+    const checkSyncingProjects = (projects: ProjectConfiguration[]) => {
+        return projects
+            .filter((project) => project.enabled && !projectService.everyWorkflowFromProjectIsPersisted(project))
+            .map((project) => getProjectLabel(project))
     }
 
-    const [syncingProjects, setSyncingProjects] = useState<string[]>(checkSyncingProjects())
+    const [syncingProjects, setSyncingProjects] = useState<string[]>([])
+
+    useLoggedOutListener(() => {
+        setToken('')
+        setUserInformation(undefined)
+        setProjects([])
+    })
 
     const updateComponentStates = () => {
         if (settingsRepository.getApiToken()) {
@@ -45,19 +55,25 @@ export const SettingsPage = (): JSX.Element => {
             setUserInformation(newUserInformation)
         }
         if (projectService.loadTrackedProjects()) {
-            setProjects(projectService.loadTrackedProjects()
-                .sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b))))
+            const loadedProjects = projectService
+                .loadTrackedProjects()
+                .sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b)))
+            setProjects(loadedProjects)
+            setSyncingProjects(checkSyncingProjects(loadedProjects))
         }
     }
 
     useInterval(() => {
-        console.log('Autosync tracked projects')
-        refresh();
+        refresh()
     }, AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS)
 
     useEffect(() => {
         updateComponentStates()
     }, [])
+
+    useWorkflowSynchedListener(() => {
+        updateComponentStates()
+    })
 
     const onSwitchChange = (project: ProjectConfiguration) => {
         const id = getProjectLabel(project)
@@ -65,13 +81,13 @@ export const SettingsPage = (): JSX.Element => {
             if (project.enabled) {
                 projectService.disableProject(project)
             } else {
-                setSyncingProjects(currentlySyncingProjects => currentlySyncingProjects.concat(id))
+                setSyncingProjects((currentlySyncingProjects) => currentlySyncingProjects.concat(id))
                 projectService.enableProject(project)
-                projectService.syncProjectData(project)
-                    .then(() => {
-                        setSyncingProjects(currentlySyncingProjects => currentlySyncingProjects.filter(item => item !== id))
-                        emitNewNotification({ message: `Project ${project.reponame} successfuly synchronized` })
-                    })
+                projectService.syncProjectData(project).then(() => {
+                    setSyncingProjects((currentlySyncingProjects) =>
+                        currentlySyncingProjects.filter((item) => item !== id)
+                    )
+                })
             }
             updateComponentStates()
         }
@@ -80,60 +96,71 @@ export const SettingsPage = (): JSX.Element => {
     const refresh = async () => {
         if (token.length > 0) {
             initializeCircleCiClient(token)
-            const [newUserInformation, projects] = await Promise.all([
-                circleCiClient.getUserInformation(),
-                projectService.listProjectsConfigurations(),
-            ])
-            settingsRepository.setApiToken(token)
-            settingsRepository.setUserInformation(newUserInformation)
-            projects.forEach((project) => projectService.trackProject(project))
-            updateComponentStates()
+            try {
+                const [newUserInformation, projects] = await Promise.all([
+                    circleCiClient.getUserInformation(),
+                    projectService.listProjectsConfigurations(),
+                ])
+                settingsRepository.setApiToken(token)
+                settingsRepository.setUserInformation(newUserInformation)
+                projects.forEach((project) => projectService.trackProject(project))
+                updateComponentStates()
+            } catch (error) {
+                emitNewNotification({ message: `Invalid token` })
+            }
         }
     }
 
     const renderProjects = () => {
         return (
             <ul className="list-group list-group-flush">
-                {(projects || [])
-                    .map(project => {
-                        const renderVersionControlComponent = () => {
-                            const versionControl = mapVersionControlFromString(project.vcsType)
-                            if (versionControl) {
-                                return new VersionControlComponent(versionControl).getIcon()
-                            }
-                            return <></>
+                {(projects || []).map((project) => {
+                    const renderVersionControlComponent = () => {
+                        const versionControl = mapVersionControlFromString(project.vcsType)
+                        if (versionControl) {
+                            return new VersionControlComponent(versionControl).getIcon()
                         }
-                        const id = getProjectLabel(project)
-                        const renderSpinner = () => {
-                            if (syncingProjects.includes(id)) {
-                                return <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
+                        return <></>
+                    }
+                    const id = getProjectLabel(project)
+                    const renderSpinner = () => {
+                        if (syncingProjects.includes(id)) {
+                            return (
+                                <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </div>
-                            }
-                            return <></>
+                            )
                         }
-                        return (
-                            <li key={id} className="list-group-item d-flex align-items-center justify-content-between"
-                                style={{ backgroundColor: project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}>
-                                <div className="form-check form-switch">
-                                    <input className="form-check-input" type="checkbox" id={id}
-                                        checked={project.enabled}
-                                        onChange={onSwitchChange(project)} />
-                                    <label className="form-check-label" htmlFor={id}>
-                                        <span className="mx-2">{renderVersionControlComponent()}</span>
-                                        <span>
-                                            {project.username}/{project.reponame}
-                                        </span>
-                                    </label>
-                                </div>
-                                <div>{renderSpinner()}</div>
-                            </li>
-                        )
-                    })}
+                        return <></>
+                    }
+                    return (
+                        <li
+                            key={id}
+                            className="list-group-item d-flex align-items-center justify-content-between"
+                            style={{ backgroundColor: project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}
+                        >
+                            <div className="form-check form-switch">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={id}
+                                    checked={project.enabled}
+                                    onChange={onSwitchChange(project)}
+                                />
+                                <label className="form-check-label" htmlFor={id}>
+                                    <span className="mx-2">{renderVersionControlComponent()}</span>
+                                    <span>
+                                        {project.username}/{project.reponame}
+                                    </span>
+                                </label>
+                            </div>
+                            <div>{renderSpinner()}</div>
+                        </li>
+                    )
+                })}
             </ul>
         )
     }
-
 
     return (
         <>
@@ -161,7 +188,12 @@ export const SettingsPage = (): JSX.Element => {
                         />
                     </div>
                     <div className="col-auto">
-                        <button onClick={refresh} type="button" className="btn btn-primary">
+                        <button
+                            disabled={token.length === 0}
+                            onClick={refresh}
+                            type="button"
+                            className="btn btn-primary"
+                        >
                             <FontAwesomeIcon icon={faRightToBracket} />
                         </button>
                     </div>
@@ -174,4 +206,3 @@ export const SettingsPage = (): JSX.Element => {
         </>
     )
 }
-

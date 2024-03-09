@@ -13,15 +13,17 @@ export const DashboardsPage = (): JSX.Element => {
     const navigate = useNavigate()
 
     const [workflows, setWorkflows] = useState<WorkflowData[]>([])
-    const [filterText, setFilterText] = useState<string>("")
+    const [filterText, setFilterText] = useState<string>('')
 
     useWorkflowSynchedListener(() => {
         loadDashboards()
     })
 
     useEffect(() => {
-        const workflows = loadDashboards()
-        if (workflows.length === 0) {
+        const trackedProjects = projectService.loadTrackedProjects()
+        const enabledProjects = (trackedProjects || []).filter((project) => project.enabled)
+
+        if (enabledProjects.length === 0) {
             navigate(`../settings`, { relative: 'route' })
         }
     }, [])
@@ -33,27 +35,32 @@ export const DashboardsPage = (): JSX.Element => {
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
         const workflows = (trackedProjects || [])
-            .filter(project => project.reponame
-                .concat(project.username)
-                .concat(project.username)
-                .concat(project.workflows.join('')).includes(filterText))
-            .filter(project => project.enabled)
+            .filter((project) => project.enabled)
+            .filter((project) =>
+                project.reponame
+                    .concat(project.username)
+                    .concat(project.username)
+                    .concat(project.workflows.join(''))
+                    .includes(filterText)
+            )
             .map((project) => projectService.loadProjectWorkflows(project))
             .flat()
             .filter((workflow) => workflow !== undefined)
             .map((workflow) => workflow as WorkflowData)
-        setWorkflows(workflows);
+        setWorkflows(workflows)
+
         return workflows
     }
 
     const renderWorkflows = () => {
-        return workflows
-            .map((workflow, index) => {
-                const id = `workflow-${workflow.name}-${index}`
-                return <div key={id} id={id}>
+        return workflows.map((workflow, index) => {
+            const id = `workflow-${workflow.name}-${index}`
+            return (
+                <div key={id} id={id} className='py-4'>
                     <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
                 </div>
-            })
+            )
+        })
     }
 
     return (
@@ -81,7 +88,7 @@ export const DashboardsPage = (): JSX.Element => {
                     />
                 </div>
                 <div className="col-auto">
-                    <FontAwesomeIcon flip='horizontal' icon={faSearch} />
+                    <FontAwesomeIcon flip="horizontal" icon={faSearch} />
                 </div>
             </div>
             {renderWorkflows()}

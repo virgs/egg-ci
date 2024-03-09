@@ -17,11 +17,18 @@ export const JobCardComponent = (props: Props): JSX.Element => {
     return (
         <div className="col">
             <div className="card h-100">
-                <JobCardHeaderComponent projectUrl={props.projectUrl} jobOrder={props.jobOrder} job={props.job.executions[highlightedExecutionIndex]} />
+                <JobCardHeaderComponent
+                    projectUrl={props.projectUrl}
+                    jobOrder={props.jobOrder}
+                    job={props.job.executions[highlightedExecutionIndex]}
+                />
                 <JobCardBodyComponent job={props.job.executions[highlightedExecutionIndex]} />
-                <JobCardFooterComponent executions={props.job.executions} highligthedExecutionIndex={highlightedExecutionIndex}
-                    onHighligthedExecutionIndexChanged={index => setHighlightedExecutionIndex(index)} />
-            </div >
-        </div >
+                <JobCardFooterComponent
+                    executions={props.job.executions}
+                    highligthedExecutionIndex={highlightedExecutionIndex}
+                    onHighligthedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
+                />
+            </div>
+        </div>
     )
 }

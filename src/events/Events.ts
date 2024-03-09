@@ -8,12 +8,12 @@ export type WorkflowSynchedEvent = {
 }
 
 export type NotificationEvent = {
-    message: string;
+    message: string
 }
 
 export const { useUserInformationChangedListener, emitUserInformationChanged } =
     createEvent('user-information-changed')<UserInformationResponse>()
 export const { useWorkflowSynchedListener, emitWorkflowSynched } =
     createEvent('workflow-synched')<WorkflowSynchedEvent>()
-export const { useNewNotificationListener, emitNewNotification } =
-    createEvent('new-notification')<NotificationEvent>()
+export const { useNewNotificationListener, emitNewNotification } = createEvent('new-notification')<NotificationEvent>()
+export const { useLoggedOutListener, emitLoggedOut } = createEvent('logged-out')<void>()

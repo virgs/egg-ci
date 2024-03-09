@@ -1,11 +1,11 @@
 import { faTrash, faUser, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useState } from 'react'
-import { useUserInformationChangedListener } from '../events/Events'
+import { emitLoggedOut, useUserInformationChangedListener } from '../events/Events'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import eggIcon from '/egg-icon.png'
-import "./NavBarComponent.scss"
+import './NavBarComponent.scss'
 import { useNavigate } from 'react-router-dom'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -31,34 +31,50 @@ export const NavBarComponent = (): JSX.Element => {
                     />
                     Egg CI
                 </span>
-                <div className='w-100'>
+                <div className="w-100">
                     <ul className="navbar-nav w-100 justify-content-between align-items-center">
                         <li className="nav-item">
-                            <button className="nav-link active" aria-current="page"
+                            <button
+                                className="nav-link active"
+                                aria-current="page"
                                 onPointerDown={() => navigate('/#', { relative: 'route' })}
-                            >Dashboard</button>
+                            >
+                                Dashboard
+                            </button>
                         </li>
                         <li className="nav-item dropdown">
                             <div>
-                                <span className="dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                    <FontAwesomeIcon className='me-2' icon={faUser} />
+                                <span
+                                    className="dropdown-toggle"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-display="static"
+                                    aria-expanded="false"
+                                >
+                                    <FontAwesomeIcon className="me-2" icon={faUser} />
                                     {userInformation?.name ?? 'No token'}
                                 </span>
                                 <ul className="dropdown-menu">
                                     <li>
-                                        <button className="dropdown-item d-flex align-items-center"
-                                            onPointerDown={() => navigate('/settings', { relative: 'route' })}>
+                                        <button
+                                            className="dropdown-item d-flex align-items-center"
+                                            onPointerDown={() => navigate('/settings', { relative: 'route' })}
+                                        >
                                             <FontAwesomeIcon className="me-2" icon={faWrench} />
                                             Settings
                                         </button>
                                     </li>
-                                    <li><hr className="dropdown-divider" /></li>
                                     <li>
-                                        <button className="dropdown-item d-flex align-items-center"
+                                        <hr className="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <button
+                                            className="dropdown-item d-flex align-items-center"
                                             onPointerDown={() => {
+                                                emitLoggedOut()
                                                 localStorage.clear()
-                                                return navigate('/settings', { relative: 'route' })
-                                            }}>
+                                                navigate('/settings', { relative: 'route' })
+                                            }}
+                                        >
                                             <FontAwesomeIcon className="me-2" icon={faTrash} />
                                             Log out
                                         </button>
