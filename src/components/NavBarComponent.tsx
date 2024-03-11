@@ -76,7 +76,7 @@ export const NavBarComponent = (): JSX.Element => {
                                             }}
                                         >
                                             <FontAwesomeIcon className="me-2" icon={faTrash} />
-                                            Log out
+                                            Clear data
                                         </button>
                                     </li>
                                 </ul>

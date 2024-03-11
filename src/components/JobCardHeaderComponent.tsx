@@ -1,4 +1,4 @@
-import { faBars, faPlay, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faPause, faPlay, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
 import { useEffect } from 'react'
@@ -18,7 +18,7 @@ const getStatusDisplay = (status: string): string => {
 }
 const getBadge = (job: WorkflowJob): JSX.Element => {
     const classes = getClassesFromJobExecution(job)
-    return <FontAwesomeIcon style={{ color: `var(--bs-${classes.color})` }} icon={classes.actionIcon} />
+    return <FontAwesomeIcon className={job.status === 'running' ? 'fa-spin' : ''} style={{ color: `var(--bs-${classes.color})` }} icon={classes.actionIcon} />
 }
 
 export const JobCardHeaderComponent = (props: Props): JSX.Element => {
@@ -80,7 +80,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         return <></>
     }
     const renderActionButton = () => {
-        if (props.job.type === 'build') {
+        if (props.job.type === 'build' && props.job.status === 'running') {
             return (
                 <button
                     type="button"
@@ -89,22 +89,25 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                     className="btn btn-outline-primary py-0 px-2"
                     style={{ fontSize: '8px' }}
                 >
-                    <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon>
+                    {props.job.status}
+                    <FontAwesomeIcon icon={faPause}></FontAwesomeIcon>
+                </button>
+            )
+        } else if (props.job.type === 'approval') {
+            return (
+                <button
+                    type="button"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Approve job"
+                    disabled={props.job.status === 'success'}
+                    className="btn btn-outline-primary py-0 px-2"
+                    style={{ fontSize: '8px' }}
+                >
+                    <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
                 </button>
             )
         }
-        return (
-            <button
-                type="button"
-                data-bs-toggle="tooltip"
-                data-bs-title="Approve job"
-                disabled={props.job.status === 'success'}
-                className="btn btn-outline-primary py-0 px-2"
-                style={{ fontSize: '8px' }}
-            >
-                <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
-            </button>
-        )
+        return <></>
     }
     return (
         <div className="card-header p-1 pt-2 px-3">
