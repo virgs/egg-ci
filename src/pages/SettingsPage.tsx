@@ -1,21 +1,19 @@
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
-import { VersionControlComponent } from '../components/VersionControlComponent'
+import {
+    emitNewNotification,
+    emitUserInformationChanged,
+    useLoggedOutListener
+} from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectConfiguration } from '../project/ProjectConfiguration'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
-import { mapVersionControlFromString } from '../version-control/VersionControl'
-import './SettingsPage.css'
-import {
-    emitNewNotification,
-    emitUserInformationChanged,
-    useLoggedOutListener,
-    useWorkflowSynchedListener,
-} from '../events/Events'
 import { useInterval } from '../time/UseInterval'
+import './SettingsPage.css'
+import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
@@ -30,14 +28,6 @@ export const SettingsPage = (): JSX.Element => {
     const [token, setToken] = useState<string>('')
     const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
     const [projects, setProjects] = useState<ProjectConfiguration[]>([])
-
-    const checkSyncingProjects = (projects: ProjectConfiguration[]) => {
-        return projects
-            .filter((project) => project.enabled && !projectService.everyWorkflowOfProjectIsUpToDate(project))
-            .map((project) => getProjectLabel(project))
-    }
-
-    const [syncingProjects, setSyncingProjects] = useState<string[]>([])
 
     useLoggedOutListener(() => {
         setToken('')
@@ -68,30 +58,7 @@ export const SettingsPage = (): JSX.Element => {
 
     useEffect(() => {
         updateComponentStates()
-        setSyncingProjects(checkSyncingProjects(projectService
-            .loadTrackedProjects()))
     }, [])
-
-    useWorkflowSynchedListener(() => {
-        updateComponentStates()
-    })
-
-    const onSwitchChange = (project: ProjectConfiguration) => {
-        const id = getProjectLabel(project)
-        if (project.enabled) {
-            projectService.disableProject(project)
-        } else {
-            projectService.enableProject(project)
-            setSyncingProjects(() => syncingProjects.concat(id))
-            projectService.syncProjectData(project)
-                .then(() => {
-                    setSyncingProjects((currentlySyncingProjects) =>
-                        currentlySyncingProjects.filter((item) => item !== id)
-                    )
-                })
-        }
-        updateComponentStates()
-    }
 
     const refresh = async () => {
         if (token.length > 0) {
@@ -114,50 +81,13 @@ export const SettingsPage = (): JSX.Element => {
     const renderProjects = () => {
         return (
             <ul className="list-group list-group-flush">
-                {(projects || []).map((project) => {
-                    const renderVersionControlComponent = () => {
-                        const versionControl = mapVersionControlFromString(project.vcsType)
-                        if (versionControl) {
-                            return new VersionControlComponent(versionControl).getIcon()
-                        }
-                        return <></>
-                    }
-                    const id = getProjectLabel(project)
-                    const renderSpinner = () => {
-                        if (syncingProjects.includes(id)) {
-                            return (
-                                <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            )
-                        }
-                        return <></>
-                    }
-                    return (
-                        <li
-                            key={id}
-                            className="list-group-item d-flex align-items-center justify-content-between"
-                            style={{ backgroundColor: project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}
-                        >
-                            <div className="form-check form-switch">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={id}
-                                    checked={project.enabled}
-                                    onChange={() => onSwitchChange(project)}
-                                />
-                                <label className="form-check-label" htmlFor={id}>
-                                    <span className="mx-2">{renderVersionControlComponent()}</span>
-                                    <span>
-                                        {project.username}/{project.reponame}
-                                    </span>
-                                </label>
-                            </div>
-                            <div>{renderSpinner()}</div>
-                        </li>
-                    )
-                })}
+                {(projects || [])
+                    .map((project, index) => <li key={`settings-project-${index}-${project.reponame}`}
+                        className="list-group-item p-0 m-0">
+                        <SettingsProjectComponent
+                            onEnablingChange={updateComponentStates}
+                            project={project}></SettingsProjectComponent>
+                    </li>)}
             </ul>
         )
     }
@@ -192,8 +122,7 @@ export const SettingsPage = (): JSX.Element => {
                             disabled={token.length === 0}
                             onClick={refresh}
                             type="button"
-                            className="btn btn-primary"
-                        >
+                            className="btn btn-primary">
                             <FontAwesomeIcon icon={faRightToBracket} />
                         </button>
                     </div>
