@@ -33,7 +33,7 @@ export const SettingsPage = (): JSX.Element => {
 
     const checkSyncingProjects = (projects: ProjectConfiguration[]) => {
         return projects
-            .filter((project) => project.enabled && !projectService.everyWorkflowFromProjectIsPersisted(project))
+            .filter((project) => project.enabled && !projectService.everyWorkflowOfProjectIsUpToDate(project))
             .map((project) => getProjectLabel(project))
     }
 
@@ -59,7 +59,6 @@ export const SettingsPage = (): JSX.Element => {
                 .loadTrackedProjects()
                 .sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b)))
             setProjects(loadedProjects)
-            setSyncingProjects(checkSyncingProjects(loadedProjects))
         }
     }
 
@@ -69,6 +68,8 @@ export const SettingsPage = (): JSX.Element => {
 
     useEffect(() => {
         updateComponentStates()
+        setSyncingProjects(checkSyncingProjects(projectService
+            .loadTrackedProjects()))
     }, [])
 
     useWorkflowSynchedListener(() => {
@@ -77,20 +78,19 @@ export const SettingsPage = (): JSX.Element => {
 
     const onSwitchChange = (project: ProjectConfiguration) => {
         const id = getProjectLabel(project)
-        return () => {
-            if (project.enabled) {
-                projectService.disableProject(project)
-            } else {
-                setSyncingProjects((currentlySyncingProjects) => currentlySyncingProjects.concat(id))
-                projectService.enableProject(project)
-                projectService.syncProjectData(project).then(() => {
+        if (project.enabled) {
+            projectService.disableProject(project)
+        } else {
+            projectService.enableProject(project)
+            setSyncingProjects(() => syncingProjects.concat(id))
+            projectService.syncProjectData(project)
+                .then(() => {
                     setSyncingProjects((currentlySyncingProjects) =>
                         currentlySyncingProjects.filter((item) => item !== id)
                     )
                 })
-            }
-            updateComponentStates()
         }
+        updateComponentStates()
     }
 
     const refresh = async () => {
@@ -145,7 +145,7 @@ export const SettingsPage = (): JSX.Element => {
                                     type="checkbox"
                                     id={id}
                                     checked={project.enabled}
-                                    onChange={onSwitchChange(project)}
+                                    onChange={() => onSwitchChange(project)}
                                 />
                                 <label className="form-check-label" htmlFor={id}>
                                     <span className="mx-2">{renderVersionControlComponent()}</span>

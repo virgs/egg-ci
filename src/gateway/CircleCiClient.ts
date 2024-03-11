@@ -64,6 +64,42 @@ export class CircleCiClient {
         return await response.json()
     }
 
+    /*
+    Cancel job    
+const options = {
+  method: 'POST',
+  url: 'https://circleci.com/api/v2/project/gh/CircleCI-Public/api-preview-docs/job/123/cancel',
+  headers: {authorization: 'Basic REPLACE_BASIC_AUTH'}
+};
+
+
+Approve:
+const options = {
+  method: 'POST',
+  //https://circleci.com/api/v2/workflow/{workflow-id}/approve/{job-id}
+  url: 'https://circleci.com/api/v2/workflow/5034460f-c7c4-4c43-9457-de07e2029e7b/approve/%7Bapproval_request_id%7D',
+  headers: {authorization: 'Basic REPLACE_BASIC_AUTH'}
+};
+
+
+Rerun job:
+const request = require('request');
+
+const options = {
+  method: 'POST',
+  url: 'https://circleci.com/api/v2/workflow/5034460f-c7c4-4c43-9457-de07e2029e7b/rerun',
+  headers: {'content-type': 'application/json', authorization: 'Basic REPLACE_BASIC_AUTH'},
+  body: {
+    enable_ssh: false,
+    from_failed: false,
+    jobs: ['c65b68ef-e73b-4bf2-be9a-7a322a9df150', '5e957edd-5e8c-4985-9178-5d0d69561822'],
+    sparse_tree: false
+  },
+  json: true
+};
+
+*/
+
     //Not every WorkflowJob has a number. This makes this url not viable. :/
     public async getJobDetailsV1(jobNumber: number, projectSlug: string): Promise<any> {
         //apiV1/project/projectSlug/${jobNumber}?circle-token=${this.apiToken}

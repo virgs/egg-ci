@@ -24,8 +24,8 @@ export const getVersionControlSlug = (type: VersionControlType): string => {
         case VersionControlType.GITHUB_APP:
             return 'circleci'
         case VersionControlType.GITHUB:
-            return 'gh'
+            return 'github'
         case VersionControlType.BITBUCKET:
-            return 'bb'
+            return 'bitbucket'
     }
 }

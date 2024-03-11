@@ -28,7 +28,8 @@ export class ProjectService {
         return this.dashboardRepository.loadTrackedProjects()
     }
 
-    public everyWorkflowFromProjectIsPersisted(project: ProjectConfiguration): boolean {
+    public everyWorkflowOfProjectIsUpToDate(project: ProjectConfiguration): boolean {
+        //TODO make it actualy check if it' up to date
         return project.workflows.every(
             (workflow) => this.dashboardRepository.loadWorkflow(project, workflow) !== undefined
         )

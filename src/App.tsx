@@ -64,7 +64,7 @@ export const App = (): JSX.Element => {
     const projectService = new ProjectService()
     const trackedProjects = projectService.loadTrackedProjects() || []
     trackedProjects
-      .filter((project) => project.enabled && !projectService.everyWorkflowFromProjectIsPersisted(project))
+      .filter((project) => project.enabled && !projectService.everyWorkflowOfProjectIsUpToDate(project))
       .forEach(async (project) => { //Keep downloading data
         await projectService.syncProjectData(project)
         emitNewNotification({ message: `Project ${project.reponame} successfully synchronized` })

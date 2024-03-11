@@ -1,4 +1,4 @@
-import { faBars, faPause, faPlay, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRotateRight, faBars, faPause, faPlay, faThumbsUp, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
 import { useEffect } from 'react'
@@ -80,34 +80,26 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         return <></>
     }
     const renderActionButton = () => {
+        let icon = faArrowRotateRight;
+        let disabled = false;
+        let tooltip = 'Rerun job'
         if (props.job.type === 'build' && props.job.status === 'running') {
-            return (
-                <button
-                    type="button"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Rerun job"
-                    className="btn btn-outline-primary py-0 px-2"
-                    style={{ fontSize: '8px' }}
-                >
-                    {props.job.status}
-                    <FontAwesomeIcon icon={faPause}></FontAwesomeIcon>
-                </button>
-            )
+            icon = faPause
         } else if (props.job.type === 'approval') {
-            return (
-                <button
-                    type="button"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Approve job"
-                    disabled={props.job.status === 'success'}
-                    className="btn btn-outline-primary py-0 px-2"
-                    style={{ fontSize: '8px' }}
-                >
-                    <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
-                </button>
-            )
+            tooltip = 'Approje job'
+            disabled = props.job.status === 'success'
+            icon = faThumbsUp;
         }
-        return <></>
+        return <button
+            type="button"
+            data-bs-toggle="tooltip"
+            data-bs-title={tooltip}
+            disabled={disabled}
+            className="btn btn-outline-primary py-0 px-2"
+            style={{ fontSize: '8px' }}
+        >
+            <FontAwesomeIcon icon={icon}></FontAwesomeIcon>
+        </button>
     }
     return (
         <div className="card-header p-1 pt-2 px-3">
