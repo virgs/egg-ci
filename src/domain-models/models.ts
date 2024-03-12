@@ -1,6 +1,34 @@
-export type ListProjectJobs = RecentJob[]
+export interface TrackedProjectData {
+    enabled: boolean
+    vcsType: string
+    vcsUrl: string
+    reponame: string
+    username: string
+    defaultBranch: string
+}
 
-type RecentJob = {
+export interface ProjectData {
+    vcsUrl: string
+    vcsType: string
+    reponame: string
+    username: string
+    defaultBranch: string
+    workflows: {
+        [name: string]: WorkflowData
+    }
+}
+
+export type WorkflowData = {
+    name: string;
+    mostRecentBuild: number;
+    mostRecentId: string;
+    jobs: {
+        name: string;
+        history: JobData[]
+    }[]
+}
+
+export interface JobData {
     build_url: string,
     failed: boolean,
     branch: string,

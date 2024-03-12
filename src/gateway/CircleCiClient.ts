@@ -94,9 +94,6 @@ const options = {
         organization: string,
         repository: string,
         branch: string): Promise<ListProjectJobs> {
-        //api:     https://circleci.com/api/v1.1/project/:vcs-type/:username/:project?limit=20&offset=5&filter=completed
-        //postman:  https://circleci.com/api/v1.1/project/github/Jackinthebox-IT/pos-reporting-core/tree/main?limit=100&circle-token=...
-        // console: https://circleci.com/api/v1.1/project/github/Jackinthebox-IT/pos-reporting-core/tree/main?limit=100&circle-token=...
         const url = `${apiV1}/project/${versionControlSlug}/${organization}/${repository}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
         console.log(url)
         const response = await fetch(url)

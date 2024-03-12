@@ -1,9 +1,9 @@
-import { JobData } from '../dashboard/DashboardRepository'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
 import { JobCardFooterComponent } from './JobCardFooterComponent'
 import { JobCardHeaderComponent } from './JobCardHeaderComponent'
 import './JobCardComponent.scss'
 import { useState } from 'react'
+import { JobData } from '../domain-models/models'
 
 export type Props = {
     job: JobData

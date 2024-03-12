@@ -1,6 +1,8 @@
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
+import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
+import { TrackedProjectData } from '../domain-models/models'
 import {
     emitNewNotification,
     emitUserInformationChanged,
@@ -8,17 +10,15 @@ import {
 } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
-import { ProjectConfiguration } from '../project/ProjectConfiguration'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { useInterval } from '../time/UseInterval'
 import './SettingsPage.css'
-import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
 
-const getProjectLabel = (project: ProjectConfiguration): string => {
+const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
 }
 
@@ -27,7 +27,7 @@ const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
 export const SettingsPage = (): JSX.Element => {
     const [token, setToken] = useState<string>('')
     const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
-    const [projects, setProjects] = useState<ProjectConfiguration[]>([])
+    const [projects, setProjects] = useState<TrackedProjectData[]>([])
 
     useLoggedOutListener(() => {
         setToken('')
@@ -64,13 +64,14 @@ export const SettingsPage = (): JSX.Element => {
         if (token.length > 0) {
             initializeCircleCiClient(token)
             try {
-                const [newUserInformation, projects] = await Promise.all([
+                const [newUserInformation, userProjects] = await Promise.all([
                     circleCiClient.getUserInformation(),
-                    projectService.listProjectsConfigurations(),
+                    projectService.listUserProjects(),
                 ])
                 settingsRepository.setApiToken(token)
                 settingsRepository.setUserInformation(newUserInformation)
-                projects.forEach((project) => projectService.trackProject(project))
+                userProjects
+                    .forEach(project => projectService.trackProject(project))
                 updateComponentStates()
             } catch (error) {
                 emitNewNotification({ message: `Invalid token` })

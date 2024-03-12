@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
-import { VersionControlComponent } from './VersionControlComponent'
-import { ProjectConfiguration } from '../project/ProjectConfiguration'
-import { mapVersionControlFromString } from '../version-control/VersionControl'
+import { TrackedProjectData } from '../domain-models/models'
+import { emitNewNotification, useProjectSynchedListener, useWorkflowSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
-import { emitNewNotification, useWorkflowSynchedListener } from '../events/Events'
+import { mapVersionControlFromString } from '../version-control/VersionControl'
+import { VersionControlComponent } from './VersionControlComponent'
 
-const getProjectLabel = (project: ProjectConfiguration): string => {
+const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
 }
 
 type Props = {
-    project: ProjectConfiguration,
+    project: TrackedProjectData,
     onEnablingChange: (enabled: boolean) => void
 }
 
@@ -21,14 +21,14 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
     const id = getProjectLabel(props.project)
 
     const updateSyncing = () => {
-        setSyncing(props.project.enabled && !projectService.everyWorkflowOfProjectIsUpToDate(props.project))
+        setSyncing(props.project.enabled && !projectService.loadProject(props.project))
     }
 
     useEffect(() => {
         updateSyncing()
     }, [])
 
-    useWorkflowSynchedListener(() => {
+    useProjectSynchedListener(() => {
         updateSyncing()
     })
 
@@ -58,7 +58,7 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
             projectService.enableProject(props.project)
             setSyncing(true)
             props.onEnablingChange(true)
-            await projectService.syncProjectData(props.project)
+            await projectService.syncProject(props.project)
             emitNewNotification({ message: `Project ${id} synced successfully` })
         }
     }

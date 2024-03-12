@@ -3,19 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
-import { WorkflowData } from '../dashboard/DashboardRepository'
-import { useWorkflowSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
+import { ProjectData } from '../domain-models/models'
+import { useProjectSynchedListener } from '../events/Events'
 
 const projectService: ProjectService = new ProjectService()
 
 export const DashboardsPage = (): JSX.Element => {
     const navigate = useNavigate()
 
-    const [workflows, setWorkflows] = useState<WorkflowData[]>([])
+    const [projects, setProjects] = useState<ProjectData[]>([])
     const [filterText, setFilterText] = useState<string>('')
 
-    useWorkflowSynchedListener(() => {
+    useProjectSynchedListener(() => {
         loadDashboards()
     })
 
@@ -34,38 +34,35 @@ export const DashboardsPage = (): JSX.Element => {
 
     const loadDashboards = () => {
         const trackedProjects = projectService.loadTrackedProjects()
-        const workflows = (trackedProjects || [])
-            .filter((project) => project.enabled)
-            .filter((project) =>
-                project.reponame
-                    .concat(project.username)
-                    .concat(project.username)
-                    .concat(project.workflows.join(''))
-                    .includes(filterText)
-            )
-            .map((project) => projectService.loadProjectWorkflows(project))
-            .flat()
-            .filter((workflow) => workflow !== undefined)
-            .map((workflow) => workflow as WorkflowData)
-        setWorkflows(workflows)
+        const projects = (trackedProjects || [])
+            .filter(trackedProject => trackedProject.enabled)
+            .filter(trackedProject => trackedProject.reponame.concat(trackedProject.username).includes(filterText))
+            .map(trackedProject => projectService.loadProject(trackedProject))
+            .filter(project => project !== undefined)
+            .map(project => project as ProjectData)
+            .filter(project => project.workflows.map(workflow => workflow.name).join().includes(filterText))
+        setProjects(projects)
 
-        return workflows
+        return projects
     }
 
     const renderWorkflows = () => {
-        return workflows.map((workflow, index) => {
-            const id = `workflow-${workflow.name}-${index}`
-            return (
-                <div key={id} id={id} className='py-4'>
-                    <WorkflowComponent key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
-                </div>
-            )
-        })
+        return projects
+            .map(project => project.workflows
+                .map((workflow, index) => {
+                    const id = `workflow-${workflow.name}-${index}`
+                    return (
+                        <div key={id} id={id} className='py-4'>
+                            <WorkflowComponent project={project} key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
+                        </div>
+                    )
+                }))
+            .flat()
     }
 
     return (
         <>
-            <h3>Projects ({workflows.length})</h3>
+            <h3>Projects ({projects.reduce((acc, project) => project.workflows.length + acc, 0)})</h3>
             <div className="row gx-2 py-4 align-items-center">
                 <div className="col-auto">
                     <label htmlFor="searchLabel" className="visually-hidden"></label>
