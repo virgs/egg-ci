@@ -1,0 +1,141 @@
+[
+    {
+        "compare": null,
+        "previous_successful_build": null,
+        "build_parameters": {},
+        "oss": false,
+        "all_commit_details_truncated": false,
+        "committer_date": null,
+        "body": "",
+        "usage_queued_at": "2024-02-21T18:43:39.062Z",
+        "context_ids": [
+            "domain_services_store_data_hub_prod"
+        ],
+        "fail_reason": null,
+        "retry_of": null,
+        "reponame": "pos-reporting-event-processor",
+        "ssh_users": [],
+        "build_url": "https://circleci.com/gh/Jackinthebox-IT/pos-reporting-event-processor/157",
+        "parallel": 1,
+        "failed": false,
+        "branch": "main",
+        "username": "Jackinthebox-IT",
+        "author_date": null,
+        "why": "github",
+        "user": {
+            "is_user": true,
+            "login": "jessicacarneiro",
+            "avatar_url": "https://avatars.githubusercontent.com/u/1782626?v=4",
+            "name": "Jéssica Carneiro",
+            "vcs_type": "github",
+            "id": 1782626
+        },
+        "vcs_revision": "dc37e80481030d77f9f5d6894a7be6f5f406d363",
+        "workflows": {
+            "workflow_id": "8005b8a8-247c-4a34-9dfd-2d6c8f89eff2",
+            "workflow_name": "Main workflow",
+            "workspace_id": "8005b8a8-247c-4a34-9dfd-2d6c8f89eff2",
+            "job_name": "Make Live Prod",
+            "job_id": "3f85ba33-fa07-44ce-bebc-8c284b6a29ae",
+            "upstream_job_ids": [
+                "005f36a9-b262-473b-b8c7-85d863c5c0c1",
+                "3c61fd9e-0a8b-48e4-8778-22a9a34d1f01",
+                "4672b4a3-4920-459e-8b33-c794b18d1492",
+                "29d72e93-26c7-412c-8f87-9f7d8dc7206f",
+                "b9aa4e80-dc84-4299-8d19-b67a96225340",
+                "7dc71d91-1c51-41a7-be5e-6b6463c3e54e",
+                "daac0498-2373-41bf-961b-9de27a80d53c",
+                "8523a13f-534f-40b7-bffb-8fef56dac7b1",
+                "c462a006-c613-4346-ae70-d798cc8d8768",
+                "765670e1-df49-4e8e-adfe-6f5e0eb1ecd7",
+                "8381d43b-a624-4fe4-bfb9-342f99c0bd37"
+            ],
+            "upstream_concurrency_map": {
+                "8523a13f_534f_40b7_bffb_8fef56dac7b1": [
+                    "daac0498-2373-41bf-961b-9de27a80d53c",
+                    "7dc71d91-1c51-41a7-be5e-6b6463c3e54e"
+                ],
+                "b9aa4e80_dc84_4299_8d19_b67a96225340": [
+                    "29d72e93-26c7-412c-8f87-9f7d8dc7206f",
+                    "4672b4a3-4920-459e-8b33-c794b18d1492"
+                ],
+                "29d72e93_26c7_412c_8f87_9f7d8dc7206f": [
+                    "b9aa4e80-dc84-4299-8d19-b67a96225340",
+                    "daac0498-2373-41bf-961b-9de27a80d53c",
+                    "7dc71d91-1c51-41a7-be5e-6b6463c3e54e"
+                ],
+                "7dc71d91_1c51_41a7_be5e_6b6463c3e54e": [
+                    "29d72e93-26c7-412c-8f87-9f7d8dc7206f",
+                    "8523a13f-534f-40b7-bffb-8fef56dac7b1",
+                    "4672b4a3-4920-459e-8b33-c794b18d1492"
+                ],
+                "4672b4a3_4920_459e_8b33_c794b18d1492": [
+                    "b9aa4e80-dc84-4299-8d19-b67a96225340",
+                    "daac0498-2373-41bf-961b-9de27a80d53c",
+                    "7dc71d91-1c51-41a7-be5e-6b6463c3e54e"
+                ],
+                "daac0498_2373_41bf_961b_9de27a80d53c": [
+                    "29d72e93-26c7-412c-8f87-9f7d8dc7206f",
+                    "c462a006-c613-4346-ae70-d798cc8d8768",
+                    "8523a13f-534f-40b7-bffb-8fef56dac7b1",
+                    "4672b4a3-4920-459e-8b33-c794b18d1492"
+                ],
+                "c462a006_c613_4346_ae70_d798cc8d8768": [
+                    "daac0498-2373-41bf-961b-9de27a80d53c"
+                ]
+            }
+        },
+        "vcs_tag": null,
+        "build_num": 157,
+        "infrastructure_fail": false,
+        "committer_email": null,
+        "previous": {
+            "build_num": 156,
+            "status": "success",
+            "build_time_millis": 44711
+        },
+        "status": "success",
+        "committer_name": null,
+        "retries": null,
+        "subject": "Remove flag to run step in background (#4)",
+        "vcs_type": "github",
+        "timedout": false,
+        "dont_build": null,
+        "lifecycle": "finished",
+        "stop_time": "2024-02-21T18:47:11.414Z",
+        "ssh_disabled": false,
+        "build_time_millis": 210756,
+        "picard": null,
+        "circle_yml": null,
+        "messages": [],
+        "is_first_green_build": false,
+        "job_name": null,
+        "start_time": "2024-02-21T18:43:40.658Z",
+        "canceler": null,
+        "all_commit_details": [
+            {
+                "committer_date": "2024-02-20T18:04:25.000Z",
+                "body": "",
+                "branch": "main",
+                "author_date": "2024-02-20T18:04:25.000Z",
+                "committer_email": "noreply@github.com",
+                "commit": "dc37e80481030d77f9f5d6894a7be6f5f406d363",
+                "committer_login": "web-flow",
+                "committer_name": "GitHub",
+                "subject": "Remove flag to run step in background (#4)",
+                "commit_url": "https://github.com/Jackinthebox-IT/pos-reporting-event-processor/commit/dc37e80481030d77f9f5d6894a7be6f5f406d363",
+                "author_login": "jessicacarneiro",
+                "author_name": "Jéssica Carneiro",
+                "author_email": "jessica.carneiro@jackinthebox.com"
+            }
+        ],
+        "platform": "1.0",
+        "outcome": "success",
+        "vcs_url": "https://github.com/Jackinthebox-IT/pos-reporting-event-processor",
+        "author_name": null,
+        "node": null,
+        "queued_at": "2024-02-21T18:43:39.236Z",
+        "canceled": false,
+        "author_email": null
+    }
+]

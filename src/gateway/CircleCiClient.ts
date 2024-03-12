@@ -1,6 +1,7 @@
 import { JobDetailsResponse } from './models/JobDetailsResponse'
 import { ListPipelineWorkflowsResponse } from './models/ListPipelineWorkflowsResponse'
 import { ListProjectPipelinesReponse } from './models/ListProjectPipelinesResponse'
+import { ListProjectJobs as ListProjectJobs } from './models/ListProjectJobs'
 import { ListUserProjectsResponse } from './models/ListUserProjectsResponse'
 import { ListWorkflowJobsResponse } from './models/ListWorkflowJobsResponse'
 import { ListWorkflowRecentRunsResponse } from './models/ListWorkflowRecentRunsResponse'
@@ -52,18 +53,6 @@ export class CircleCiClient {
         return await response.json()
     }
 
-    //Not every WorkflowJob has a number. This makes this url not viable. :/
-    //And only returns well succeeded workflows? 
-    public async getJobDetails(jobNumber: number, projectSlug: string): Promise<JobDetailsResponse> {
-        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
-        const response = await fetch(url, {
-            headers: {
-                Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
-            },
-        })
-        return await response.json()
-    }
-
     /*
     Cancel job    
 const options = {
@@ -100,7 +89,31 @@ const options = {
 
 */
 
-    //Not every WorkflowJob has a number. This makes this url not viable. :/
+    //https://circleci.com/docs/api/v1/index.html#recent-jobs-for-a-single-project
+    public async listProjectJobs(versionControlSlug: string,
+        organization: string,
+        repository: string,
+        branch: string): Promise<ListProjectJobs> {
+        //api:     https://circleci.com/api/v1.1/project/:vcs-type/:username/:project?limit=20&offset=5&filter=completed
+        //postman:  https://circleci.com/api/v1.1/project/github/Jackinthebox-IT/pos-reporting-core/tree/main?limit=100&circle-token=...
+        // console: https://circleci.com/api/v1.1/project/github/Jackinthebox-IT/pos-reporting-core/tree/main?limit=100&circle-token=...
+        const url = `${apiV1}/project/${versionControlSlug}/${organization}/${repository}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
+        console.log(url)
+        const response = await fetch(url)
+        return await response.json()
+    }
+
+
+    public async getJobDetails(jobNumber: number, projectSlug: string): Promise<JobDetailsResponse> {
+        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
+        const response = await fetch(url, {
+            headers: {
+                Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
+            },
+        })
+        return await response.json()
+    }
+
     public async getJobDetailsV1(jobNumber: number, projectSlug: string): Promise<any> {
         //apiV1/project/projectSlug/${jobNumber}?circle-token=${this.apiToken}
         const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`

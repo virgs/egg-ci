@@ -41,6 +41,11 @@ export class ProjectService {
 
     public async syncProjectData(project: ProjectConfiguration) {
         console.log('syncProjectData', project.reponame)
+        const jobs = await circleCiClient.listProjectJobs(getVersionControlSlug(mapVersionControlFromString(project.vcsType)!),
+            project.username,
+            project.reponame,
+            project.defaultBranch)
+        console.log(jobs)
         await Promise.all(project.workflows.map((workflow) => this.syncWorkflow(workflow, project)))
     }
 
