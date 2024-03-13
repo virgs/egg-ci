@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { JobCardComponent } from './JobCardComponent'
+import { JobContextData, ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
+import { JobCardComponent } from './JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
-import { WorkflowData, JobData, ProjectData } from '../domain-models/models'
 
 type Props = {
     workflow: WorkflowData
@@ -10,14 +10,13 @@ type Props = {
 }
 
 export const WorkflowComponent = (props: Props): JSX.Element => {
-    const [jobs] = useState<JobData[]>(props.workflow.jobs)
+    const [jobs] = useState<JobContextData[]>(props.workflow.jobs)
 
     const versionControl = mapVersionControlFromString(props.project.vcsType)
     const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
 
-    const projectUrl = props.project.vcsUrl
-    const mostRecentJob = props.workflow.jobs[0]
-    const workflowUrl = `${projectUrl}/${mostRecentJob.build_num}/workflows/${mostRecentJob.workflows.workflow_id}`
+    const projectUrl = props.project.ciUrl
+    const workflowUrl = `${projectUrl}/${props.workflow.latestBuildNumber}/workflows/${props.workflow.latestId}`
     return (
         <>
             <div style={{ height: '2px', backgroundColor: 'var(--bs-gray-200)' }}></div>
@@ -32,7 +31,7 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
                     <li className="breadcrumb-item d-flex align-items-center fs-5 active">
                         {props.workflow.name}
                         <a href={workflowUrl}>
-                            <small className="ms-1 fs-6">(#{mostRecentJob.build_num})</small>
+                            <small className="ms-1 fs-6">(#{props.workflow.latestBuildNumber})</small>
                         </a>
                     </li>
                 </ol>
@@ -40,7 +39,7 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">
                 {jobs.map((job, index) => (
                     <JobCardComponent
-                        key={`${job.workflows.job_id}.${index}`}
+                        key={`${props.workflow.latestId}.${index}`}
                         job={job}
                         jobOrder={index}
                         projectUrl={projectUrl}

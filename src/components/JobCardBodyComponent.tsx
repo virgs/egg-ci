@@ -1,11 +1,11 @@
 import { faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ExecutionData } from '../dashboard/DashboardRepository'
 import { formatDuration } from '../time/Time'
 import './JobCardBodyComponent.scss'
+import { JobData } from '../domain-models/models'
 
 type Props = {
-    job: ExecutionData
+    job: JobData
 }
 export const JobCardBodyComponent = (props: Props): JSX.Element => {
     const latestExecutionDurationInMinutes = formatDuration(

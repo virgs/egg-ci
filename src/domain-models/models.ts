@@ -1,3 +1,6 @@
+import { PipelineWorkflow } from "../gateway/models/ListPipelineWorkflowsResponse"
+import { ProjectPipeline } from "../gateway/models/ListProjectPipelinesResponse"
+
 export interface TrackedProjectData {
     enabled: boolean
     vcsType: string
@@ -13,45 +16,55 @@ export interface ProjectData {
     reponame: string
     username: string
     defaultBranch: string
+    ciUrl: string;
     workflows: {
         [name: string]: WorkflowData
     }
 }
 
-export type WorkflowData = {
-    name: string;
-    mostRecentBuild: number;
-    mostRecentId: string;
-    jobs: {
-        name: string;
-        history: JobData[]
-    }[]
+export type JobContextData = {
+    name: string
+    history: JobData[]
 }
 
-export interface JobData {
-    build_url: string,
-    failed: boolean,
-    branch: string,
-    vcs_revision: string,
-    subject: string
-    user: {
-        login: string,
-        avatar_url: string,
-        name: string,
-    },
-    workflows: {
-        workflow_id: string,
-        workflow_name: string,
-        job_name: string,
-        job_id: string
-    },
-    build_num: number,
-    messages: any[],
-    start_time: string,
-    stop_time: string,
-    build_time_millis: number,
-    status: "retried" | "canceled" | "infrastructure_fail" | "timedout" | "not_run" | "running" | "failed" | "queued" | "not_running" | "no_tests" | "fixed" | "success"
-    lifecycle: "queued" | "not_run" | "not_running" | "running" | "finished",
-    outcome: "canceled" | "infrastructure_fail" | "timedout" | "failed" | "no_tests" | "success"
-    vcs_url: string
+export type WorkflowData = {
+    name: string;
+    latestBuildNumber: number;
+    latestId: string;
+    jobs: JobContextData[]
+}
+
+export type PipelineJobData = ProjectPipeline
+export type WorkflowJobData = PipelineWorkflow
+
+export type JobData = {
+    workflow: WorkflowJobData
+    pipeline: PipelineJobData
+
+    canceled_by?: string
+    dependencies: string[]
+    job_number?: number
+    id: string
+    started_at?: string
+    name: string
+    approved_by?: string
+    project_slug: string
+    status:
+    | 'success'
+    | 'running'
+    | 'not_run'
+    | 'failed'
+    | 'retried'
+    | 'queued'
+    | 'not_running'
+    | 'infrastructure_fail'
+    | 'timedout'
+    | 'on_hold'
+    | 'terminated-unknown'
+    | 'blocked'
+    | 'canceled'
+    | 'unauthorized'
+    type: 'build' | 'approval'
+    stopped_at?: string
+    approval_request_id?: string
 }

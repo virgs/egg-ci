@@ -40,7 +40,7 @@ export const DashboardsPage = (): JSX.Element => {
             .map(trackedProject => projectService.loadProject(trackedProject))
             .filter(project => project !== undefined)
             .map(project => project as ProjectData)
-            .filter(project => project.workflows.map(workflow => workflow.name).join().includes(filterText))
+            .filter(project => Object.keys(project.workflows).join().includes(filterText))
         setProjects(projects)
 
         return projects
@@ -48,12 +48,14 @@ export const DashboardsPage = (): JSX.Element => {
 
     const renderWorkflows = () => {
         return projects
-            .map(project => project.workflows
-                .map((workflow, index) => {
-                    const id = `workflow-${workflow.name}-${index}`
+            .map(project => Object.keys(project.workflows)
+                .map((workflowName, index) => {
+                    const id = `workflow-${workflowName}-${index}-${project.workflows[workflowName].latestId}`
                     return (
                         <div key={id} id={id} className='py-4'>
-                            <WorkflowComponent project={project} key={`workflow-child-${index}`} workflow={workflow}></WorkflowComponent>
+                            <WorkflowComponent project={project}
+                                key={`workflow-child-${index}`}
+                                workflow={project.workflows[workflowName]}></WorkflowComponent>
                         </div>
                     )
                 }))
@@ -62,7 +64,7 @@ export const DashboardsPage = (): JSX.Element => {
 
     return (
         <>
-            <h3>Projects ({projects.reduce((acc, project) => project.workflows.length + acc, 0)})</h3>
+            <h3>Projects ({projects.reduce((acc, project) => Object.keys(project.workflows).length + acc, 0)})</h3>
             <div className="row gx-2 py-4 align-items-center">
                 <div className="col-auto">
                     <label htmlFor="searchLabel" className="visually-hidden"></label>

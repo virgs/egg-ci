@@ -1,8 +1,13 @@
+import { config } from '../config'
 import { DashboardRepository } from '../dashboard/DashboardRepository'
-import { JobData, ProjectData, TrackedProjectData } from '../domain-models/models'
+import { JobContextData, ProjectData, TrackedProjectData, WorkflowData } from '../domain-models/models'
 import { emitProjectSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
 import { getVersionControlSlug, mapVersionControlFromString } from '../version-control/VersionControl'
+
+type ProjectWorkflows = {
+    [workflowName: string]: WorkflowData
+}
 
 const SETUP_WORKFLOW = 'setup'
 
@@ -19,6 +24,7 @@ export class ProjectService {
                     reponame: project.reponame,
                     username: project.username,
                     defaultBranch: project.default_branch,
+                    vcsUrl: project.vcs_url
                 }))
         )
     }
@@ -48,135 +54,86 @@ export class ProjectService {
             reponame: project.reponame,
             username: project.username,
             vcsUrl: project.vcsUrl,
+            ciUrl: `https://app.circleci.com/pipelines/${project.vcsType}/${project.username}/${project.reponame}`,
             defaultBranch: project.defaultBranch,
-            workflows: {}
+            workflows: this.removeObsoleteJobs(await this.getProjectWorkflows(project)),
         };
-        const jobs = await circleCiClient.listProjectJobs(getVersionControlSlug(mapVersionControlFromString(project.vcsType)!),
-            project.username,
-            project.reponame,
-            project.defaultBranch);
 
-        jobs
-            // .filter(job => job.workflows.workflow_name !== SETUP_WORKFLOW)
-            .forEach(job => {
-                const workflowName = job.workflows.workflow_name;
-                if (result.workflows[workflowName]) {
-                    const existingJob = result.workflows[workflowName].jobs.find(item => item.name === job.workflows.job_name)
-                    if (existingJob) {
-                        existingJob.history.push(job)
-                    } else {
-                        result.workflows[workflowName].jobs.push({
-                            name: job.workflows.job_name,
-                            history: [job]
-                        })
-                    }
-                } else {
-                    result.workflows[workflowName] = {
-                        name: workflowName,
-                        mostRecentBuild: job.build_num,
-                        mostRecentId: job.workflows.workflow_id,
-                        jobs: [{
-                            name: job.workflows.job_name,
-                            history: [job]
-                        }]
-                    }
-                }
+        Object.keys(result.workflows)
+            .forEach(workflowName => {
+                result.workflows[workflowName]
+                    .jobs
+                    .map(job => job.history = job
+                        .history
+                        .sort((a, b) => new Date(b.started_at!).getTime() - new Date(a.started_at!).getTime())
+                        .filter((_, index) => index < config.jobExecutionsMaxHistory)
+                    )
             })
 
-        console.log(result)
         this.dashboardRepository.persistProject(result)
+        console.log(result)
         emitProjectSynched({ project: result })
         return result
     }
+    private removeObsoleteJobs(workflows: ProjectWorkflows): ProjectWorkflows {
+        return Object.keys(workflows)
+            .reduce((acc, workflowName) => {
+                const workflow = workflows[workflowName]
+                workflow.jobs = workflow.jobs
+                    .filter(job => job.history.some(historyItem => historyItem.workflow.id === workflow.latestId))
+                acc[workflowName] = workflow
+                return acc
+            }, {} as ProjectWorkflows)
+    }
 
-    // public async syncProjectData(project: ProjectConfiguration) {
-    //     console.log('syncProjectData', project.reponame)
-    //     await Promise.all(project.workflows.map((workflow) => this.syncWorkflow(workflow, project)))
-    // }
+    private async getProjectWorkflows(project: TrackedProjectData): Promise<ProjectWorkflows> {
+        const projectJobs: ProjectWorkflows = {}
+        const pipelines = await circleCiClient.listProjectPipelines(getVersionControlSlug(mapVersionControlFromString(project.vcsType)!), project.username, project.reponame, project.defaultBranch)
+        await Promise.all(pipelines.items
+            .map(async pipeline => {
+                const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
+                await Promise.all(pipelineWorkflows.items
+                    .filter(pipelineWorkflow => pipelineWorkflow.name !== SETUP_WORKFLOW &&
+                        pipelineWorkflow?.id?.length > 0)
+                    .map(async pipelineWorkflow => {
+                        const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
+                        await Promise.all(workflowJobs.items
+                            .filter(workflowJob => workflowJob.started_at)
+                            .map(async workflowJob => {
 
-    // private async syncWorkflow(workflowName: string, project: ProjectConfiguration): Promise<void> {
-    //     const pipelines = await circleCiClient.listProjectPipelines(
-    //         getVersionControlSlug(mapVersionControlFromString(project.vcsType)!),
-    //         project.username,
-    //         project.reponame,
-    //         project.defaultBranch
-    //     )
-    //     //sort pipelines in a way that the most recent is the first item (by updated_at attribute)
-
-    //     // if (pipelines.items.length === 0) {
-    //     //     return
-    //     // }
-    //     const mostRecentPipeline = pipelines.items[0]
-    //     //TODO compare against the most recent persisted pipele to check which ones are new
-    //     //To make it simpler, we'll need to go through the pipeline.item in the reverse order
-
-    //     const jobsMap = await this.initializePipelineJobsMap(mostRecentPipeline)
-    //     let mostRecentWorkflow: PipelineWorkflow | undefined
-
-    //     for (let pipeline of pipelines.items) {
-    //         const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
-    //         //TODO there can be multiple workflows with the same name in the same pipeline (when it reruns, for example)
-    //         const workflow = pipelineWorkflows.items.find((pipelineWorkflow) => pipelineWorkflow.name === workflowName)
-    //         if (!workflow) {
-    //             break
-    //         }
-    //         if (mostRecentWorkflow === undefined) {
-    //             mostRecentWorkflow = workflow
-    //         }
-    //         const workflowJobs = await circleCiClient.listWorkflowJobs(workflow.id)
-    //         workflowJobs.items.forEach((workflowJob) =>
-    //             jobsMap
-    //                 .find((job) => job.name === workflowJob.name)
-    //                 ?.executions.push({ ...workflowJob, pipeline: pipeline, workflow: workflow })
-    //         )
-    //     }
-
-    //     const dashboardWorkflow: WorkflowData = {
-    //         name: workflowName,
-    //         project: project,
-    //         mostRecentPipeline: mostRecentPipeline,
-    //         mostRecentWorkflow: mostRecentWorkflow!,
-    //         jobs: jobsMap.map((job) => ({
-    //             name: job.name,
-    //             hidden: false,
-    //             executions: job.executions
-    //                 .filter((execution) => execution.started_at !== undefined && execution.started_at?.length > 0)
-    //                 .filter((_, index) => index < config.jobExecutionsMaxHistory),
-    //         })),
-    //     }
-
-    //     const dashboardRepository = new DashboardRepository()
-    //     dashboardRepository.persistWorkflow(dashboardWorkflow)
-    //     emitWorkflowSynched({ project: project, workflowName: workflowName })
-    // }
-
-    // private async initializePipelineJobsMap(mostRecentPipeline: ProjectPipeline): Promise<JobData[]> {
-    //     const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(mostRecentPipeline.id)
-    //     if (pipelineWorkflows.items.length === 0) {
-    //         return []
-    //     }
-    //     const mostRecentWorkflow = pipelineWorkflows.items[0]
-    //     return (await this.listWorkflowJobsName(mostRecentWorkflow)).map((jobName) => ({
-    //         name: jobName,
-    //         hidden: false,
-    //         executions: [],
-    //         history: [],
-    //     }))
-    // }
-
-    // private async listPipelineWorkflows(mostRecentPipeline: ProjectPipeline): Promise<string[]> {
-    //     const workflowsDetails = await circleCiClient.listPipelineWorkflows(mostRecentPipeline.id)
-    //     return Array.from(
-    //         new Set(
-    //             workflowsDetails.items
-    //                 .filter((workflow) => workflow?.tag !== SETUP_WORKFLOW)
-    //                 .map((workflow) => workflow.name)
-    //         )
-    //     )
-    // }
-
-    // private async listWorkflowJobsName(mostRecentWorkflow: PipelineWorkflow): Promise<string[]> {
-    //     const jobsDetails = await circleCiClient.listWorkflowJobs(mostRecentWorkflow.id)
-    //     return jobsDetails.items.map((workflow) => workflow.name)
-    // }
+                                const workflowName = pipelineWorkflow.name
+                                const workflow = projectJobs[workflowName]
+                                const jobData = {
+                                    ...workflowJob,
+                                    pipeline: pipeline,
+                                    workflow: pipelineWorkflow
+                                }
+                                if (workflow) {
+                                    if (workflow.latestBuildNumber < pipelineWorkflow.pipeline_number) {
+                                        workflow.latestBuildNumber = pipelineWorkflow.pipeline_number
+                                        workflow.latestId = pipelineWorkflow.id
+                                    }
+                                    workflow
+                                        .jobs
+                                        .find(item => item.name === workflowJob.name)?.history.push(jobData) ??
+                                        workflow.jobs.push({
+                                            name: workflowJob.name,
+                                            history: [jobData]
+                                        })
+                                } else {
+                                    projectJobs[workflowName] = {
+                                        name: workflowName,
+                                        latestBuildNumber: pipelineWorkflow.pipeline_number,
+                                        latestId: pipelineWorkflow.id,
+                                        jobs: [{
+                                            name: workflowJob.name,
+                                            history: [jobData]
+                                        }]
+                                    }
+                                }
+                            }))
+                    }))
+            }))
+        return projectJobs
+    }
 }

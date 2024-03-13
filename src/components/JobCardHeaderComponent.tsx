@@ -2,13 +2,14 @@ import { faArrowRotateRight, faBars, faPause, faThumbsUp } from '@fortawesome/fr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
 import { useEffect } from 'react'
-import { ExecutionData } from '../dashboard/DashboardRepository'
+import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { getClassesFromJobExecution } from './ClassesFromJobExecution'
 import './JobCardHeaderComponent.scss'
+import { circleCiClient } from '../gateway/CircleCiClient'
 
 type Props = {
-    job: ExecutionData
+    job: JobData
     jobOrder: number
     projectUrl: string
 }
@@ -22,7 +23,7 @@ const getBadge = (job: WorkflowJob): JSX.Element => {
 }
 
 export const JobCardHeaderComponent = (props: Props): JSX.Element => {
-    const jobUrl = `${props.projectUrl}/${props.job.pipeline.number}/workflows/${props.job.workflow.id}/jobs/${props.job.job_number}`
+    const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
 
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -83,10 +84,13 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         let icon = faArrowRotateRight;
         let disabled = false;
         let tooltip = 'Rerun job'
+        let onClick = circleCiClient.rerunJob();
         if (props.job.type === 'build' && props.job.status === 'running') {
             icon = faPause
+            onClick = circleCiClient.cancelJob();
         } else if (props.job.type === 'approval') {
             tooltip = 'Approje job'
+            onClick = circleCiClient.approveJob();
             disabled = props.job.status === 'success'
             icon = faThumbsUp;
         }
@@ -109,7 +113,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                 </div>
                 <div className="col-2">{renderInfoButton()}</div>
                 <div className="w-100 mb-2"></div>
-                <div className="col card-header-details">#{props.job.workflow.pipeline_number}</div>
+                <div className="col card-header-details"><a href=''></a>#{props.job.workflow.pipeline_number}</div>
                 <div className="col-4 card-header-details" style={{ textAlign: 'center' }}>
                     {renderActionButton()}
                 </div>

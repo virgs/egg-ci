@@ -1,18 +1,18 @@
+import { useState } from 'react'
+import { JobContextData } from '../domain-models/models'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
+import './JobCardComponent.scss'
 import { JobCardFooterComponent } from './JobCardFooterComponent'
 import { JobCardHeaderComponent } from './JobCardHeaderComponent'
-import './JobCardComponent.scss'
-import { useState } from 'react'
-import { JobData } from '../domain-models/models'
 
 export type Props = {
-    job: JobData
+    job: JobContextData
     jobOrder: number
     projectUrl: string
 }
 
 export const JobCardComponent = (props: Props): JSX.Element => {
-    const [highlightedExecutionIndex, setHighlightedExecutionIndex] = useState<number>(0) //Zero is the index of the most recent one
+    const [highlightedExecutionIndex, setHighlightedExecutionIndex] = useState<number>(0) // Zero is the index of the most recent one
 
     return (
         <div className="col">
@@ -20,11 +20,11 @@ export const JobCardComponent = (props: Props): JSX.Element => {
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}
-                    job={props.job.executions[highlightedExecutionIndex]}
+                    job={props.job.history[highlightedExecutionIndex]}
                 />
-                <JobCardBodyComponent job={props.job.executions[highlightedExecutionIndex]} />
+                <JobCardBodyComponent job={props.job.history[highlightedExecutionIndex]} />
                 <JobCardFooterComponent
-                    executions={props.job.executions}
+                    executions={props.job.history}
                     highligthedExecutionIndex={highlightedExecutionIndex}
                     onHighligthedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
                 />
