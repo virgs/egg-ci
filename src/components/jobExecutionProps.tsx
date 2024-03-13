@@ -7,7 +7,7 @@ type Result = {
     actionIcon: IconDefinition
 }
 
-export const getClassesFromJobExecution = (job: WorkflowJob): Result => {
+export const jobExecutionProps = (job: WorkflowJob): Result => {
     switch (job.status) {
         case 'success':
             return { color: 'success', animated: false, actionIcon: faCheck }

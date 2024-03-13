@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import './JobCardFooterComponent.scss'
-import { getClassesFromJobExecution } from './ClassesFromJobExecution'
+import { jobExecutionProps } from './jobExecutionProps'
 import { config } from '../config'
 import { JobData } from '../domain-models/models'
 
@@ -25,7 +25,7 @@ export const JobCardFooterComponent = (props: Props): JSX.Element => {
                 <div>History</div>
             </strong>
             {executions.map((execution, index) => {
-                const classes = getClassesFromJobExecution(execution)
+                const classes = jobExecutionProps(execution)
                 return (
                     <div
                         key={`job-history-${execution.id}-${index}-${execution.started_at}`}
