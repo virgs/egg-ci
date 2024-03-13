@@ -4,6 +4,9 @@ import { emitNewNotification, useProjectSynchedListener } from '../events/Events
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
+import { faRefresh } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Tooltip } from 'bootstrap'
 
 const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
@@ -26,7 +29,18 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
 
     useEffect(() => {
         updateSyncing()
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        Array.from(tooltipTriggerList).map(
+            (tooltipTriggerEl) =>
+                new Tooltip(tooltipTriggerEl, {
+                    delay: {
+                        show: 750,
+                        hide: 100,
+                    },
+                })
+        )
     }, [])
+
 
     useProjectSynchedListener(() => {
         updateSyncing()
@@ -40,7 +54,7 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
         return <></>
     }
 
-    const renderSpinner = () => {
+    const renderAction = () => {
         if (syncing) {
             return (
                 <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
@@ -48,20 +62,29 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
                 </div>
             )
         }
-        return <></>
+        if (props.project.enabled) {
+            return <FontAwesomeIcon
+                data-bs-toggle="tooltip"
+                data-bs-title='Refresh project'
+                style={{ cursor: 'pointer' }}
+                icon={faRefresh} onPointerDown={() => updateProject()}></FontAwesomeIcon>
+        }
+    }
+
+    const updateProject = async () => {
+        setSyncing(true)
+        props.onEnablingChange(true)
+        await projectService.syncProject(props.project)
+        emitNewNotification({ message: `Project ${id} synced successfully` })
     }
 
     const onSwitchChange = async () => {
-        // props.onEnablingChange(!props.project.enabled)
         if (props.project.enabled) {
             projectService.disableProject(props.project)
             props.onEnablingChange(false)
         } else {
             projectService.enableProject(props.project)
-            setSyncing(true)
-            props.onEnablingChange(true)
-            await projectService.syncProject(props.project)
-            emitNewNotification({ message: `Project ${id} synced successfully` })
+            updateProject()
         }
     }
 
@@ -85,7 +108,7 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
                     </span>
                 </label>
             </div>
-            <div>{renderSpinner()}</div>
+            <div>{renderAction()}</div>
         </div>
     )
 }

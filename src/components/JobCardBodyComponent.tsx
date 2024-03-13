@@ -13,9 +13,14 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
     )
 
     const getCommitMessage = () => {
-        const message = props.job.pipeline.vcs?.commit?.body ?? props.job.pipeline.vcs?.commit?.subject
-        if (message !== undefined && message.length > 0) {
-            return message
+        const commit = props.job.pipeline.vcs?.commit
+        if (commit) {
+            if (commit.subject.length > 0) {
+                return commit.subject
+            }
+            if (commit.body.length > 0) {
+                return commit.body
+            }
         }
         return '** No information available **'
     }
@@ -47,7 +52,7 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
             </div>
             <div className="card-details text-body-secondary">
                 <strong>On: </strong>
-                {new Date(props.job.started_at!).toDateString()}
+                {new Date(props.job.started_at!).toLocaleString()}
             </div>
         </div>
     )

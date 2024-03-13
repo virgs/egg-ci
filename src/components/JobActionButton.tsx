@@ -1,12 +1,13 @@
 import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { JobData, ProjectData } from "../domain-models/models"
 import { emitNewNotification, emitProjectSynched } from "../events/Events"
 import { circleCiClient } from "../gateway/CircleCiClient"
 import { ProjectService } from "../project/ProjectService"
 import { sleep } from "../time/Time"
 import { ProjectContext } from "./WorkflowComponent"
+import { Tooltip } from 'bootstrap'
 
 type ActionButtonProps = {
     tooltip: string,
@@ -23,7 +24,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
                 tooltip: 'Approve job',
                 icon: faThumbsUp,
                 onClick: () => circleCiClient.approveJob(job.workflow.id, job.id),
-                message: `Approving ${job.name} job`,
+                message: `Approving '${job.name}' job`,
                 disabled: job.status === 'success'
 
             }
@@ -33,13 +34,13 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
                     tooltip: 'Cancel job',
                     icon: faPause,
                     onClick: () => circleCiClient.cancelJob(project, job.job_number!),
-                    message: `Canceling ${job.name} job`,
+                    message: `Canceling '${job.name}' job`,
                     disabled: false
                 }
             }
     }
     return {
-        message: `Running ${job.name} job`,
+        message: `Rerunning '${job.name}' job`,
         icon: faArrowRotateRight,
         disabled: false,
         tooltip: 'Rerun job',
@@ -53,8 +54,23 @@ type Props = {
 }
 export const JobActionButton = (props: Props): JSX.Element => {
     const project = useContext(ProjectContext)!
-
     const actionProps = actionButtonProps(project, props.job)
+
+
+    useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        Array.from(tooltipTriggerList).map(
+            (tooltipTriggerEl) =>
+                new Tooltip(tooltipTriggerEl, {
+                    delay: {
+                        show: 750,
+                        hide: 100,
+                    },
+                })
+        )
+    }, [])
+
+
     return (
         <button
             type="button"
@@ -64,7 +80,7 @@ export const JobActionButton = (props: Props): JSX.Element => {
             className="btn btn-outline-primary py-0 px-2"
             onPointerDown={async () => {
                 actionProps.onClick()
-                emitNewNotification({ message: `Executing ${props.job.name} action` })
+                emitNewNotification({ message: actionProps.message })
                 await sleep(3 * 1000)
                 const projectService = new ProjectService()
                 const synced = await projectService.syncProject(project)

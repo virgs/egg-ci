@@ -1,12 +1,9 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Tooltip } from 'bootstrap'
-import { useContext, useEffect } from 'react'
 import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { JobActionButton } from './JobActionButton'
 import './JobCardHeaderComponent.scss'
-import { ProjectContext } from './WorkflowComponent'
 import { jobExecutionProps } from './jobExecutionProps'
 
 type Props = {
@@ -31,19 +28,6 @@ const getBadge = (job: WorkflowJob): JSX.Element => {
 
 export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
-
-    useEffect(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        Array.from(tooltipTriggerList).map(
-            (tooltipTriggerEl) =>
-                new Tooltip(tooltipTriggerEl, {
-                    delay: {
-                        show: 750,
-                        hide: 100,
-                    },
-                })
-        )
-    }, [])
 
     const renderTitle = () => {
         const content = (
