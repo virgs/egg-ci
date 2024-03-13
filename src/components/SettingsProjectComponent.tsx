@@ -5,7 +5,7 @@ import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
 import { faRefresh } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
 
 const getProjectLabel = (project: TrackedProjectData): string => {
@@ -41,7 +41,6 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
         )
     }, [])
 
-
     useProjectSynchedListener(() => {
         updateSyncing()
     })
@@ -63,11 +62,15 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
             )
         }
         if (props.project.enabled) {
-            return <FontAwesomeIcon
-                data-bs-toggle="tooltip"
-                data-bs-title='Refresh project'
-                style={{ cursor: 'pointer' }}
-                icon={faRefresh} onPointerDown={() => updateProject()}></FontAwesomeIcon>
+            return (
+                <FontAwesomeIcon
+                    data-bs-toggle="tooltip"
+                    data-bs-title="Refresh project"
+                    style={{ cursor: 'pointer' }}
+                    icon={faRefresh}
+                    onPointerDown={() => updateProject()}
+                ></FontAwesomeIcon>
+            )
         }
     }
 

@@ -68,9 +68,9 @@ export class ProjectService {
         Object.keys(result.workflows).forEach((workflowName) => {
             result.workflows[workflowName].jobs.map(
                 (job) =>
-                (job.history = job.history
-                    .sort((a, b) => new Date(b.started_at!).getTime() - new Date(a.started_at!).getTime())
-                    .filter((_, index) => index < config.jobExecutionsMaxHistory))
+                    (job.history = job.history
+                        .sort((a, b) => new Date(b.started_at!).getTime() - new Date(a.started_at!).getTime())
+                        .filter((_, index) => index < config.jobExecutionsMaxHistory))
             )
         })
 
@@ -99,8 +99,10 @@ export class ProjectService {
                 const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
                 await Promise.all(
                     pipelineWorkflows.items
-                        .filter((pipelineWorkflow) =>
-                            pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0)
+                        .filter(
+                            (pipelineWorkflow) =>
+                                pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
+                        )
                         .map(async (pipelineWorkflow) => {
                             const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
                             await Promise.all(

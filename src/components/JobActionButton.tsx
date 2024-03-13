@@ -1,19 +1,19 @@
-import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useContext, useEffect } from "react"
-import { JobData, ProjectData } from "../domain-models/models"
-import { emitNewNotification, emitProjectSynched } from "../events/Events"
-import { circleCiClient } from "../gateway/CircleCiClient"
-import { ProjectService } from "../project/ProjectService"
-import { sleep } from "../time/Time"
-import { ProjectContext } from "./WorkflowComponent"
+import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useContext, useEffect } from 'react'
+import { JobData, ProjectData } from '../domain-models/models'
+import { emitNewNotification, emitProjectSynched } from '../events/Events'
+import { circleCiClient } from '../gateway/CircleCiClient'
+import { ProjectService } from '../project/ProjectService'
+import { sleep } from '../time/Time'
+import { ProjectContext } from './WorkflowComponent'
 import { Tooltip } from 'bootstrap'
 
 type ActionButtonProps = {
-    tooltip: string,
-    icon: IconDefinition,
-    onClick: () => void,
-    message: string,
+    tooltip: string
+    icon: IconDefinition
+    onClick: () => void
+    message: string
     disabled: boolean
 }
 
@@ -25,8 +25,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
                 icon: faThumbsUp,
                 onClick: () => circleCiClient.approveJob(job.workflow.id, job.id),
                 message: `Approving '${job.name}' job`,
-                disabled: job.status === 'success'
-
+                disabled: job.status === 'success',
             }
         case 'build':
             if (job.status === 'running') {
@@ -35,7 +34,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
                     icon: faPause,
                     onClick: () => circleCiClient.cancelJob(project, job.job_number!),
                     message: `Canceling '${job.name}' job`,
-                    disabled: false
+                    disabled: false,
                 }
             }
     }
@@ -44,10 +43,9 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
         icon: faArrowRotateRight,
         disabled: false,
         tooltip: 'Rerun job',
-        onClick: () => circleCiClient.rerunJob(job.workflow.id, job.id)
+        onClick: () => circleCiClient.rerunJob(job.workflow.id, job.id),
     }
 }
-
 
 type Props = {
     job: JobData
@@ -55,7 +53,6 @@ type Props = {
 export const JobActionButton = (props: Props): JSX.Element => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
-
 
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -69,7 +66,6 @@ export const JobActionButton = (props: Props): JSX.Element => {
                 })
         )
     }, [])
-
 
     return (
         <button
