@@ -3,11 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 import { TrackedProjectData } from '../domain-models/models'
-import {
-    emitNewNotification,
-    emitUserInformationChanged,
-    useLoggedOutListener
-} from '../events/Events'
+import { emitNewNotification, emitUserInformationChanged, useLoggedOutListener } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
@@ -70,8 +66,7 @@ export const SettingsPage = (): JSX.Element => {
                 ])
                 settingsRepository.setApiToken(token)
                 settingsRepository.setUserInformation(newUserInformation)
-                userProjects
-                    .forEach(project => projectService.trackProject(project))
+                userProjects.forEach((project) => projectService.trackProject(project))
                 updateComponentStates()
             } catch (error) {
                 emitNewNotification({ message: `Invalid token` })
@@ -82,13 +77,14 @@ export const SettingsPage = (): JSX.Element => {
     const renderProjects = () => {
         return (
             <ul className="list-group list-group-flush">
-                {(projects || [])
-                    .map((project, index) => <li key={`settings-project-${index}-${project.reponame}`}
-                        className="list-group-item p-0 m-0">
+                {(projects || []).map((project, index) => (
+                    <li key={`settings-project-${index}-${project.reponame}`} className="list-group-item p-0 m-0">
                         <SettingsProjectComponent
                             onEnablingChange={updateComponentStates}
-                            project={project}></SettingsProjectComponent>
-                    </li>)}
+                            project={project}
+                        ></SettingsProjectComponent>
+                    </li>
+                ))}
             </ul>
         )
     }
@@ -123,7 +119,8 @@ export const SettingsPage = (): JSX.Element => {
                             disabled={token.length === 0}
                             onClick={refresh}
                             type="button"
-                            className="btn btn-primary">
+                            className="btn btn-primary"
+                        >
                             <FontAwesomeIcon icon={faRightToBracket} />
                         </button>
                     </div>

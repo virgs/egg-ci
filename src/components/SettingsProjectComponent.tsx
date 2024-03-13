@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { TrackedProjectData } from '../domain-models/models'
-import { emitNewNotification, useProjectSynchedListener, useWorkflowSynchedListener } from '../events/Events'
+import { emitNewNotification, useProjectSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
@@ -10,7 +10,7 @@ const getProjectLabel = (project: TrackedProjectData): string => {
 }
 
 type Props = {
-    project: TrackedProjectData,
+    project: TrackedProjectData
     onEnablingChange: (enabled: boolean) => void
 }
 
@@ -42,9 +42,11 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
 
     const renderSpinner = () => {
         if (syncing) {
-            return <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
+            return (
+                <div className="spinner-grow spinner-grow-sm text-secondary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            )
         }
         return <></>
     }
@@ -63,23 +65,27 @@ export const SettingsProjectComponent = (props: Props): JSX.Element => {
         }
     }
 
-    return <div className="h-100 px-4 d-flex align-items-center justify-content-between"
-        style={{ backgroundColor: props.project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}>
-        <div className="form-check form-switch">
-            <input
-                className="form-check-input"
-                type="checkbox"
-                id={id}
-                checked={props.project.enabled}
-                onChange={() => onSwitchChange()}
-            />
-            <label className="form-check-label" htmlFor={id}>
-                <span className="mx-2">{renderVersionControlComponent()}</span>
-                <span>
-                    {props.project.username}/{props.project.reponame}
-                </span>
-            </label>
+    return (
+        <div
+            className="h-100 px-4 d-flex align-items-center justify-content-between"
+            style={{ backgroundColor: props.project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}
+        >
+            <div className="form-check form-switch">
+                <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={id}
+                    checked={props.project.enabled}
+                    onChange={() => onSwitchChange()}
+                />
+                <label className="form-check-label" htmlFor={id}>
+                    <span className="mx-2">{renderVersionControlComponent()}</span>
+                    <span>
+                        {props.project.username}/{props.project.reponame}
+                    </span>
+                </label>
+            </div>
+            <div>{renderSpinner()}</div>
         </div>
-        <div>{renderSpinner()}</div>
-    </div>
+    )
 }

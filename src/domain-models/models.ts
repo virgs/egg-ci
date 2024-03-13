@@ -1,5 +1,5 @@
-import { PipelineWorkflow } from "../gateway/models/ListPipelineWorkflowsResponse"
-import { ProjectPipeline } from "../gateway/models/ListProjectPipelinesResponse"
+import { PipelineWorkflow } from '../gateway/models/ListPipelineWorkflowsResponse'
+import { ProjectPipeline } from '../gateway/models/ListProjectPipelinesResponse'
 
 export interface TrackedProjectData {
     enabled: boolean
@@ -16,7 +16,7 @@ export interface ProjectData {
     reponame: string
     username: string
     defaultBranch: string
-    ciUrl: string;
+    ciUrl: string
     workflows: {
         [name: string]: WorkflowData
     }
@@ -28,9 +28,9 @@ export type JobContextData = {
 }
 
 export type WorkflowData = {
-    name: string;
-    latestBuildNumber: number;
-    latestId: string;
+    name: string
+    latestBuildNumber: number
+    latestId: string
     jobs: JobContextData[]
 }
 
@@ -50,20 +50,20 @@ export type JobData = {
     approved_by?: string
     project_slug: string
     status:
-    | 'success'
-    | 'running'
-    | 'not_run'
-    | 'failed'
-    | 'retried'
-    | 'queued'
-    | 'not_running'
-    | 'infrastructure_fail'
-    | 'timedout'
-    | 'on_hold'
-    | 'terminated-unknown'
-    | 'blocked'
-    | 'canceled'
-    | 'unauthorized'
+        | 'success'
+        | 'running'
+        | 'not_run'
+        | 'failed'
+        | 'retried'
+        | 'queued'
+        | 'not_running'
+        | 'infrastructure_fail'
+        | 'timedout'
+        | 'on_hold'
+        | 'terminated-unknown'
+        | 'blocked'
+        | 'canceled'
+        | 'unauthorized'
     type: 'build' | 'approval'
     stopped_at?: string
     approval_request_id?: string

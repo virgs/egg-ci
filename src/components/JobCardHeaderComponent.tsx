@@ -1,7 +1,7 @@
 import { faArrowRotateRight, faBars, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as bootstrap from 'bootstrap'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { getClassesFromJobExecution } from './ClassesFromJobExecution'
@@ -9,6 +9,7 @@ import './JobCardHeaderComponent.scss'
 import { circleCiClient } from '../gateway/CircleCiClient'
 import { emitNewNotification } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
+import { ProjectContext } from './WorkflowComponent'
 
 type Props = {
     job: JobData
@@ -21,10 +22,18 @@ const getStatusDisplay = (status: string): string => {
 }
 const getBadge = (job: WorkflowJob): JSX.Element => {
     const classes = getClassesFromJobExecution(job)
-    return <FontAwesomeIcon className={job.status === 'running' ? 'fa-spin' : ''} style={{ color: `var(--bs-${classes.color})` }} icon={classes.actionIcon} />
+    return (
+        <FontAwesomeIcon
+            className={job.status === 'running' ? 'fa-spin' : ''}
+            style={{ color: `var(--bs-${classes.color})` }}
+            icon={classes.actionIcon}
+        />
+    )
 }
 
 export const JobCardHeaderComponent = (props: Props): JSX.Element => {
+    const project = useContext(ProjectContext)!
+
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
 
     useEffect(() => {
@@ -55,7 +64,6 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         if (props.job.type === 'build') {
             return (
                 <div>
-                    {/* <button className="btn btn-secondary dropdown-toggle" type="button"> */}
                     <FontAwesomeIcon
                         data-bs-toggle="dropdown"
                         data-bs-auto-close="true"
@@ -63,7 +71,6 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                         style={{ float: 'right', cursor: 'pointer' }}
                         icon={faBars}
                     />
-                    {/* </button> */}
                     <ul className="dropdown-menu">
                         <li>
                             <a className="dropdown-item disabled" href="#">
@@ -83,39 +90,41 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         return <></>
     }
     const renderActionButton = () => {
-        let icon = faArrowRotateRight;
-        let disabled = false;
+        let icon = faArrowRotateRight
+        let disabled = false
         let tooltip = 'Rerun job'
-        let onClick: () => any = () => circleCiClient.rerunJob(props.job.workflow.id, props.job.id);
+        let onClick: () => any = () => circleCiClient.rerunJob(props.job.workflow.id, props.job.id)
         if (props.job.type === 'build' && props.job.status === 'running') {
             icon = faPause
-            onClick = () => circleCiClient.cancelJob(props.job.project_slug, props.job.job_number!);
+            onClick = () => circleCiClient.cancelJob(project, props.job.job_number!)
         } else if (props.job.type === 'approval') {
             tooltip = 'Approve job'
-            onClick = () => circleCiClient.approveJob(props.job.workflow.id, props.job.id);
+            onClick = () => circleCiClient.approveJob(props.job.workflow.id, props.job.id)
             disabled = props.job.status === 'success'
-            icon = faThumbsUp;
+            icon = faThumbsUp
         }
-        return <button
-            type="button"
-            data-bs-toggle="tooltip"
-            data-bs-title={tooltip}
-            disabled={disabled}
-            className="btn btn-outline-primary py-0 px-2"
-            onPointerDown={async () => {
-                try {
-                    await onClick()
-                } catch (error) {
-                    console.log(error)
-                    emitNewNotification({ message: `Executing ${props.job.name} action` })
-                }
-                const projectService = new ProjectService()
-                await projectService.syncProject(props.job.project_slug)
-            }}
-            style={{ fontSize: '8px' }}
-        >
-            <FontAwesomeIcon icon={icon}></FontAwesomeIcon>
-        </button>
+        return (
+            <button
+                type="button"
+                data-bs-toggle="tooltip"
+                data-bs-title={tooltip}
+                disabled={disabled}
+                className="btn btn-outline-primary py-0 px-2"
+                onPointerDown={async () => {
+                    try {
+                        await onClick()
+                    } catch (error) {
+                        console.log(error)
+                        emitNewNotification({ message: `Executing ${props.job.name} action` })
+                    }
+                    const projectService = new ProjectService()
+                    await projectService.syncProject(project)
+                }}
+                style={{ fontSize: '8px' }}
+            >
+                <FontAwesomeIcon icon={icon}></FontAwesomeIcon>
+            </button>
+        )
     }
     return (
         <div className="card-header p-1 pt-2 px-3">
@@ -125,7 +134,9 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                 </div>
                 <div className="col-2">{renderInfoButton()}</div>
                 <div className="w-100 mb-2"></div>
-                <div className="col card-header-details"><a href=''></a>#{props.job.workflow.pipeline_number}</div>
+                <div className="col card-header-details">
+                    <a href=""></a>#{props.job.workflow.pipeline_number}
+                </div>
                 <div className="col-4 card-header-details" style={{ textAlign: 'center' }}>
                     {renderActionButton()}
                 </div>

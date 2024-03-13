@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { createContext, useState } from 'react'
 import { JobContextData, ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './JobCardComponent'
@@ -8,6 +8,8 @@ type Props = {
     workflow: WorkflowData
     project: ProjectData
 }
+
+export const ProjectContext = createContext<ProjectData | undefined>(undefined)
 
 export const WorkflowComponent = (props: Props): JSX.Element => {
     const [jobs] = useState<JobContextData[]>(props.workflow.jobs)
@@ -37,14 +39,16 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
                 </ol>
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">
-                {jobs.map((job, index) => (
-                    <JobCardComponent
-                        key={`${props.workflow.latestId}.${index}`}
-                        job={job}
-                        jobOrder={index}
-                        projectUrl={projectUrl}
-                    ></JobCardComponent>
-                ))}
+                <ProjectContext.Provider value={props.project}>
+                    {jobs.map((job, index) => (
+                        <JobCardComponent
+                            key={`${props.workflow.latestId}.${index}`}
+                            job={job}
+                            jobOrder={index}
+                            projectUrl={projectUrl}
+                        ></JobCardComponent>
+                    ))}
+                </ProjectContext.Provider>
             </div>
         </>
     )

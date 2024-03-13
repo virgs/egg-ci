@@ -6,6 +6,7 @@ import { ListUserProjectsResponse } from './models/ListUserProjectsResponse'
 import { ListWorkflowJobsResponse } from './models/ListWorkflowJobsResponse'
 import { ListWorkflowRecentRunsResponse } from './models/ListWorkflowRecentRunsResponse'
 import { UserInformationResponse } from './models/UserInformationResponse'
+import { ProjectData, TrackedProjectData } from '../domain-models/models'
 
 const apiV1 = 'https://circleci.com/api/v1.1'
 const apiV2 = 'https://circleci.com/api/v2'
@@ -14,6 +15,10 @@ export let circleCiClient: CircleCiClient
 
 export const initializeCircleCiClient = (apiToken: string): CircleCiClient => {
     return (circleCiClient = new CircleCiClient(apiToken))
+}
+
+const getProjectSlug = (project: TrackedProjectData | ProjectData): string => {
+    return `${project.vcsType}/${project.username}/${project.reponame}`
 }
 
 const NINETY_DAYS = 1000 * 3600 * 24 * 90
@@ -31,12 +36,10 @@ export class CircleCiClient {
     }
 
     public async listProjectPipelines(
-        versionControlSlug: string,
-        organization: string,
-        repository: string,
+        project: TrackedProjectData | ProjectData,
         branch: string
     ): Promise<ListProjectPipelinesReponse> {
-        const url = `${apiV2}/project/${versionControlSlug}/${organization}/${repository}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
+        const url = `${apiV2}/project/${getProjectSlug(project)}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
         const response = await fetch(url)
         return await response.json()
     }
@@ -53,17 +56,16 @@ export class CircleCiClient {
         return await response.json()
     }
 
-    public async cancelJob(projectSlug: string,
-        jobNumber: number): Promise<{ message: string }> {
-        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}/cancel?circle-token=${this.apiToken}`
+    public async cancelJob(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<{ message: string }> {
+        const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}/cancel?circle-token=${this.apiToken}`
         return new Promise(async (resolve, reject) => {
             try {
                 fetch(url, { method: 'POST' })
-                    .then(response => {
+                    .then((response) => {
                         console.log(response.json())
                         resolve({ message: 'ok' })
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.log(error)
                         reject(error)
                     })
@@ -73,15 +75,13 @@ export class CircleCiClient {
         })
     }
 
-    public async approveJob(workflowId: string,
-        jobId: string): Promise<{ message: string }> {
+    public async approveJob(workflowId: string, jobId: string): Promise<{ message: string }> {
         const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}?circle-token=${this.apiToken}`
         const response = await fetch(url, { method: 'POST' })
         return await response.json()
     }
 
-    public async rerunJob(workflowId: string,
-        jobId: string): Promise<{ workflow_id: string }> {
+    public async rerunJob(workflowId: string, jobId: string): Promise<{ workflow_id: string }> {
         const url = `${apiV2}/workflow/${workflowId}/rerun?circle-token=${this.apiToken}`
         console.log(url)
         const response = await fetch(url, {
@@ -90,7 +90,7 @@ export class CircleCiClient {
                 enable_ssh: false,
                 from_failed: false,
                 jobs: [jobId],
-                sparse_tree: false
+                sparse_tree: false,
             }),
         })
         return await response.json()
@@ -98,18 +98,18 @@ export class CircleCiClient {
 
     //Doesn't return approval jobs :()
     //https://circleci.com/docs/api/v1/index.html#recent-jobs-for-a-single-project
-    public async listProjectJobs(versionControlSlug: string,
-        organization: string,
-        repository: string,
-        branch: string): Promise<ListProjectJobs> {
-        const url = `${apiV1}/project/${versionControlSlug}/${organization}/${repository}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
+    public async listProjectJobs(project: TrackedProjectData | ProjectData, branch: string): Promise<ListProjectJobs> {
+        const url = `${apiV1}/project/${getProjectSlug(project)}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
         console.log(url)
         const response = await fetch(url)
         return await response.json()
     }
 
-    public async getJobDetails(jobNumber: number, projectSlug: string): Promise<JobDetailsResponse> {
-        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
+    public async getJobDetails(
+        project: TrackedProjectData | ProjectData,
+        jobNumber: number
+    ): Promise<JobDetailsResponse> {
+        const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}`
         const response = await fetch(url, {
             headers: {
                 Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
@@ -118,8 +118,8 @@ export class CircleCiClient {
         return await response.json()
     }
 
-    public async getJobDetailsV1(jobNumber: number, projectSlug: string): Promise<any> {
-        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
+    public async getJobDetailsV1(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<any> {
+        const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}`
         const response = await fetch(url, {
             headers: {
                 Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
@@ -136,15 +136,13 @@ export class CircleCiClient {
 
     //Up to 90 days limitation :(
     public async listSuccessfulWorkflowRecentRuns(
-        versionControlSlug: string,
-        organization: string,
-        repository: string,
+        project: TrackedProjectData | ProjectData,
         workflowName: string
     ): Promise<ListWorkflowRecentRunsResponse> {
         const endDate = Date.now()
         const startDate = new Date(endDate - NINETY_DAYS)
         const queryString = `circle-token=${this.apiToken}&start-date=${startDate.toISOString()}&end-date=${new Date(endDate).toISOString()}`
-        const url = `${apiV2}/insights/${versionControlSlug}/${organization}/${repository}/workflows/${workflowName}?${queryString}`
+        const url = `${apiV2}/insights/${getProjectSlug(project)}/workflows/${workflowName}?${queryString}`
         const response = await fetch(url)
         return await response.json()
     }

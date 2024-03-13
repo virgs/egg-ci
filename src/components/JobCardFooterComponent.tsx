@@ -40,7 +40,8 @@ export const JobCardFooterComponent = (props: Props): JSX.Element => {
                                 executions.length - index - 1 !== props.highligthedExecutionIndex
                                     ? 'unset'
                                     : `0 0 3px 2px var(--bs-${classes.color})`,
-                        }}>
+                        }}
+                    >
                         <div
                             className={`progress-bar w-100 bg-${classes.color} ${classes.animated ? 'progress-bar-striped progress-bar-animated' : ''}`}
                         ></div>
