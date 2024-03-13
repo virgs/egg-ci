@@ -7,6 +7,8 @@ import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { getClassesFromJobExecution } from './ClassesFromJobExecution'
 import './JobCardHeaderComponent.scss'
 import { circleCiClient } from '../gateway/CircleCiClient'
+import { emitNewNotification } from '../events/Events'
+import { ProjectService } from '../project/ProjectService'
 
 type Props = {
     job: JobData
@@ -84,13 +86,13 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         let icon = faArrowRotateRight;
         let disabled = false;
         let tooltip = 'Rerun job'
-        let onClick = circleCiClient.rerunJob();
+        let onClick: () => any = () => circleCiClient.rerunJob(props.job.workflow.id, props.job.id);
         if (props.job.type === 'build' && props.job.status === 'running') {
             icon = faPause
-            onClick = circleCiClient.cancelJob();
+            onClick = () => circleCiClient.cancelJob(props.job.project_slug, props.job.job_number!);
         } else if (props.job.type === 'approval') {
-            tooltip = 'Approje job'
-            onClick = circleCiClient.approveJob();
+            tooltip = 'Approve job'
+            onClick = () => circleCiClient.approveJob(props.job.workflow.id, props.job.id);
             disabled = props.job.status === 'success'
             icon = faThumbsUp;
         }
@@ -100,6 +102,16 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
             data-bs-title={tooltip}
             disabled={disabled}
             className="btn btn-outline-primary py-0 px-2"
+            onPointerDown={async () => {
+                try {
+                    await onClick()
+                } catch (error) {
+                    console.log(error)
+                    emitNewNotification({ message: `Executing ${props.job.name} action` })
+                }
+                const projectService = new ProjectService()
+                await projectService.syncProject(props.job.project_slug)
+            }}
             style={{ fontSize: '8px' }}
         >
             <FontAwesomeIcon icon={icon}></FontAwesomeIcon>

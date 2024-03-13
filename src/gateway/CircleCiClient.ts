@@ -53,42 +53,50 @@ export class CircleCiClient {
         return await response.json()
     }
 
-    /*
-    Cancel job    
-const options = {
-  method: 'POST',
-  url: 'https://circleci.com/api/v2/project/gh/CircleCI-Public/api-preview-docs/job/123/cancel',
-  headers: {authorization: 'Basic REPLACE_BASIC_AUTH'}
-};
+    public async cancelJob(projectSlug: string,
+        jobNumber: number): Promise<{ message: string }> {
+        const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}/cancel?circle-token=${this.apiToken}`
+        return new Promise(async (resolve, reject) => {
+            try {
+                fetch(url, { method: 'POST' })
+                    .then(response => {
+                        console.log(response.json())
+                        resolve({ message: 'ok' })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+            } catch (er) {
+                console.log(er)
+            }
+        })
+    }
 
+    public async approveJob(workflowId: string,
+        jobId: string): Promise<{ message: string }> {
+        const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}?circle-token=${this.apiToken}`
+        const response = await fetch(url, { method: 'POST' })
+        return await response.json()
+    }
 
-Approve:
-const options = {
-  method: 'POST',
-  //https://circleci.com/api/v2/workflow/{workflow-id}/approve/{job-id}
-  url: 'https://circleci.com/api/v2/workflow/5034460f-c7c4-4c43-9457-de07e2029e7b/approve/%7Bapproval_request_id%7D',
-  headers: {authorization: 'Basic REPLACE_BASIC_AUTH'}
-};
+    public async rerunJob(workflowId: string,
+        jobId: string): Promise<{ workflow_id: string }> {
+        const url = `${apiV2}/workflow/${workflowId}/rerun?circle-token=${this.apiToken}`
+        console.log(url)
+        const response = await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+                enable_ssh: false,
+                from_failed: false,
+                jobs: [jobId],
+                sparse_tree: false
+            }),
+        })
+        return await response.json()
+    }
 
-
-Rerun job:
-const request = require('request');
-
-const options = {
-  method: 'POST',
-  url: 'https://circleci.com/api/v2/workflow/5034460f-c7c4-4c43-9457-de07e2029e7b/rerun',
-  headers: {'content-type': 'application/json', authorization: 'Basic REPLACE_BASIC_AUTH'},
-  body: {
-    enable_ssh: false,
-    from_failed: false,
-    jobs: ['c65b68ef-e73b-4bf2-be9a-7a322a9df150', '5e957edd-5e8c-4985-9178-5d0d69561822'],
-    sparse_tree: false
-  },
-  json: true
-};
-
-*/
-
+    //Doesn't return approval jobs :()
     //https://circleci.com/docs/api/v1/index.html#recent-jobs-for-a-single-project
     public async listProjectJobs(versionControlSlug: string,
         organization: string,
@@ -99,7 +107,6 @@ const options = {
         const response = await fetch(url)
         return await response.json()
     }
-
 
     public async getJobDetails(jobNumber: number, projectSlug: string): Promise<JobDetailsResponse> {
         const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
@@ -112,7 +119,6 @@ const options = {
     }
 
     public async getJobDetailsV1(jobNumber: number, projectSlug: string): Promise<any> {
-        //apiV1/project/projectSlug/${jobNumber}?circle-token=${this.apiToken}
         const url = `${apiV2}/project/${projectSlug}/job/${jobNumber}`
         const response = await fetch(url, {
             headers: {

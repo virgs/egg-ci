@@ -11,6 +11,7 @@ import { useInterval } from './time/UseInterval'
 import { useEffect } from 'react'
 import { ProjectService } from './project/ProjectService'
 import { emitNewNotification } from './events/Events'
+import { config } from './config'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 if (settingsRepository.getApiToken()) {
@@ -49,27 +50,26 @@ const router = createHashRouter([
   },
 ])
 
-const autoSyncInterval = 1000 * 30 //30 seconds
-
 export const App = (): JSX.Element => {
-  useInterval(() => {
+  const autoUpdate = async () => {
     const projectService = new ProjectService()
-    projectService.loadTrackedProjects()
-      .filter(project => project.enabled)
-      .forEach(async project => {
-        // await projectService.syncProject(project)
-        // emitNewNotification({ message: `Project ${project.reponame} successfully synchronized` })
-      })
+    for await (let project of projectService.loadTrackedProjects()
+      .filter(project => project.enabled)) {
+      await projectService.syncProject(project)
+      // emitNewNotification({ message: `Project ${project.reponame} successfully synchronized` })
+    }
 
     console.log('auto sync')
-  }, autoSyncInterval)
+  }
+
+  useInterval(() => autoUpdate(), config.autoSyncInterval)
 
   useEffect(() => {
     const projectService = new ProjectService()
     const trackedProjects = projectService.loadTrackedProjects() || []
     trackedProjects
       .filter((project) => project.enabled && !projectService.loadProject(project))
-      .forEach(async (project) => { //Keep downloading data
+      .map(async (project) => { //Keep downloading data
         await projectService.syncProject(project)
         emitNewNotification({ message: `Project ${project.reponame} successfully synchronized` })
       })

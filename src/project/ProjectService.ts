@@ -1,6 +1,6 @@
 import { config } from '../config'
 import { DashboardRepository } from '../dashboard/DashboardRepository'
-import { JobContextData, ProjectData, TrackedProjectData, WorkflowData } from '../domain-models/models'
+import { JobContextData, JobData, ProjectData, TrackedProjectData, WorkflowData } from '../domain-models/models'
 import { emitProjectSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
 import { getVersionControlSlug, mapVersionControlFromString } from '../version-control/VersionControl'
@@ -71,7 +71,6 @@ export class ProjectService {
             })
 
         this.dashboardRepository.persistProject(result)
-        console.log(result)
         emitProjectSynched({ project: result })
         return result
     }
@@ -103,10 +102,10 @@ export class ProjectService {
 
                                 const workflowName = pipelineWorkflow.name
                                 const workflow = projectJobs[workflowName]
-                                const jobData = {
+                                const jobData: JobData = {
                                     ...workflowJob,
                                     pipeline: pipeline,
-                                    workflow: pipelineWorkflow
+                                    workflow: pipelineWorkflow,
                                 }
                                 if (workflow) {
                                     if (workflow.latestBuildNumber < pipelineWorkflow.pipeline_number) {
