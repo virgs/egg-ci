@@ -1,4 +1,4 @@
-import { IconDefinition, faCheck, faMinus, faPause, faRotate, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition, faCheck, faPause, faRotate, faStop, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 
 type Result = {
@@ -23,7 +23,7 @@ export const getClassesFromJobExecution = (job: WorkflowJob): Result => {
         case 'terminated-unknown':
         case 'canceled':
         case 'unauthorized':
-            return { color: 'secondary', animated: false, actionIcon: faMinus }
+            return { color: 'secondary', animated: false, actionIcon: faStop }
 
         case 'failed':
         case 'not_running':

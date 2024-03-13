@@ -56,44 +56,45 @@ export class CircleCiClient {
         return await response.json()
     }
 
-    public async cancelJob(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<{ message: string }> {
+    public async cancelJob(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<boolean> {
         const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}/cancel?circle-token=${this.apiToken}`
-        return new Promise(async (resolve, reject) => {
-            try {
-                fetch(url, { method: 'POST' })
-                    .then((response) => {
-                        console.log(response.json())
-                        resolve({ message: 'ok' })
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                        reject(error)
-                    })
-            } catch (er) {
-                console.log(er)
-            }
-        })
+        try {
+            await fetch(url, { method: 'POST', mode: 'no-cors' })
+            return true
+        } catch (error) {
+            console.log(error)
+            return false
+        }
     }
 
-    public async approveJob(workflowId: string, jobId: string): Promise<{ message: string }> {
-        const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}?circle-token=${this.apiToken}`
-        const response = await fetch(url, { method: 'POST' })
-        return await response.json()
-    }
-
-    public async rerunJob(workflowId: string, jobId: string): Promise<{ workflow_id: string }> {
+    public async rerunJob(workflowId: string, jobId: string): Promise<boolean> {
         const url = `${apiV2}/workflow/${workflowId}/rerun?circle-token=${this.apiToken}`
-        console.log(url)
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify({
-                enable_ssh: false,
-                from_failed: false,
-                jobs: [jobId],
-                sparse_tree: false,
-            }),
+        const body = JSON.stringify({
+            jobs: [jobId],
         })
-        return await response.json()
+        console.log(url, jobId, body)
+        try {
+            await fetch(url, {
+                method: 'POST',
+                body: body,
+                mode: 'no-cors',
+            })
+            return true
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
+    public async approveJob(workflowId: string, jobId: string): Promise<boolean> {
+        const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}?circle-token=${this.apiToken}`
+        try {
+            await fetch(url, { method: 'POST', mode: 'no-cors' })
+            return true
+        } catch (error) {
+            console.log(error)
+            return false
+        }
     }
 
     //Doesn't return approval jobs :()

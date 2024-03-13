@@ -8,6 +8,7 @@
 6. [ ] Be able to hide non relevant jobs
 7. [x] Replace the info icon with the details dropdown
 8. [x] Create method in the service that checks if project has data persisted
-9. [ ] Be able to merge workflow data (autosync pipelines)
+9. ~[ ] Be able to merge workflow data (autosync pipelines)~
 10. [ ] Fix disable -> enable progress gron project sync
 11. [ ] Card placeholders
+12. [x] Job action buttons

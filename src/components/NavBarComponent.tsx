@@ -19,7 +19,7 @@ export const NavBarComponent = (): JSX.Element => {
     useUserInformationChangedListener((payload) => setUserInformation(payload))
 
     return (
-        <nav className="navbar navbar-expand sticky-top border-bottom bg-body-tertiary">
+        <nav className="navbar navbar-expand sticky-top border-bottom bg-primary" data-bs-theme="dark">
             <div className="container-fluid px-5">
                 <span className="navbar-brand">
                     <img
@@ -44,15 +44,15 @@ export const NavBarComponent = (): JSX.Element => {
                         </li>
                         <li className="nav-item dropdown">
                             <div>
-                                <span
-                                    className="dropdown-toggle"
+                                <div
+                                    className="dropdown-toggle nav-link active"
                                     data-bs-toggle="dropdown"
                                     data-bs-display="static"
                                     aria-expanded="false"
                                 >
                                     <FontAwesomeIcon className="me-2" icon={faUser} />
                                     {userInformation?.name ?? 'No token'}
-                                </span>
+                                </div>
                                 <ul className="dropdown-menu">
                                     <li>
                                         <button

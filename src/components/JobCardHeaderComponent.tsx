@@ -1,15 +1,16 @@
 import { faArrowRotateRight, faBars, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import * as bootstrap from 'bootstrap'
+import { Tooltip } from 'bootstrap'
 import { useContext, useEffect } from 'react'
 import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { getClassesFromJobExecution } from './ClassesFromJobExecution'
 import './JobCardHeaderComponent.scss'
 import { circleCiClient } from '../gateway/CircleCiClient'
-import { emitNewNotification } from '../events/Events'
+import { emitNewNotification, emitProjectSynched } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
 import { ProjectContext } from './WorkflowComponent'
+import { sleep } from '../time/Time'
 
 type Props = {
     job: JobData
@@ -40,7 +41,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         Array.from(tooltipTriggerList).map(
             (tooltipTriggerEl) =>
-                new bootstrap.Tooltip(tooltipTriggerEl, {
+                new Tooltip(tooltipTriggerEl, {
                     delay: {
                         show: 750,
                         hide: 100,
@@ -85,7 +86,6 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                     </ul>
                 </div>
             )
-            // return
         }
         return <></>
     }
@@ -95,6 +95,7 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
         let tooltip = 'Rerun job'
         let onClick: () => any = () => circleCiClient.rerunJob(props.job.workflow.id, props.job.id)
         if (props.job.type === 'build' && props.job.status === 'running') {
+            tooltip = 'Cancel job'
             icon = faPause
             onClick = () => circleCiClient.cancelJob(project, props.job.job_number!)
         } else if (props.job.type === 'approval') {
@@ -115,10 +116,12 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
                         await onClick()
                     } catch (error) {
                         console.log(error)
-                        emitNewNotification({ message: `Executing ${props.job.name} action` })
                     }
+                    emitNewNotification({ message: `Executing ${props.job.name} action` })
+                    await sleep(3 * 1000)
                     const projectService = new ProjectService()
-                    await projectService.syncProject(project)
+                    const synced = await projectService.syncProject(project)
+                    emitProjectSynched({ project: synced })
                 }}
                 style={{ fontSize: '8px' }}
             >

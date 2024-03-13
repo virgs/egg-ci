@@ -36,11 +36,16 @@ export const DashboardsPage = (): JSX.Element => {
         const trackedProjects = projectService.loadTrackedProjects()
         const projects = (trackedProjects || [])
             .filter((trackedProject) => trackedProject.enabled)
-            .filter((trackedProject) => trackedProject.reponame.concat(trackedProject.username).includes(filterText))
             .map((trackedProject) => projectService.loadProject(trackedProject))
             .filter((project) => project !== undefined)
             .map((project) => project as ProjectData)
-            .filter((project) => Object.keys(project.workflows).join().includes(filterText))
+            .filter((project) =>
+                Object.keys(project.workflows)
+                    .join()
+                    .concat(project.reponame)
+                    .concat(project.username)
+                    .includes(filterText)
+            )
         setProjects(projects)
 
         return projects

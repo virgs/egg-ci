@@ -1,3 +1,5 @@
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 export const formatDuration = (ms: number, numberOfRelevantUnits: number = 2) => {
     if (ms < 0) ms = -ms
     const time = {

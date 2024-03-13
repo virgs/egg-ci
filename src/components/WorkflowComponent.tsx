@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { JobContextData, ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './JobCardComponent'
@@ -12,7 +12,11 @@ type Props = {
 export const ProjectContext = createContext<ProjectData | undefined>(undefined)
 
 export const WorkflowComponent = (props: Props): JSX.Element => {
-    const [jobs] = useState<JobContextData[]>(props.workflow.jobs)
+    const [jobs, setJobs] = useState<JobContextData[]>(props.workflow.jobs)
+
+    useEffect(() => {
+        setJobs(props.workflow.jobs)
+    }, [props.workflow])
 
     const versionControl = mapVersionControlFromString(props.project.vcsType)
     const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
@@ -21,7 +25,7 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
     const workflowUrl = `${projectUrl}/${props.workflow.latestBuildNumber}/workflows/${props.workflow.latestId}`
     return (
         <>
-            <div style={{ height: '2px', backgroundColor: 'var(--bs-gray-200)' }}></div>
+            <div style={{ height: '1px', backgroundColor: 'var(--bs-gray-200)', marginBottom: '4px' }}></div>
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item d-flex align-items-center fs-4">

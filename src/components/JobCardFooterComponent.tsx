@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import './JobCardFooterComponent.scss'
 import { getClassesFromJobExecution } from './ClassesFromJobExecution'
@@ -12,7 +12,11 @@ type Props = {
 }
 
 export const JobCardFooterComponent = (props: Props): JSX.Element => {
-    const [executions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions)).reverse())
+    const [executions, setExecutions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions)).reverse())
+
+    useEffect(() => {
+        setExecutions(JSON.parse(JSON.stringify(props.executions)).reverse())
+    }, [props.executions])
 
     const gap = '3px'
     return (

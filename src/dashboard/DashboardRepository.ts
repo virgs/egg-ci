@@ -15,7 +15,7 @@ export class DashboardRepository extends LocalStorageRepository {
         this.persist(TRACKED_PROJECTS_KEY, currentProjects)
     }
 
-    public enableProject(project: TrackedProjectData) {
+    public enableProject(project: TrackedProjectData | ProjectData) {
         const id = `${this.projectIdentifier(project)}`
         let currentProjects = this.loadTrackedProjects() ?? []
         currentProjects = currentProjects?.map((trackedProject) => {
@@ -28,7 +28,7 @@ export class DashboardRepository extends LocalStorageRepository {
         this.persist(TRACKED_PROJECTS_KEY, currentProjects)
     }
 
-    public disableProject(project: TrackedProjectData) {
+    public disableProject(project: TrackedProjectData | ProjectData) {
         const id = `${this.projectIdentifier(project)}`
         let currentProjects = this.loadTrackedProjects() ?? []
         currentProjects = currentProjects?.map((trackedProject) => {
@@ -45,12 +45,12 @@ export class DashboardRepository extends LocalStorageRepository {
         return this.load(TRACKED_PROJECTS_KEY)
     }
 
-    public persistProject(project: ProjectData): void {
+    public persistProject(project: TrackedProjectData | ProjectData): void {
         const key = `${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`
         return this.persist(key, project)
     }
 
-    public loadProject(project: TrackedProjectData): ProjectData | undefined {
+    public loadProject(project: TrackedProjectData | ProjectData): ProjectData | undefined {
         const key = `${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`
         return this.load(key)
     }
