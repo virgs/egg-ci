@@ -72,30 +72,12 @@ export const DashboardsPage = (): JSX.Element => {
 
     return (
         <>
-            <h3>Projects ({projects.reduce((acc, project) => Object.keys(project.workflows).length + acc, 0)})</h3>
-            <div className="row gx-2 py-4 align-items-center">
-                <div className="col-auto">
-                    <label htmlFor="searchLabel" className="visually-hidden"></label>
-                    <input
-                        type="text"
-                        readOnly={true}
-                        className="form-control-plaintext"
-                        id="searchLabel"
-                        value={'Filter'}
-                    />
-                </div>
-                <div className="col">
-                    <label htmlFor="searchInput" className="visually-hidden"></label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="searchInput"
-                        value={filterText}
-                        onChange={(event) => setFilterText(event.target.value)}
-                    />
-                </div>
-                <div className="col-auto">
-                    <FontAwesomeIcon flip="horizontal" icon={faSearch} />
+            <h3>Workflows ({projects.reduce((acc, project) => Object.keys(project.workflows).length + acc, 0)})</h3>
+            <div className="mb-3">
+                <div className="input-group w-100 d-flex align-items-center">
+                    <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">Filter</label>
+                    <input type="text" className="form-control py-0 me-3" id="wokflowSearchLabel" />
+                    <span className="input-group-text"> <FontAwesomeIcon flip="horizontal" icon={faSearch} /></span>
                 </div>
             </div>
             {renderWorkflows()}

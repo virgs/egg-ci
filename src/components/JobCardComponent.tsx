@@ -4,6 +4,7 @@ import { JobCardBodyComponent } from './JobCardBodyComponent'
 import './JobCardComponent.scss'
 import { JobCardFooterComponent } from './JobCardFooterComponent'
 import { JobCardHeaderComponent } from './JobCardHeaderComponent'
+import { jobExecutionProps } from './jobExecutionProps'
 
 export type Props = {
     job: JobContextData
@@ -16,7 +17,7 @@ export const JobCardComponent = (props: Props): JSX.Element => {
 
     return (
         <div className="col">
-            <div className="card h-100">
+            <div className={`card h-100 ${props.job.history[highlightedExecutionIndex].status === 'success' ? '' : `border-${jobExecutionProps(props.job.history[highlightedExecutionIndex]).color}`}`}>
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}

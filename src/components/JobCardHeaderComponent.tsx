@@ -42,32 +42,34 @@ export const JobCardHeaderComponent = (props: Props): JSX.Element => {
     }
 
     const renderInfoButton = () => {
-        if (props.job.type === 'build') {
-            return (
-                <div>
-                    <FontAwesomeIcon
-                        data-bs-toggle="dropdown"
-                        data-bs-auto-close="true"
-                        aria-expanded="false"
-                        style={{ float: 'right', cursor: 'pointer' }}
-                        icon={faBars}
-                    />
-                    <ul className="dropdown-menu">
-                        <li>
-                            <a className="dropdown-item disabled" href="#">
-                                Details
-                            </a>
-                        </li>
-                        <li>
-                            <a className="dropdown-item disabled" href="#">
-                                Hide
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            )
-        }
-        return <></>
+        return (
+            <div>
+                <FontAwesomeIcon
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="true"
+                    aria-expanded="false"
+                    style={{ float: 'right', cursor: 'pointer' }}
+                    icon={faBars}
+                />
+                <ul className="dropdown-menu">
+                    <li>
+                        <a className="dropdown-item disabled" href="#">
+                            Details
+                        </a>
+                    </li>
+                    <li>
+                        <a className="dropdown-item disabled" href="#">
+                            Browse repo at this point
+                        </a>
+                    </li>
+                    <li>
+                        <a className="dropdown-item disabled" href="#">
+                            Compare against previous execution
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        )
     }
 
     return (

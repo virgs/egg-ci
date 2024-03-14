@@ -1,4 +1,4 @@
-import { faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
+import { faCircleChevronLeft, faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { formatDuration } from '../time/Time'
 import './JobCardBodyComponent.scss'
@@ -50,9 +50,12 @@ export const JobCardBodyComponent = (props: Props): JSX.Element => {
                 ></img>
                 {props.job.pipeline.trigger.actor.login}
             </div>
-            <div className="card-details text-body-secondary">
-                <strong>On: </strong>
-                {new Date(props.job.started_at!).toLocaleString()}
+            <div className="card-details text-body-secondary d-flex justify-content-between">
+                <span>
+                    <strong>On: </strong>
+                    {new Date(props.job.started_at!).toLocaleString()}
+                </span>
+                <FontAwesomeIcon style={{ fontSize: '15px', cursor: 'pointer' }} icon={faCircleChevronLeft} />
             </div>
         </div>
     )

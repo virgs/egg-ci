@@ -1,4 +1,4 @@
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faInfo, faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
@@ -93,36 +93,26 @@ export const SettingsPage = (): JSX.Element => {
         <>
             <div>
                 <h3>Token</h3>
-                <div className="row gx-2 py-4">
-                    <div className="col-auto">
-                        <label htmlFor="apiTokenLabel" className="visually-hidden"></label>
-                        <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            id="apiTokenLabel"
-                            value={'API Token'}
-                        />
-                    </div>
-                    <div className="col">
-                        <label htmlFor="apiToken" className="visually-hidden"></label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="apiToken"
-                            value={token}
-                            onChange={(event) => setToken(event.target.value)}
-                        />
-                    </div>
-                    <div className="col-auto">
-                        <button
-                            disabled={token.length === 0}
-                            onClick={refresh}
-                            type="button"
-                            className="btn btn-primary"
-                        >
-                            <FontAwesomeIcon icon={faRightToBracket} />
-                        </button>
+                <div className="input-group mb-3">
+                    <div className="w-100">
+                        <div className="input-group w-100 d-flex align-items-center">
+                            <label htmlFor="circleci-api-token" className="form-label mb-0">
+                                <span>API Token</span>
+                                <a className='ps-1 pe-3'
+                                    href='https://app.circleci.com/settings/user/tokens'
+                                ><FontAwesomeIcon className='align-baseline' style={{ fontSize: 'x-small' }} icon={faInfoCircle} /></a>
+                            </label>
+                            <input type="password" className="form-control py-2"
+                                id="circleci-api-token" />
+                            <button
+                                disabled={token.length === 0}
+                                onClick={refresh}
+                                type="button"
+                                className="btn btn-primary py-2"
+                            >
+                                <FontAwesomeIcon icon={faRightToBracket} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
