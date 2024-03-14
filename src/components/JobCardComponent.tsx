@@ -17,7 +17,9 @@ export const JobCardComponent = (props: Props): JSX.Element => {
 
     return (
         <div className="col">
-            <div className={`card h-100 ${props.job.history[highlightedExecutionIndex].status === 'success' ? '' : `border-${jobExecutionProps(props.job.history[highlightedExecutionIndex]).color}`}`}>
+            <div
+                className={`card h-100 ${props.job.history[highlightedExecutionIndex].status === 'success' ? '' : `border-${jobExecutionProps(props.job.history[highlightedExecutionIndex]).color}`}`}
+            >
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}

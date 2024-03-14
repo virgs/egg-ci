@@ -50,7 +50,8 @@ export class ProjectService {
 
     public async syncProject(project: TrackedProjectData | ProjectData): Promise<ProjectData> {
         const pipelines = await circleCiClient.listProjectPipelines(project, project.defaultBranch)
-        //The idea was to check change by checking if the pipelines have changed
+        console.log(pipelines.next_page_token, pipelines.items.length)
+        //The idea was to check changes in the pipeline by checking if the pipelines' hash have changed
         //Turns out when a job change in a pipeline, the pipeline doesn't changed. :/
         const pipelineHash = await hash(JSON.stringify(pipelines))
 
