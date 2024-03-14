@@ -56,17 +56,18 @@ export const App = (): JSX.Element => {
         const trackedProjects = projectService.loadTrackedProjects().filter((project) => project.enabled)
         for await (let project of trackedProjects) {
             projectService.syncProject(project)
-            await sleep(config.autoSyncInterval / trackedProjects.length)
+            await sleep(config.autoSyncInterval)
         }
     }
 
-    useInterval(() => autoUpdate(), config.autoSyncInterval)
+    useInterval(
+        () => autoUpdate(),
+        config.autoSyncInterval * projectService.loadTrackedProjects().filter((project) => project.enabled).length
+    )
 
     return (
-        <>
-            <div id="app">
-                <RouterProvider router={router}></RouterProvider>
-            </div>
-        </>
+        <div id="app">
+            <RouterProvider router={router}></RouterProvider>
+        </div>
     )
 }
