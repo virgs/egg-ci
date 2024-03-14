@@ -106,7 +106,13 @@ export const SettingsPage = (): JSX.Element => {
                                     />
                                 </a>
                             </label>
-                            <input type="password" className="form-control py-2" id="circleci-api-token" />
+                            <input
+                                type="password"
+                                value={token}
+                                onChange={(event) => setToken(event.target.value)}
+                                className="form-control py-2"
+                                id="circleci-api-token"
+                            />
                             <button
                                 disabled={token.length === 0}
                                 onClick={refresh}
