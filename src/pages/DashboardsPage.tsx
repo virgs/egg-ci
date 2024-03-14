@@ -76,7 +76,7 @@ export const DashboardsPage = (): JSX.Element => {
             <div className="mb-3">
                 <div className="input-group w-100 d-flex align-items-center">
                     <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">Filter</label>
-                    <input type="text" className="form-control py-0 me-3" id="wokflowSearchLabel" />
+                    <input type="text" value={filterText} onChange={event => setFilterText(event.target.value)} className="form-control py-0 me-3" id="wokflowSearchLabel" />
                     <span className="input-group-text"> <FontAwesomeIcon flip="horizontal" icon={faSearch} /></span>
                 </div>
             </div>
