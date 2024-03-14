@@ -41,7 +41,7 @@ export class ProjectService {
     }
 
     public loadTrackedProjects(): TrackedProjectData[] {
-        return this.dashboardRepository.loadTrackedProjects()
+        return this.dashboardRepository.loadTrackedProjects() || []
     }
 
     public loadProject(project: TrackedProjectData | ProjectData): ProjectData | undefined {
