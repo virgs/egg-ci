@@ -40,6 +40,9 @@ export const WorkflowComponent = (props: Props): JSX.Element => {
                             <small className="ms-1 fs-6">(#{props.workflow.latestBuildNumber})</small>
                         </a>
                     </li>
+                    <li className="breadcrumb-item d-flex align-items-center fs-6">
+                        <small>{props.project.defaultBranch}</small>
+                    </li>
                 </ol>
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">

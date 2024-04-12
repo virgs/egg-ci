@@ -37,9 +37,13 @@ export class CircleCiClient {
 
     public async listProjectPipelines(
         project: TrackedProjectData | ProjectData,
-        branch: string
+        branch: string,
+        pageToken?: string
     ): Promise<ListProjectPipelinesReponse> {
-        const url = `${apiV2}/project/${getProjectSlug(project)}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
+        let url = `${apiV2}/project/${getProjectSlug(project)}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
+        if (pageToken) {
+            url += `&page-token=${pageToken}`
+        }
         const response = await fetch(url)
         return await response.json()
     }

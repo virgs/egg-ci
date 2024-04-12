@@ -3,8 +3,9 @@ import { DashboardRepository } from '../dashboard/DashboardRepository'
 import { JobData, ProjectData, TrackedProjectData, WorkflowData } from '../domain-models/models'
 import { emitProjectSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
-import { ListProjectPipelinesReponse } from '../gateway/models/ListProjectPipelinesResponse'
+import { ProjectPipeline } from '../gateway/models/ListProjectPipelinesResponse'
 import { hash } from '../math/math'
+import { sleep } from '../time/Time'
 
 type ProjectWorkflows = {
     [workflowName: string]: WorkflowData
@@ -49,8 +50,8 @@ export class ProjectService {
     }
 
     public async syncProject(project: TrackedProjectData | ProjectData): Promise<ProjectData> {
-        const pipelines = await circleCiClient.listProjectPipelines(project, project.defaultBranch)
-        console.log(pipelines.next_page_token, pipelines.items.length)
+        const pipelines = await this.listProjectPipelines(project)
+        console.log(`${project.reponame} (${project.defaultBranch}) pipelines: ${pipelines.length}`)
         //The idea was to check changes in the pipeline by checking if the pipelines' hash have changed
         //Turns out when a job change in a pipeline, the pipeline doesn't changed. :/
         const pipelineHash = await hash(JSON.stringify(pipelines))
@@ -79,6 +80,18 @@ export class ProjectService {
         emitProjectSynched({ project: result })
         return result
     }
+    private async listProjectPipelines(project: TrackedProjectData | ProjectData): Promise<ProjectPipeline[]> {
+        const pipelines: ProjectPipeline[] = []
+        while (pipelines.length < config.minPipelineNumber) {
+            const listPipelineResult = await circleCiClient.listProjectPipelines(project, project.defaultBranch)
+            pipelines.push(...listPipelineResult.items)
+            if (!listPipelineResult.next_page_token || listPipelineResult.next_page_token.length === 0) {
+                break
+            }
+        }
+        return pipelines
+    }
+
     private removeObsoleteJobs(workflows: ProjectWorkflows): ProjectWorkflows {
         return Object.keys(workflows).reduce((acc, workflowName) => {
             const workflow = workflows[workflowName]
@@ -92,11 +105,11 @@ export class ProjectService {
         }, {} as ProjectWorkflows)
     }
 
-    private async getProjectWorkflows(pipelines: ListProjectPipelinesReponse): Promise<ProjectWorkflows> {
+    private async getProjectWorkflows(pipelines: ProjectPipeline[]): Promise<ProjectWorkflows> {
         const projectJobs: ProjectWorkflows = {}
 
         await Promise.all(
-            pipelines.items.map(async (pipeline) => {
+            pipelines.map(async (pipeline) => {
                 const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
                 await Promise.all(
                     pipelineWorkflows.items
@@ -105,6 +118,7 @@ export class ProjectService {
                                 pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
                         )
                         .map(async (pipelineWorkflow) => {
+                            sleep(config.pipelineWorkflowFetchSleepInMs) //avoid throttling
                             const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
                             await Promise.all(
                                 workflowJobs.items
