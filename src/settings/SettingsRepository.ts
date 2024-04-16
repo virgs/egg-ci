@@ -1,3 +1,4 @@
+import { Config, defaultConfig } from '../config'
 import { LocalStorageRepository } from '../db/LocalStorageRepository'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 
@@ -16,5 +17,13 @@ export class SettingsRepository extends LocalStorageRepository {
 
     public getUserInformation(): UserInformationResponse | undefined {
         return super.load('userInformation')
+    }
+
+    public getConfiguration(): Config {
+        return super.load('configuration') ?? defaultConfig
+    }
+
+    public setConfiguration(configuration: Config) {
+        return this.persist('configuration', configuration)
     }
 }

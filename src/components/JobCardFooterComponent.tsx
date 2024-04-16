@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
+import { ConfigContext } from '../pages/DashboardsPage'
 import './JobCardFooterComponent.scss'
 import { jobExecutionProps } from './jobExecutionProps'
-import { config } from '../config'
-import { JobData } from '../domain-models/models'
 
 type Props = {
     executions: JobData[]
@@ -12,6 +12,8 @@ type Props = {
 }
 
 export const JobCardFooterComponent = (props: Props): JSX.Element => {
+    const configuration = useContext(ConfigContext)!
+
     const [executions, setExecutions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions)).reverse())
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export const JobCardFooterComponent = (props: Props): JSX.Element => {
                         aria-label="Job status"
                         style={{
                             cursor: 'pointer',
-                            width: `calc((100% / ${config.jobHistoryColumnsPerLine}) - ${gap})`,
+                            width: `calc((100% / ${configuration.jobHistoryColumnsPerLine}) - ${gap})`,
                             height: '10px',
                             display: 'inline-flex',
                             marginRight: gap,

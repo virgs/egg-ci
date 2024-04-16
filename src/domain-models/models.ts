@@ -17,7 +17,6 @@ export interface ProjectData {
     username: string
     defaultBranch: string
     ciUrl: string
-    pipelineHash: string
     workflows: {
         [name: string]: WorkflowData
     }

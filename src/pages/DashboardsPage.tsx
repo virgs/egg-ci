@@ -1,17 +1,22 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
 import { ProjectService } from '../project/ProjectService'
 import { ProjectData } from '../domain-models/models'
 import { useProjectSynchedListener } from '../events/Events'
+import { Config } from '../config'
+import { SettingsRepository } from '../settings/SettingsRepository'
 
 const projectService: ProjectService = new ProjectService()
+
+export const ConfigContext = createContext<Config | undefined>(undefined)
 
 export const DashboardsPage = (): JSX.Element => {
     const navigate = useNavigate()
 
+    const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())
     const [projects, setProjects] = useState<ProjectData[]>([])
     const [filterText, setFilterText] = useState<string>('')
 
@@ -72,26 +77,28 @@ export const DashboardsPage = (): JSX.Element => {
 
     return (
         <>
-            <h3>Workflows ({projects.reduce((acc, project) => Object.keys(project.workflows).length + acc, 0)})</h3>
-            <div className="mb-3">
-                <div className="input-group w-100 d-flex align-items-center">
-                    <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">
-                        Filter
-                    </label>
-                    <input
-                        type="text"
-                        value={filterText}
-                        onChange={(event) => setFilterText(event.target.value)}
-                        className="form-control py-0 me-3"
-                        id="wokflowSearchLabel"
-                    />
-                    <span className="input-group-text">
-                        {' '}
-                        <FontAwesomeIcon flip="horizontal" icon={faSearch} />
-                    </span>
+            <ConfigContext.Provider value={configuration}>
+                <h3>Workflows ({projects.reduce((acc, project) => Object.keys(project.workflows).length + acc, 0)})</h3>
+                <div className="mb-3">
+                    <div className="input-group w-100 d-flex align-items-center">
+                        <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">
+                            Filter
+                        </label>
+                        <input
+                            type="text"
+                            value={filterText}
+                            onChange={(event) => setFilterText(event.target.value)}
+                            className="form-control py-0 me-3"
+                            id="wokflowSearchLabel"
+                        />
+                        <span className="input-group-text">
+                            {' '}
+                            <FontAwesomeIcon flip="horizontal" icon={faSearch} />
+                        </span>
+                    </div>
                 </div>
-            </div>
-            {renderWorkflows()}
+                {renderWorkflows()}
+            </ConfigContext.Provider>
         </>
     )
 }

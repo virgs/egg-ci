@@ -10,6 +10,8 @@ import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { useInterval } from '../time/UseInterval'
 import './SettingsPage.css'
+import { ConfigurationComponent } from '../components/ConfigurationsComponent'
+import { Config } from '../config'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
@@ -56,6 +58,10 @@ export const SettingsPage = (): JSX.Element => {
         updateComponentStates()
     }, [])
 
+    const onConfigurationsChange = (configuration: Config) => {
+        settingsRepository.setConfiguration(configuration)
+    }
+
     const refresh = async () => {
         if (token.length > 0) {
             initializeCircleCiClient(token)
@@ -93,7 +99,7 @@ export const SettingsPage = (): JSX.Element => {
         <>
             <div>
                 <h3>Token</h3>
-                <div className="input-group mb-3">
+                <div className="input-group mb-3 px-3">
                     <div className="w-100">
                         <div className="input-group w-100 d-flex align-items-center">
                             <label htmlFor="circleci-api-token" className="form-label mb-0">
@@ -123,6 +129,15 @@ export const SettingsPage = (): JSX.Element => {
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div>
+                <h3>Configurations</h3>
+                <div className="px-3">
+                    <ConfigurationComponent
+                        onChange={onConfigurationsChange}
+                        config={settingsRepository.getConfiguration()}
+                    />
                 </div>
             </div>
             <div>

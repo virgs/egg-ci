@@ -6,7 +6,6 @@ import { SettingsPage } from './pages/SettingsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
 import { RouterProvider, createHashRouter } from 'react-router-dom'
-import { config } from './config'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
 import { sleep } from './time/Time'
@@ -56,13 +55,14 @@ export const App = (): JSX.Element => {
         const trackedProjects = projectService.loadTrackedProjects().filter((project) => project.enabled)
         for await (let project of trackedProjects) {
             projectService.syncProject(project)
-            await sleep(config.autoSyncInterval)
+            await sleep(settingsRepository.getConfiguration().autoSyncInterval)
         }
     }
 
     useInterval(
         () => autoUpdate(),
-        config.autoSyncInterval * projectService.loadTrackedProjects().filter((project) => project.enabled).length
+        settingsRepository.getConfiguration().autoSyncInterval *
+            projectService.loadTrackedProjects().filter((project) => project.enabled).length
     )
 
     return (
