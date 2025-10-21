@@ -37,7 +37,7 @@
     "prettier": "^3.0.3",
     "sass": "^1.71.1",
     "typescript": "^5.2.2",
-    "vite": "^6.3.6"
+    "vite": "^6.4.1"
   },
   "prettier": {
     "trailingComma": "es5",
