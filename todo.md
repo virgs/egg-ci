@@ -9,7 +9,7 @@
 7. [x] Create method in the service that checks if project has data persisted
 8. [x] Fix disable -> enable progress gron project sync
 9. [x] Job action buttons
-10. [ ] Create README file with screenshots and instructions on how to use the extension
+10. [x] Create README file with screenshots and instructions on how to use the extension
 11. [x] Create unit tests
 12. [x] Update dependencies and libraries to latest versions
 13. [x] Check new circle CI API to see if some of the features can be implemented in a better way (https://circleci.com/docs/api/v2/ and https://circleci.com/docs/api/v1/)
