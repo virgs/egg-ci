@@ -70,8 +70,6 @@ export const JobActionButton = (props: Props): ReactElement => {
     return (
         <div
             // type="button"
-            data-bs-toggle="tooltip"
-            data-bs-title={actionProps.tooltip}
             // disabled={actionProps.disabled}
             className="py-1"
             onPointerDown={async () => {
@@ -91,7 +89,12 @@ export const JobActionButton = (props: Props): ReactElement => {
                 color: actionProps.disabled ? 'var(--bs-secondary)' : 'var(--bs-primary)',
             }}
         >
-            <FontAwesomeIcon icon={actionProps.icon}></FontAwesomeIcon>
+            <FontAwesomeIcon
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title={actionProps.tooltip}
+                icon={actionProps.icon}
+            ></FontAwesomeIcon>
         </div>
     )
 }
