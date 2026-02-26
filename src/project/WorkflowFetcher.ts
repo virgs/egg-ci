@@ -46,30 +46,19 @@ export class WorkflowFetcher {
         const pipelines: ProjectPipeline[] = await this.listProjectPipelines()
         const currentJobs: string[] = await this.listCurrentJobs(pipelines)
 
-        await Promise.all(
-            pipelines.map(async (pipeline) => {
-                const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
-                await Promise.all(
-                    pipelineWorkflows.items
-                        .filter(
-                            (pipelineWorkflow) =>
-                                pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
-                        )
-                        .map(async (pipelineWorkflow) => {
-                            await sleep(this.config.pipelineWorkflowFetchSleepInMs) //avoids throttling
-                            const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
-                            await Promise.all(
-                                workflowJobs.items
-                                    .filter((workflowJob) => workflowJob.started_at)
-                                    .filter((workflowJob) => currentJobs.includes(workflowJob.name))
-                                    .map(async (workflowJob) => {
-                                        this.insertJob(workflowJob, pipelineWorkflow, pipeline)
-                                    })
-                            )
-                        })
-                )
-            })
-        )
+        for (const pipeline of pipelines) {
+            const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
+            for (const pipelineWorkflow of pipelineWorkflows.items.filter(
+                (w) => w.name !== SETUP_WORKFLOW && w?.id?.length > 0
+            )) {
+                await sleep(this.config.pipelineWorkflowFetchSleepInMs) //avoids throttling
+                const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
+                workflowJobs.items
+                    .filter((workflowJob) => workflowJob.started_at)
+                    .filter((workflowJob) => currentJobs.includes(workflowJob.name))
+                    .forEach((workflowJob) => this.insertJob(workflowJob, pipelineWorkflow, pipeline))
+            }
+        }
 
         this.sortAndFilterJobs()
 

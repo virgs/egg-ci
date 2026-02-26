@@ -11,7 +11,7 @@ export const defaultConfig: Config = {
     jobExecutionsMaxHistory: 10,
     jobHistoryColumnsPerLine: 5,
     autoSyncInterval: 20 * 1000,
-    minPipelineNumber: 50,
+    minPipelineNumber: 10,
     pipelineWorkflowFetchSleepInMs: 200,
     includeBuildJobs: false,
 }

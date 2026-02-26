@@ -9,7 +9,6 @@ import { ReactElement } from 'react'
 import { RouterProvider, createHashRouter } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
-import { sleep } from './time/Time'
 import { useInterval } from './time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -54,9 +53,8 @@ const projectService = new ProjectService()
 export const App = (): ReactElement => {
     const autoUpdate = async () => {
         const trackedProjects = projectService.loadTrackedProjects().filter((project) => project.enabled)
-        for await (const project of trackedProjects) {
-            projectService.syncProject(project)
-            await sleep(settingsRepository.getConfiguration().autoSyncInterval)
+        for (const project of trackedProjects) {
+            await projectService.syncProject(project)
         }
     }
 
