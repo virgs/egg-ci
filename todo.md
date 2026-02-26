@@ -15,7 +15,7 @@
 13. [x] Update dependencies and libraries to latest versions
 14. [x] Check new circle CI API to see if some of the features can be implemented in a better way (https://circleci.com/docs/api/v2/ and https://circleci.com/docs/api/v1/)
 15. [x] The "Include build jobs" should be set per project. Not global. It should default to true. There should be horizontal bar icon in each project listed in the settings. Once you click it, a menu shows up and there should be an option to check "Include build jobs" for that project. This should be persisted. Also, even projects that have no build on the dashboard should be listed there and show the following message: "This project has no build jobs. Enable "No jobs found. Enable "Include build jobs" to show build jobs on the dashboard."
-16. [ ] Some job titles are too long and the card add "..." at the end. Which is fine. Add the full title on hover using a tooltip.
+16. [x] Some job titles are too long and the card add "..." at the end. Which is fine. Add the full title on hover using a tooltip.
 17. [ ] Improve data persistence and caching to reduce API calls and improve performance
     - [ ] Consider using indexedDB
     - [ ] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored

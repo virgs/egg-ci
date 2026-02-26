@@ -1,4 +1,5 @@
-import { ReactElement } from 'react'
+import { ReactElement, useEffect, useRef } from 'react'
+import { Tooltip } from 'bootstrap'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../domain-models/models'
@@ -28,7 +29,14 @@ const getBadge = (job: WorkflowJob): ReactElement => {
 }
 
 export const JobCardHeaderComponent = (props: Props): ReactElement => {
+    const titleRef = useRef<HTMLHeadingElement>(null)
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
+
+    useEffect(() => {
+        if (titleRef.current) {
+            new Tooltip(titleRef.current, { delay: { show: 500, hide: 100 } })
+        }
+    }, [])
 
     const renderTitle = () => {
         const content = (
@@ -77,7 +85,14 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
         <div className="card-header p-1 pt-2 px-3">
             <div className="row h-100 align-items-center g-0">
                 <div className="col-10">
-                    <h6 className="card-title m-0">{renderTitle()}</h6>
+                    <h6
+                        ref={titleRef}
+                        className="card-title m-0"
+                        data-bs-toggle="tooltip"
+                        data-bs-title={props.job.name}
+                    >
+                        {renderTitle()}
+                    </h6>
                 </div>
                 <div className="col-2">{renderInfoButton()}</div>
                 <div className="w-100 mb-2"></div>
