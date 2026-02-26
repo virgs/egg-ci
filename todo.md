@@ -1,5 +1,15 @@
-# TODO list
+# Agents instructions:
+1. Reason step by step. Think about the problem and how to solve it before writing the code and plan for the long term. Don't just write code without thinking about the problem and how to solve it. Always think about the problem and how to solve it before writing code. Consider even the next steps.
+2. Write code that is clean, maintainable, and well-documented. Follow best practices and coding standards. Write code that is easy to understand and modify in the future. Write code that is modular and reusable. Write code that is efficient and performant. Write code that is secure and handles edge cases. Write code that is tested and has good coverage. Write code that is easy to debug and troubleshoot.
+3. Always consider the user experience and how the user will interact with the extension.
+4. Avoid big refactors. Instead, make small incremental changes that can be easily tested and rolled back if necessary. This will help to ensure that the extension remains stable and functional while new features are being added.
+5. Always keep in mind the long-term vision for the extension and how new features will fit into that vision. Consider how new features will impact the overall user experience and how they will interact with
+6. Avoid big classes and functions. Instead, break down the code into smaller, more manageable pieces that can be easily tested and maintained. This will help to improve the readability and maintainability of the codebase.
+7. Always keep the tests up to date and ensure that they cover all new features and changes to the codebase. This will help to catch any bugs or issues early on and ensure that the extension remains stable and functional.
+8. Since I don't have the best Calude plan, and it keeps running out of tokens: Keep track of what you're doing and what you have done in a separate file (e.g. a TODO list) to avoid losing context and to help you stay organized. This will also help you to keep track of what features have been implemented and what still needs to be done, even if the conversation is interrupted or if you need to take a break.
 
+
+# TODO list
 1. [x] Scroll behavior
 2. [x] Select item in job execution history
 3. [x] Toast event system
@@ -16,12 +26,13 @@
 14. [x] Check new circle CI API to see if some of the features can be implemented in a better way (https://circleci.com/docs/api/v2/ and https://circleci.com/docs/api/v1/)
 15. [x] The "Include build jobs" should be set per project. Not global. It should default to true. There should be horizontal bar icon in each project listed in the settings. Once you click it, a menu shows up and there should be an option to check "Include build jobs" for that project. This should be persisted. Also, even projects that have no build on the dashboard should be listed there and show the following message: "This project has no build jobs. Enable "No jobs found. Enable "Include build jobs" to show build jobs on the dashboard."
 16. [x] Some job titles are too long and the card add "..." at the end. Which is fine. Add the full title on hover using a tooltip.
-17. [ ] Improve data persistence and caching to reduce API calls and improve performance
-    - [ ] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
+17. [x] Improve data persistence and caching to reduce API calls and improve performance
+    - [x] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
     - [ ] Consider using indexedDB
-18. [ ] Be able to hide/unhide selected jobs (in the settings, not on the card, list jobs) and persist that information
-19. ~[ ] Be able to merge workflow data (autosync pipelines)~
-20. ~[ ] Card placeholders~
-21. [ ] Job more options:
-    1.  [ ] Compare against previous execution (https://docs.github.com/en/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits/comparing-commits)
-    2.  [ ] Browse repo at this point: https://github.com/virgs/jsonPlaceholderReplacer/tree/<commit-hash>
+18. [ ] Setup CI/CD (CircleCI) for project to automate testing and deployment processes
+19. [ ] Be able to hide/unhide selected jobs (in the settings, not on the card, list jobs) and persist that information
+20. ~[ ] Be able to merge workflow data (autosync pipelines)~
+21. ~[ ] Card placeholders~
+22. [ ] Job more options:
+    1. [ ] Compare against previous execution (https://docs.github.com/en/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits/comparing-commits)
+    2. [ ] Browse repo at this point: https://github.com/virgs/jsonPlaceholderReplacer/tree/<commit-hash>

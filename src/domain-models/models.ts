@@ -1,6 +1,3 @@
-import { PipelineWorkflow } from '../gateway/models/ListPipelineWorkflowsResponse'
-import { ProjectPipeline } from '../gateway/models/ListProjectPipelinesResponse'
-
 export interface TrackedProjectData {
     enabled: boolean
     vcsType: string
@@ -36,12 +33,33 @@ export type WorkflowData = {
     jobs: JobContextData[]
 }
 
-export type PipelineJobData = ProjectPipeline
-export type WorkflowJobData = PipelineWorkflow
+export type StoredPipelineRef = {
+    updated_at: string
+    trigger: {
+        actor: {
+            login: string
+            avatar_url: string
+        }
+    }
+    vcs?: {
+        origin_repository_url: string
+        revision: string
+        commit?: {
+            subject: string
+            body: string
+        }
+    }
+}
+
+export type StoredWorkflowRef = {
+    id: string
+    pipeline_id: string
+    pipeline_number: number
+}
 
 export type JobData = {
-    workflow: WorkflowJobData
-    pipeline: PipelineJobData
+    workflow: StoredWorkflowRef
+    pipeline: StoredPipelineRef
 
     canceled_by?: string
     dependencies: string[]

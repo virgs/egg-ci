@@ -45,6 +45,7 @@ export class ProjectService {
     }
 
     public async syncProject(project: TrackedProjectData | ProjectData): Promise<ProjectData> {
+        const existingData = this.dashboardRepository.loadProject(project)
         const result: ProjectData = {
             vcsType: project.vcsType,
             reponame: project.reponame,
@@ -53,7 +54,7 @@ export class ProjectService {
             ciUrl: `https://app.circleci.com/pipelines/${project.vcsType}/${project.username}/${project.reponame}`,
             defaultBranch: project.defaultBranch,
             lastSyncedAt: new Date().toISOString(),
-            workflows: await new WorkflowFetcher(project).getProjectWorkflows(),
+            workflows: await new WorkflowFetcher(project, existingData?.workflows).getProjectWorkflows(),
         }
 
         this.dashboardRepository.persistProject(result)
