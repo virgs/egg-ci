@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 type TimerCallback = (...params: any[]) => any
 
 export function useInterval(callback: TimerCallback, delay?: number) {
-    const savedCallback = useRef<TimerCallback>()
+    const savedCallback = useRef<TimerCallback | undefined>(undefined)
 
     // Remember the latest callback.
     useEffect(() => {
@@ -18,7 +18,7 @@ export function useInterval(callback: TimerCallback, delay?: number) {
             }
         }
         if (delay !== undefined) {
-            let id = setInterval(tick, delay)
+            const id = setInterval(tick, delay)
             return () => clearInterval(id)
         }
     }, [delay])

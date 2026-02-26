@@ -1,6 +1,6 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { createContext, useEffect, useState } from 'react'
+import { ReactElement, createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
 import { ProjectService } from '../project/ProjectService'
@@ -13,7 +13,7 @@ const projectService: ProjectService = new ProjectService()
 
 export const ConfigContext = createContext<Config | undefined>(undefined)
 
-export const DashboardsPage = (): JSX.Element => {
+export const DashboardsPage = (): ReactElement => {
     const navigate = useNavigate()
 
     const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())

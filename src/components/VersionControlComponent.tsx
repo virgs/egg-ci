@@ -1,3 +1,4 @@
+import { ReactElement } from 'react'
 import { faGithub, faGitlab, faBitbucket } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { VersionControlType } from '../version-control/VersionControl'
@@ -9,7 +10,7 @@ export class VersionControlComponent {
         this.versionControl = versionControl
     }
 
-    public getIcon(): JSX.Element {
+    public getIcon(): ReactElement {
         switch (this.versionControl) {
             case VersionControlType.GITHUB_APP:
             case VersionControlType.GITHUB:

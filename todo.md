@@ -11,7 +11,7 @@
 9. [x] Job action buttons
 10. [ ] Create README file with screenshots and instructions on how to use the extension
 11. [x] Create unit tests
-12. [ ] Update dependencies and libraries to latest versions
+12. [x] Update dependencies and libraries to latest versions
 13. [ ] Check new circle CI API to see if some of the features can be implemented in a better way (https://circleci.com/docs/api/v2/ and https://circleci.com/docs/api/v1/)
 14. [ ] Improve data persistence and caching to reduce API calls and improve performance
     - [ ] Consider using indexedDB

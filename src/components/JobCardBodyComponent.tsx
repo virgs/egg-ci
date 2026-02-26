@@ -1,3 +1,4 @@
+import { ReactElement } from 'react'
 import { faCircleChevronLeft, faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { formatDuration } from '../time/Time'
@@ -7,7 +8,7 @@ import { JobData } from '../domain-models/models'
 type Props = {
     job: JobData
 }
-export const JobCardBodyComponent = (props: Props): JSX.Element => {
+export const JobCardBodyComponent = (props: Props): ReactElement => {
     const latestExecutionDurationInMinutes = formatDuration(
         new Date(props.job.stopped_at!).getTime() - new Date(props.job.started_at!).getTime()
     )

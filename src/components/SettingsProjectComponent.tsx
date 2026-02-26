@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
@@ -19,7 +19,7 @@ type Props = {
 
 const projectService: ProjectService = new ProjectService()
 
-export const SettingsProjectComponent = (props: Props): JSX.Element => {
+export const SettingsProjectComponent = (props: Props): ReactElement => {
     const [syncing, setSyncing] = useState<boolean>(false)
     const id = getProjectLabel(props.project)
 

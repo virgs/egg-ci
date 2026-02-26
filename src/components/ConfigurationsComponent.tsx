@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { Config } from '../config'
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
     onChange: (config: Config) => void
 }
 
-export const ConfigurationComponent = (props: Props): JSX.Element => {
+export const ConfigurationComponent = (props: Props): ReactElement => {
     const [includeBuildJobsCheckBox, setIncludeBuildJobsCheckBox] = useState<boolean>(props.config.includeBuildJobs)
     const [minPipelineNumber, setMinPipelineNumber] = useState<number>(props.config.minPipelineNumber)
     const [pipelineWorkflowFetchSleepInMs, setPipelineWorkflowFetchSleepInMs] = useState<number>(

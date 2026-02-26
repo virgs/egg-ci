@@ -1,6 +1,6 @@
 import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useContext, useEffect } from 'react'
+import { ReactElement, useContext, useEffect } from 'react'
 import { JobData, ProjectData } from '../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
@@ -50,7 +50,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
 type Props = {
     job: JobData
 }
-export const JobActionButton = (props: Props): JSX.Element => {
+export const JobActionButton = (props: Props): ReactElement => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
 

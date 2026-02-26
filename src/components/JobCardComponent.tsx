@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { JobContextData } from '../domain-models/models'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
 import './JobCardComponent.scss'
@@ -12,7 +12,7 @@ export type Props = {
     projectUrl: string
 }
 
-export const JobCardComponent = (props: Props): JSX.Element => {
+export const JobCardComponent = (props: Props): ReactElement => {
     const [highlightedExecutionIndex, setHighlightedExecutionIndex] = useState<number>(0) // Zero is the index of the most recent one
 
     return (

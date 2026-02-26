@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { ReactElement, createContext, useEffect, useState } from 'react'
 import { JobContextData, ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './JobCardComponent'
@@ -11,7 +11,7 @@ type Props = {
 
 export const ProjectContext = createContext<ProjectData | undefined>(undefined)
 
-export const WorkflowComponent = (props: Props): JSX.Element => {
+export const WorkflowComponent = (props: Props): ReactElement => {
     const [jobs, setJobs] = useState<JobContextData[]>(props.workflow.jobs)
 
     useEffect(() => {

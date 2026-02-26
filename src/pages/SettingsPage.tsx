@@ -1,6 +1,6 @@
 import { faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged, useLoggedOutListener } from '../events/Events'
@@ -22,7 +22,7 @@ const getProjectLabel = (project: TrackedProjectData): string => {
 
 const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
 
-export const SettingsPage = (): JSX.Element => {
+export const SettingsPage = (): ReactElement => {
     const [token, setToken] = useState<string>('')
     const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
     const [projects, setProjects] = useState<TrackedProjectData[]>([])

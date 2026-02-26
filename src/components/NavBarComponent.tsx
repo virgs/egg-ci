@@ -1,6 +1,6 @@
 import { faTrash, faUser, faWrench } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { emitLoggedOut, useUserInformationChangedListener } from '../events/Events'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { SettingsRepository } from '../settings/SettingsRepository'
@@ -9,7 +9,7 @@ import './NavBarComponent.scss'
 import { useNavigate } from 'react-router-dom'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
-export const NavBarComponent = (): JSX.Element => {
+export const NavBarComponent = (): ReactElement => {
     const navigate = useNavigate()
 
     const [userInformation, setUserInformation] = useState<UserInformationResponse | undefined>(

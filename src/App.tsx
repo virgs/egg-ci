@@ -5,6 +5,7 @@ import { DashboardsPage } from './pages/DashboardsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
+import { ReactElement } from 'react'
 import { RouterProvider, createHashRouter } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
@@ -16,7 +17,7 @@ if (settingsRepository.getApiToken()) {
     initializeCircleCiClient(settingsRepository.getApiToken()!)
 }
 
-const AppShell = ({ children }: { children: JSX.Element }): JSX.Element => {
+const AppShell = ({ children }: { children: ReactElement }): ReactElement => {
     return (
         <>
             <NavBarComponent />
@@ -50,10 +51,10 @@ const router = createHashRouter([
 
 const projectService = new ProjectService()
 
-export const App = (): JSX.Element => {
+export const App = (): ReactElement => {
     const autoUpdate = async () => {
         const trackedProjects = projectService.loadTrackedProjects().filter((project) => project.enabled)
-        for await (let project of trackedProjects) {
+        for await (const project of trackedProjects) {
             projectService.syncProject(project)
             await sleep(settingsRepository.getConfiguration().autoSyncInterval)
         }

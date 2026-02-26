@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { JobData } from '../domain-models/models'
 import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import { ConfigContext } from '../pages/DashboardsPage'
@@ -11,7 +11,7 @@ type Props = {
     highligthedExecutionIndex: number
 }
 
-export const JobCardFooterComponent = (props: Props): JSX.Element => {
+export const JobCardFooterComponent = (props: Props): ReactElement => {
     const configuration = useContext(ConfigContext)!
 
     const [executions, setExecutions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions)).reverse())

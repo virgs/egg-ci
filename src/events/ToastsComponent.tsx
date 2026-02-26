@@ -1,15 +1,15 @@
 import * as bootstrap from 'bootstrap'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useNewNotificationListener } from './Events'
 
 type ToastData = {
     shown: boolean
     makkedToRemoval: boolean
-    element: JSX.Element
+    element: ReactElement
 }
 let toastsCounter = 0
 
-export const ToastsComponent = (): JSX.Element => {
+export const ToastsComponent = (): ReactElement => {
     const [toasts, setToasts] = useState<ToastData[]>([])
 
     useNewNotificationListener((payload) => {

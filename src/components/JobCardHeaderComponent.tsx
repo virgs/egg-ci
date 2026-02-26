@@ -1,3 +1,4 @@
+import { ReactElement } from 'react'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../domain-models/models'
@@ -15,7 +16,7 @@ type Props = {
 const getStatusDisplay = (status: string): string => {
     return status.replace('_', ' ').replace('-', ' ')
 }
-const getBadge = (job: WorkflowJob): JSX.Element => {
+const getBadge = (job: WorkflowJob): ReactElement => {
     const classes = jobExecutionProps(job)
     return (
         <FontAwesomeIcon
@@ -26,7 +27,7 @@ const getBadge = (job: WorkflowJob): JSX.Element => {
     )
 }
 
-export const JobCardHeaderComponent = (props: Props): JSX.Element => {
+export const JobCardHeaderComponent = (props: Props): ReactElement => {
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
 
     const renderTitle = () => {
