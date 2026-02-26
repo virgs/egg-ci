@@ -6,7 +6,7 @@ import { SettingsPage } from './pages/SettingsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
 import { ReactElement } from 'react'
-import { RouterProvider, createHashRouter } from 'react-router-dom'
+import { RouterProvider, createHashRouter, useRouteError } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
 import { useInterval } from './time/UseInterval'
@@ -28,6 +28,21 @@ const AppShell = ({ children }: { children: ReactElement }): ReactElement => {
     )
 }
 
+const RouteErrorElement = (): ReactElement => {
+    const error = useRouteError() as Error
+    return (
+        <AppShell>
+            <div className="text-center py-5">
+                <h4 className="mb-2">Something went wrong</h4>
+                {error?.message && <p className="text-muted mb-4">{error.message}</p>}
+                <button className="btn btn-primary" onClick={() => window.location.reload()}>
+                    Reload
+                </button>
+            </div>
+        </AppShell>
+    )
+}
+
 //ghpage doesnt work with browser router: https://stackoverflow.com/a/71985764
 const router = createHashRouter([
     {
@@ -37,6 +52,7 @@ const router = createHashRouter([
                 <SettingsPage />
             </AppShell>
         ),
+        errorElement: <RouteErrorElement />,
     },
     {
         path: '/*',
@@ -45,6 +61,7 @@ const router = createHashRouter([
                 <DashboardsPage />
             </AppShell>
         ),
+        errorElement: <RouteErrorElement />,
     },
 ])
 
