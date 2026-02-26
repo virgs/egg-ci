@@ -14,21 +14,23 @@ export type Props = {
 
 export const JobCardComponent = (props: Props): ReactElement => {
     const [highlightedExecutionIndex, setHighlightedExecutionIndex] = useState<number>(0) // Zero is the index of the most recent one
+    const safeIndex = Math.min(highlightedExecutionIndex, props.job.history.length - 1)
+    const execution = props.job.history[safeIndex]
 
     return (
         <div className="col">
             <div
-                className={`card h-100 ${props.job.history[highlightedExecutionIndex].status === 'success' ? 'border-success' : `border-${jobExecutionProps(props.job.history[highlightedExecutionIndex]).color}`}`}
+                className={`card h-100 ${execution.status === 'success' ? 'border-success' : `border-${jobExecutionProps(execution).color}`}`}
             >
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}
-                    job={props.job.history[highlightedExecutionIndex]}
+                    job={execution}
                 />
-                <JobCardBodyComponent job={props.job.history[highlightedExecutionIndex]} />
+                <JobCardBodyComponent job={execution} />
                 <JobCardFooterComponent
                     executions={props.job.history}
-                    highligthedExecutionIndex={highlightedExecutionIndex}
+                    highligthedExecutionIndex={safeIndex}
                     onHighligthedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
                 />
             </div>
