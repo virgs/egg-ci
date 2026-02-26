@@ -12,7 +12,7 @@ You're using [CircleCI](https://circleci.com). You have pipelines. You have work
 
 > 1. *"When was the last successful execution of each environment deploy job `deploy-production`*
 > 2. *"Which job is currently failing in the `deploy-staging` workflow?"*
-> 3. *How do I promote the last job that reached pre-production approval to production?"*
+> 3. *"How do I promote the last job that reached pre-production approval to production?"*
 
 So you open CircleCI, navigate to your project, pick a branch, scroll through a list of pipeline runs sorted by time, click into one, hope that's the right workflow, find the job, note the status, and realise you need to do this again for the previous run. And the one before that.
 
