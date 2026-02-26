@@ -17,8 +17,8 @@
 15. [x] The "Include build jobs" should be set per project. Not global. It should default to true. There should be horizontal bar icon in each project listed in the settings. Once you click it, a menu shows up and there should be an option to check "Include build jobs" for that project. This should be persisted. Also, even projects that have no build on the dashboard should be listed there and show the following message: "This project has no build jobs. Enable "No jobs found. Enable "Include build jobs" to show build jobs on the dashboard."
 16. [x] Some job titles are too long and the card add "..." at the end. Which is fine. Add the full title on hover using a tooltip.
 17. [ ] Improve data persistence and caching to reduce API calls and improve performance
-    - [ ] Consider using indexedDB
     - [ ] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
+    - [ ] Consider using indexedDB
 18. [ ] Be able to hide/unhide selected jobs (in the settings, not on the card, list jobs) and persist that information
 19. ~[ ] Be able to merge workflow data (autosync pipelines)~
 20. ~[ ] Card placeholders~

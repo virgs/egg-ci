@@ -71,7 +71,7 @@ export const JobActionButton = (props: Props): ReactElement => {
         <div
             // type="button"
             // disabled={actionProps.disabled}
-            className="py-1"
+            className="p-1"
             onPointerDown={async () => {
                 if (actionProps.disabled) {
                     return

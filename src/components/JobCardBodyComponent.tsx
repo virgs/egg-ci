@@ -1,5 +1,5 @@
 import { ReactElement } from 'react'
-import { faCircleChevronLeft, faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
+import {  faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { formatDuration } from '../time/Time'
 import './JobCardBodyComponent.scss'
@@ -56,7 +56,7 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
                     <strong>On: </strong>
                     {new Date(props.job.started_at!).toLocaleString()}
                 </span>
-                <FontAwesomeIcon style={{ fontSize: '15px', cursor: 'pointer' }} icon={faCircleChevronLeft} />
+                {/*<FontAwesomeIcon style={{ fontSize: '15px', cursor: 'pointer' }} icon={faCircleChevronLeft} />*/}
             </div>
         </div>
     )
