@@ -4,6 +4,11 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test-setup.ts'],
+  },
   plugins: [react()],
   base: '/egg-ci',
   build: {
