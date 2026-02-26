@@ -8,26 +8,29 @@
 
 ## The Problem
 
-You're using [CircleCI](https://circleci.com). You have pipelines. You have workflows. You have jobs inside those workflows. And you want to answer one completely reasonable question:
+You're using [CircleCI](https://circleci.com). You have pipelines. You have workflows. You have jobs inside those workflows. And you want to answer a few completely reasonable questions:
 
-> *"When did my `deploy-production` job last run, and did it succeed?"*
+> 1. *"When was the last successful execution of each environment deploy job `deploy-production`*
+> 2. *"Which job is currently failing in the `deploy-staging` workflow?"*
+> 3. *How do I promote the last job that reached pre-production approval to production?"*
 
-So you open CircleCI, navigate to your project, pick a branch, scroll through a list of pipeline runs sorted by time (not by job), click into one, hope that's the right workflow, find the job, note the status, and realise you need to do this again for the previous run. And the one before that.
+So you open CircleCI, navigate to your project, pick a branch, scroll through a list of pipeline runs sorted by time, click into one, hope that's the right workflow, find the job, note the status, and realise you need to do this again for the previous run. And the one before that.
 
-Congratulations. You've just spent 4 minutes doing what should take 4 seconds.
+Congratulations. You've just spent 40 minutes doing what should take 4 seconds.
 
-CircleCI's UI is a great tool for triggering pipelines and getting email notifications. It is a terrible tool for *watching* your CI. It was clearly designed by people who never had to stare at it all day.
+CircleCI's UI is an amazing tool for triggering pipelines and getting email notifications. But I feel the tool failed a bit at *watching* your CI.
 
 ---
 
 ## The Solution
 
-**egg-ci** gives you a single-page dashboard showing all your tracked CircleCI projects, their workflows, each job within them, and a colour-coded execution history — at a glance, all at once, without clicking through four levels of navigation.
+**egg-ci** gives you a single-page dashboard showing all your tracked CircleCI projects, their workflows, each job within them, and a colour-coded execution history — at a glance, all at once, without clicking through multiple levels of navigation.
 
-Inspired by [GoCD](https://www.gocd.org/)'s legendary pipeline dashboard (pictured below), which has been solving this exact problem since 2010 while the rest of the industry was busy reinventing it badly.
+Inspired by [GoCD](https://www.gocd.org/)'s pipeline dashboard (pictured below), which has been solving this exact problem since 2010 while the rest of the industry was busy reinventing it badly.
 
 ![GoCD pipeline dashboard — the gold standard](./goal.png)
-*GoCD knows what a pipeline dashboard should look like. We're just doing our best.*
+
+[//]: # (*GoCD knows what a pipeline dashboard should look like. We're just doing our best.*)
 
 egg-ci brings that same at-a-glance visibility to CircleCI: one card per job, coloured history dots for the last N runs, and no archaeological expedition required to find out when something broke.
 
@@ -80,7 +83,8 @@ That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
 ## Why "egg"?
 
-It's the sound you make when you open CircleCI's native UI and try to find job history.
+It's almost a Circle plus a "something" (get it? Circle + something = egg? No? Just me?).
+And it's a bit of a joke about how long it took to build this thing, which was supposed to be a weekend project but turned into a months-long labour of love. Plus, you know, eggs are delicious.
 
 ---
 

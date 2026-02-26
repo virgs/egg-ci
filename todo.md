@@ -16,7 +16,7 @@
 14. [ ] Improve data persistence and caching to reduce API calls and improve performance
     - [ ] Consider using indexedDB
     - [ ] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
-15. [ ] Be able to hide selected relevant jobs
+15. [ ] Be able to hide/unhide selected jobs (in the settings, not on the card, list jobs) and persist that information
 16. ~[ ] Be able to merge workflow data (autosync pipelines)~
 17. ~[ ] Card placeholders~
 18. [ ] Job more options:
