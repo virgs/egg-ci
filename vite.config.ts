@@ -21,6 +21,14 @@ export default defineConfig({
     outDir: 'docs',
     assetsDir: '.'
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://circleci.com',
+        changeOrigin: true,
+      },
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {

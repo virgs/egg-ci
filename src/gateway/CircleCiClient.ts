@@ -8,8 +8,9 @@ import { ListWorkflowRecentRunsResponse } from './models/ListWorkflowRecentRunsR
 import { UserInformationResponse } from './models/UserInformationResponse'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 
-const apiV1 = 'https://circleci.com/api/v1.1'
-const apiV2 = 'https://circleci.com/api/v2'
+const baseUrl = import.meta.env.DEV ? '' : 'https://circleci.com'
+const apiV1 = `${baseUrl}/api/v1.1`
+const apiV2 = `${baseUrl}/api/v2`
 
 export let circleCiClient: CircleCiClient
 
