@@ -10,6 +10,7 @@ export type Props = {
     job: JobContextData
     jobOrder: number
     projectUrl: string
+    onHideJob: (jobName: string) => void
 }
 
 export const JobCardComponent = (props: Props): ReactElement => {
@@ -26,6 +27,7 @@ export const JobCardComponent = (props: Props): ReactElement => {
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}
                     job={execution}
+                    onHideJob={props.onHideJob}
                 />
                 <JobCardBodyComponent job={execution} />
                 <JobCardFooterComponent

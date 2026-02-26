@@ -82,16 +82,15 @@ export const SettingsPage = (): ReactElement => {
 
     const renderProjects = () => {
         return (
-            <ul className="list-group list-group-flush">
+            <div className="accordion">
                 {(projects || []).map((project, index) => (
-                    <li key={`settings-project-${index}-${project.reponame}`} className="list-group-item p-0 m-0">
-                        <SettingsProjectComponent
-                            onEnablingChange={updateComponentStates}
-                            project={project}
-                        ></SettingsProjectComponent>
-                    </li>
+                    <SettingsProjectComponent
+                        key={`settings-project-${index}-${project.reponame}`}
+                        onEnablingChange={updateComponentStates}
+                        project={project}
+                    ></SettingsProjectComponent>
                 ))}
-            </ul>
+            </div>
         )
     }
 

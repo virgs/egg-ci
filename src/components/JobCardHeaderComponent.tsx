@@ -12,6 +12,7 @@ type Props = {
     job: JobData
     jobOrder: number
     projectUrl: string
+    onHideJob: (jobName: string) => void
 }
 
 const getStatusDisplay = (status: string): string => {
@@ -61,6 +62,14 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     icon={faBars}
                 />
                 <ul className="dropdown-menu">
+                    <li>
+                        <button className="dropdown-item" type="button" onClick={() => props.onHideJob(props.job.name)}>
+                            Hide job
+                        </button>
+                    </li>
+                    <li>
+                        <hr className="dropdown-divider" />
+                    </li>
                     <li>
                         <a className="dropdown-item disabled" href="#">
                             Details

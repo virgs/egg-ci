@@ -30,7 +30,7 @@
     - [x] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
     - [x] Consider using indexedDB (deferred: data slimmed in #17, localStorage limits not a concern for now)
 18. [x] Setup CI/CD (CircleCI) for project to automate testing and deployment processes
-19. [ ] Be able to hide/unhide selected jobs
+19. [x] Be able to hide/unhide selected jobs
     - The project items should become an accordion on the settings page. When you click on a project, it expands and shows the jobs for that project.
     - Each job has a checkbox next to it. If the checkbox is checked, the job is included in the dashboard. 
     - If the checkbox is unchecked, the job is hidden from the dashboard.

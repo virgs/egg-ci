@@ -7,6 +7,7 @@ import { VersionControlComponent } from './VersionControlComponent'
 type Props = {
     workflow: WorkflowData
     project: ProjectData
+    onHideJob: (jobName: string) => void
 }
 
 export const ProjectContext = createContext<ProjectData | undefined>(undefined)
@@ -53,6 +54,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                             job={job}
                             jobOrder={index}
                             projectUrl={projectUrl}
+                            onHideJob={props.onHideJob}
                         ></JobCardComponent>
                     ))}
                 </ProjectContext.Provider>

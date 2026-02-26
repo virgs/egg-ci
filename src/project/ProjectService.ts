@@ -36,6 +36,10 @@ export class ProjectService {
         return this.dashboardRepository.setProjectIncludeBuildJobs(project, value)
     }
 
+    public setProjectHiddenJobs(project: TrackedProjectData, hiddenJobs: string[]): void {
+        return this.dashboardRepository.setProjectHiddenJobs(project, hiddenJobs)
+    }
+
     public loadTrackedProjects(): TrackedProjectData[] {
         return this.dashboardRepository.loadTrackedProjects() || []
     }
