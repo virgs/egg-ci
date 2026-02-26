@@ -30,10 +30,21 @@ export class CircleCiClient {
         this.apiToken = apiToken
     }
 
+    private authHeaders(): HeadersInit {
+        return { 'Circle-Token': this.apiToken }
+    }
+
+    private async getJson<T>(url: string, options?: RequestInit): Promise<T> {
+        const response = await fetch(url, { ...options, headers: { ...this.authHeaders(), ...options?.headers } })
+        if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
+        return response.json()
+    }
+
     public async listUserProjects(): Promise<ListUserProjectsResponse[]> {
         const url = `${apiV1}/projects?circle-token=${this.apiToken}`
         const response = await fetch(url)
-        return await response.json()
+        if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
+        return response.json()
     }
 
     public async listProjectPipelines(
@@ -41,30 +52,25 @@ export class CircleCiClient {
         branch: string,
         pageToken?: string
     ): Promise<ListProjectPipelinesReponse> {
-        let url = `${apiV2}/project/${getProjectSlug(project)}/pipeline?branch=${branch}&circle-token=${this.apiToken}`
+        let url = `${apiV2}/project/${getProjectSlug(project)}/pipeline?branch=${branch}`
         if (pageToken) {
             url += `&page-token=${pageToken}`
         }
-        const response = await fetch(url)
-        return await response.json()
+        return this.getJson(url)
     }
 
     public async listPipelineWorkflows(pipelineId: string): Promise<ListPipelineWorkflowsResponse> {
-        const url = `${apiV2}/pipeline/${pipelineId}/workflow?circle-token=${this.apiToken}`
-        const response = await fetch(url)
-        return await response.json()
+        return this.getJson(`${apiV2}/pipeline/${pipelineId}/workflow`)
     }
 
     public async listWorkflowJobs(workflowId: string): Promise<ListWorkflowJobsResponse> {
-        const url = `${apiV2}/workflow/${workflowId}/job?circle-token=${this.apiToken}`
-        const response = await fetch(url)
-        return await response.json()
+        return this.getJson(`${apiV2}/workflow/${workflowId}/job`)
     }
 
     public async cancelJob(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<boolean> {
-        const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}/cancel?circle-token=${this.apiToken}`
+        const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}/cancel`
         try {
-            await fetch(url, { method: 'POST', mode: 'no-cors' })
+            await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
             return true
         } catch (error) {
             console.log(error)
@@ -73,7 +79,7 @@ export class CircleCiClient {
     }
 
     public async rerunJob(workflowId: string, jobId: string): Promise<boolean> {
-        const url = `${apiV2}/workflow/${workflowId}/rerun?circle-token=${this.apiToken}`
+        const url = `${apiV2}/workflow/${workflowId}/rerun`
         const body = JSON.stringify({
             jobs: [jobId],
         })
@@ -83,6 +89,7 @@ export class CircleCiClient {
                 method: 'POST',
                 body: body,
                 mode: 'no-cors',
+                headers: this.authHeaders(),
             })
             return true
         } catch (error) {
@@ -92,9 +99,9 @@ export class CircleCiClient {
     }
 
     public async approveJob(workflowId: string, jobId: string): Promise<boolean> {
-        const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}?circle-token=${this.apiToken}`
+        const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}`
         try {
-            await fetch(url, { method: 'POST', mode: 'no-cors' })
+            await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
             return true
         } catch (error) {
             console.log(error)
@@ -108,7 +115,8 @@ export class CircleCiClient {
         const url = `${apiV1}/project/${getProjectSlug(project)}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
         console.log(url)
         const response = await fetch(url)
-        return await response.json()
+        if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
+        return response.json()
     }
 
     public async getJobDetails(
@@ -121,7 +129,8 @@ export class CircleCiClient {
                 Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
             },
         })
-        return await response.json()
+        if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
+        return response.json()
     }
 
     public async getJobDetailsV1(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<any> {
@@ -131,13 +140,12 @@ export class CircleCiClient {
                 Authorization: 'Basic ' + btoa(this.apiToken.concat(':')),
             },
         })
-        return await response.json()
+        if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
+        return response.json()
     }
 
     public async getUserInformation(): Promise<UserInformationResponse> {
-        const url = `${apiV2}/me?circle-token=${this.apiToken}`
-        const response = await fetch(url)
-        return await response.json()
+        return this.getJson(`${apiV2}/me`)
     }
 
     //Up to 90 days limitation :(
@@ -147,9 +155,8 @@ export class CircleCiClient {
     ): Promise<ListWorkflowRecentRunsResponse> {
         const endDate = Date.now()
         const startDate = new Date(endDate - NINETY_DAYS)
-        const queryString = `circle-token=${this.apiToken}&start-date=${startDate.toISOString()}&end-date=${new Date(endDate).toISOString()}`
+        const queryString = `start-date=${startDate.toISOString()}&end-date=${new Date(endDate).toISOString()}`
         const url = `${apiV2}/insights/${getProjectSlug(project)}/workflows/${workflowName}?${queryString}`
-        const response = await fetch(url)
-        return await response.json()
+        return this.getJson(url)
     }
 }

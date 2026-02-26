@@ -21,24 +21,24 @@ export class WorkflowFetcher {
     public constructor(project: TrackedProjectData | ProjectData) {
         this.project = project
         this.projectWorkflows = {}
-
         this.config = new SettingsRepository().getConfiguration()
-        console.log(this.config.includeBuildJobs)
     }
 
     private async listProjectPipelines(): Promise<ProjectPipeline[]> {
         const pipelines: ProjectPipeline[] = []
+        let pageToken: string | undefined
         while (pipelines.length < this.config.minPipelineNumber) {
             const listPipelineResult = await circleCiClient.listProjectPipelines(
                 this.project,
-                this.project.defaultBranch
+                this.project.defaultBranch,
+                pageToken
             )
             pipelines.push(...listPipelineResult.items)
-            if (!listPipelineResult.next_page_token || listPipelineResult.next_page_token.length === 0) {
+            if (!listPipelineResult.next_page_token) {
                 break
             }
+            pageToken = listPipelineResult.next_page_token
         }
-        //TODO make sure this is DESC sorted by pipelines[0].updated_at
         return pipelines
     }
 
@@ -120,16 +120,19 @@ export class WorkflowFetcher {
         })
     }
 
-    private async listCurrentJobs(pipelines: ProjectPipeline[]) {
+    private async listCurrentJobs(pipelines: ProjectPipeline[]): Promise<string[]> {
         const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipelines[0].id)
-        const workflowJobs = await circleCiClient.listWorkflowJobs(
-            pipelineWorkflows.items.filter(
-                (pipelineWorkflow) => pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
-            )[0].id
+        const eligibleWorkflows = pipelineWorkflows.items.filter(
+            (pipelineWorkflow) => pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
         )
-        const jobsList: string[] = workflowJobs.items
-            .filter((workflowJob) => this.config.includeBuildJobs || workflowJob.type === 'approval')
-            .map((job) => job.name)
-        return jobsList
+        const jobNameArrays = await Promise.all(
+            eligibleWorkflows.map(async (workflow) => {
+                const workflowJobs = await circleCiClient.listWorkflowJobs(workflow.id)
+                return workflowJobs.items
+                    .filter((workflowJob) => this.config.includeBuildJobs || workflowJob.type === 'approval')
+                    .map((job) => job.name)
+            })
+        )
+        return [...new Set(jobNameArrays.flat())]
     }
 }
