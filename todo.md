@@ -28,9 +28,16 @@
 16. [x] Some job titles are too long and the card add "..." at the end. Which is fine. Add the full title on hover using a tooltip.
 17. [x] Improve data persistence and caching to reduce API calls and improve performance
     - [x] Consider changing data structure to better fit the needs of the extension and reduce the amount of data stored
-    - [ ] Consider using indexedDB
-18. [ ] Setup CI/CD (CircleCI) for project to automate testing and deployment processes
-19. [ ] Be able to hide/unhide selected jobs (in the settings, not on the card, list jobs) and persist that information
+    - [x] Consider using indexedDB (deferred: data slimmed in #17, localStorage limits not a concern for now)
+18. [x] Setup CI/CD (CircleCI) for project to automate testing and deployment processes
+19. [ ] Be able to hide/unhide selected jobs
+    - The project items should become an accordion on the settings page. When you click on a project, it expands and shows the jobs for that project.
+    - Each job has a checkbox next to it. If the checkbox is checked, the job is included in the dashboard. 
+    - If the checkbox is unchecked, the job is hidden from the dashboard.
+    - This information should be persisted so that when the user comes back to the settings page, they can see which jobs are hidden and which are shown.
+    - The "enable/disable build jobs" option should be a shortcut for hiding/showing all build jobs for that project.
+    - If the user unchecks "include build jobs", all build jobs for that project are hidden. If the user checks "include build jobs", all build jobs for that project are shown.
+    - It should also be possible to hide invididual jobs in the dashboard page. There should be a "hide job" option in the job card menu. If the user clicks on it, the job is hidden from the dashboard and the settings page is updated to reflect that change (the checkbox for that job is unchecked).
 20. ~[ ] Be able to merge workflow data (autosync pipelines)~
 21. ~[ ] Card placeholders~
 22. [ ] Job more options:
