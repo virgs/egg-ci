@@ -32,6 +32,10 @@ describe('formatDuration', () => {
         expect(formatDuration(3723000, 3)).toBe('1h 2m 3s')
     })
 
+    it('handles minutes only', () => {
+        expect(formatDuration(20 * 60 * 1000)).toBe('20m')
+    })
+
     it('handles seconds only', () => {
         expect(formatDuration(45000)).toBe('45s')
     })

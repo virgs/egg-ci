@@ -58,8 +58,20 @@ export const DashboardsPage = (): ReactElement => {
 
     const renderWorkflows = () => {
         return projects
-            .map((project) =>
-                Object.keys(project.workflows).map((workflowName, index) => {
+            .map((project) => {
+                const workflowKeys = Object.keys(project.workflows)
+                if (workflowKeys.length === 0) {
+                    return (
+                        <div key={`no-jobs-${project.username}-${project.reponame}`} className="py-4">
+                            <p className="text-muted fst-italic">
+                                No jobs found for <strong>{project.username}/{project.reponame}</strong>. Enable{' '}
+                                <strong>Include build jobs</strong> for this project in Settings to display build jobs
+                                here.
+                            </p>
+                        </div>
+                    )
+                }
+                return workflowKeys.map((workflowName, index) => {
                     const id = `workflow-${workflowName}-${index}-${project.workflows[workflowName].latestId}`
                     return (
                         <div key={id} id={id} className="py-4">
@@ -71,7 +83,7 @@ export const DashboardsPage = (): ReactElement => {
                         </div>
                     )
                 })
-            )
+            })
             .flat()
     }
 

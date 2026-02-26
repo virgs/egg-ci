@@ -53,8 +53,10 @@ export class WorkflowFetcher {
             )) {
                 await sleep(this.config.pipelineWorkflowFetchSleepInMs) //avoids throttling
                 const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
+                const includeBuildJobs = (this.project as TrackedProjectData).includeBuildJobs ?? true
                 workflowJobs.items
                     .filter((workflowJob) => workflowJob.started_at)
+                    .filter((workflowJob) => includeBuildJobs || workflowJob.type !== 'build')
                     .filter((workflowJob) => currentJobs.includes(workflowJob.name))
                     .forEach((workflowJob) => this.insertJob(workflowJob, pipelineWorkflow, pipeline))
             }
@@ -114,11 +116,12 @@ export class WorkflowFetcher {
         const eligibleWorkflows = pipelineWorkflows.items.filter(
             (pipelineWorkflow) => pipelineWorkflow.name !== SETUP_WORKFLOW && pipelineWorkflow?.id?.length > 0
         )
+        const includeBuildJobs = (this.project as TrackedProjectData).includeBuildJobs ?? true
         const jobNameArrays = await Promise.all(
             eligibleWorkflows.map(async (workflow) => {
                 const workflowJobs = await circleCiClient.listWorkflowJobs(workflow.id)
                 return workflowJobs.items
-                    .filter((workflowJob) => this.config.includeBuildJobs || workflowJob.type === 'approval')
+                    .filter((workflowJob) => includeBuildJobs || workflowJob.type === 'approval')
                     .map((job) => job.name)
             })
         )

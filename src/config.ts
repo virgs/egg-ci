@@ -4,7 +4,6 @@ export type Config = {
     autoSyncInterval: number
     minPipelineNumber: number
     pipelineWorkflowFetchSleepInMs: number
-    includeBuildJobs: boolean
 }
 
 export const defaultConfig: Config = {
@@ -13,5 +12,4 @@ export const defaultConfig: Config = {
     autoSyncInterval: 20 * 1000,
     minPipelineNumber: 10,
     pipelineWorkflowFetchSleepInMs: 200,
-    includeBuildJobs: false,
 }

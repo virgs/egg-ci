@@ -32,6 +32,10 @@ export class ProjectService {
         return this.dashboardRepository.disableProject(project)
     }
 
+    public setProjectIncludeBuildJobs(project: TrackedProjectData, value: boolean) {
+        return this.dashboardRepository.setProjectIncludeBuildJobs(project, value)
+    }
+
     public loadTrackedProjects(): TrackedProjectData[] {
         return this.dashboardRepository.loadTrackedProjects() || []
     }
@@ -48,6 +52,7 @@ export class ProjectService {
             vcsUrl: project.vcsUrl,
             ciUrl: `https://app.circleci.com/pipelines/${project.vcsType}/${project.username}/${project.reponame}`,
             defaultBranch: project.defaultBranch,
+            lastSyncedAt: new Date().toISOString(),
             workflows: await new WorkflowFetcher(project).getProjectWorkflows(),
         }
 

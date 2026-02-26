@@ -104,7 +104,12 @@ export const SettingsPage = (): ReactElement => {
                         <div className="input-group w-100 d-flex align-items-center">
                             <label htmlFor="circleci-api-token" className="form-label mb-0">
                                 <span>API Token</span>
-                                <a className="ps-1 pe-3" href="https://app.circleci.com/settings/user/tokens">
+                                <a
+                                    className="ps-1 pe-3"
+                                    href="https://app.circleci.com/settings/user/tokens"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     <FontAwesomeIcon
                                         className="align-baseline"
                                         style={{ fontSize: 'x-small' }}

@@ -84,9 +84,6 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                 <div className="col card-header-details">
                     <a href=""></a>#{props.job.workflow.pipeline_number}
                 </div>
-                <div className="col-4 card-header-details" style={{ textAlign: 'center' }}>
-                    <JobActionButton job={props.job}></JobActionButton>
-                </div>
                 <div className="col card-header-details">
                     <div style={{ float: 'right', display: 'inline-flex', alignItems: 'center' }}>
                         <small className="me-1" style={{ textTransform: 'capitalize' }}>
@@ -94,6 +91,9 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                         </small>
                         <span>{getBadge(props.job)}</span>
                     </div>
+                </div>
+                <div className="col-4 card-header-details" style={{ textAlign: 'right' }}>
+                    <JobActionButton job={props.job}></JobActionButton>
                 </div>
             </div>
         </div>

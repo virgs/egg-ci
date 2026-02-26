@@ -7,7 +7,6 @@ type Props = {
 }
 
 export const ConfigurationComponent = (props: Props): ReactElement => {
-    const [includeBuildJobsCheckBox, setIncludeBuildJobsCheckBox] = useState<boolean>(props.config.includeBuildJobs)
     const [minPipelineNumber, setMinPipelineNumber] = useState<number>(props.config.minPipelineNumber)
     const [pipelineWorkflowFetchSleepInMs, setPipelineWorkflowFetchSleepInMs] = useState<number>(
         props.config.pipelineWorkflowFetchSleepInMs
@@ -21,26 +20,11 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
             autoSyncInterval: props.config.autoSyncInterval,
             minPipelineNumber: minPipelineNumber,
             pipelineWorkflowFetchSleepInMs: pipelineWorkflowFetchSleepInMs,
-            includeBuildJobs: includeBuildJobsCheckBox,
         })
-    }, [includeBuildJobsCheckBox, minPipelineNumber, pipelineWorkflowFetchSleepInMs, jobExecutionsMaxHistory])
+    }, [minPipelineNumber, pipelineWorkflowFetchSleepInMs, jobExecutionsMaxHistory])
 
     return (
         <div className="row">
-            <div className="col-12 pb-2 d-flex align-items-center justify-content-between" style={{}}>
-                <div className="form-check form-switch">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="includeBuildJobsCheckBox"
-                        checked={includeBuildJobsCheckBox}
-                        onChange={() => setIncludeBuildJobsCheckBox(!includeBuildJobsCheckBox)}
-                    />
-                    <label className="px-1 form-check-label" htmlFor="includeBuildJobsCheckBox">
-                        Include build Jobs
-                    </label>
-                </div>
-            </div>
             <div className="col-12 col-lg-6 col-xl-4 d-flex pb-2">
                 <input
                     type="range"

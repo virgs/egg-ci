@@ -8,6 +8,7 @@ export interface TrackedProjectData {
     reponame: string
     username: string
     defaultBranch: string
+    includeBuildJobs?: boolean
 }
 
 export interface ProjectData {
@@ -17,6 +18,7 @@ export interface ProjectData {
     username: string
     defaultBranch: string
     ciUrl: string
+    lastSyncedAt?: string
     workflows: {
         [name: string]: WorkflowData
     }

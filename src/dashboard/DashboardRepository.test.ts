@@ -31,6 +31,14 @@ describe('DashboardRepository', () => {
             expect(tracked[0].reponame).toBe('my-repo')
         })
 
+        it('does not overwrite per-project settings when already tracked', () => {
+            const project = makeProject('my-repo')
+            repo.trackProject(project)
+            repo.setProjectIncludeBuildJobs(project, false)
+            repo.trackProject(project) // second call — must be a no-op
+            expect(repo.loadTrackedProjects().find((p) => p.reponame === 'my-repo')!.includeBuildJobs).toBe(false)
+        })
+
         it('is idempotent — no duplicates on same vcsType/username/reponame', () => {
             const project = makeProject('my-repo')
             repo.trackProject(project)
@@ -78,12 +86,45 @@ describe('DashboardRepository', () => {
         })
     })
 
+    describe('setProjectIncludeBuildJobs', () => {
+        it('sets includeBuildJobs = false for the correct project only', () => {
+            const a = makeProject('repo-a')
+            const b = makeProject('repo-b')
+            repo.trackProject(a)
+            repo.trackProject(b)
+            repo.setProjectIncludeBuildJobs(a, false)
+            const tracked = repo.loadTrackedProjects()
+            expect(tracked.find((p) => p.reponame === 'repo-a')!.includeBuildJobs).toBe(false)
+            expect(tracked.find((p) => p.reponame === 'repo-b')!.includeBuildJobs).toBeUndefined()
+        })
+
+        it('sets includeBuildJobs = true for the correct project only', () => {
+            const a = makeProject('repo-a')
+            const b = makeProject('repo-b')
+            repo.trackProject(a)
+            repo.trackProject(b)
+            repo.setProjectIncludeBuildJobs(a, false)
+            repo.setProjectIncludeBuildJobs(a, true)
+            const tracked = repo.loadTrackedProjects()
+            expect(tracked.find((p) => p.reponame === 'repo-a')!.includeBuildJobs).toBe(true)
+            expect(tracked.find((p) => p.reponame === 'repo-b')!.includeBuildJobs).toBeUndefined()
+        })
+    })
+
     describe('persistProject / loadProject', () => {
         it('round-trips a project', () => {
             const project = makeProject('my-repo')
             repo.persistProject(project)
             const loaded = repo.loadProject(project)
             expect(loaded).toEqual(project)
+        })
+
+        it('overwrites previously persisted data on re-persist', () => {
+            const project = makeProject('my-repo')
+            repo.persistProject(project)
+            const updated = makeProject('my-repo', { defaultBranch: 'develop' })
+            repo.persistProject(updated)
+            expect(repo.loadProject(project)!.defaultBranch).toBe('develop')
         })
 
         it('uses the key format project:vcsType/username/reponame', () => {

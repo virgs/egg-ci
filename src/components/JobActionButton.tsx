@@ -68,13 +68,16 @@ export const JobActionButton = (props: Props): ReactElement => {
     }, [])
 
     return (
-        <button
-            type="button"
+        <div
+            // type="button"
             data-bs-toggle="tooltip"
             data-bs-title={actionProps.tooltip}
-            disabled={actionProps.disabled}
-            className="btn btn-outline-primary py-0 px-2"
+            // disabled={actionProps.disabled}
+            className="py-1"
             onPointerDown={async () => {
+                if (actionProps.disabled) {
+                    return
+                }
                 actionProps.onClick()
                 emitNewNotification({ message: actionProps.message })
                 await sleep(3 * 1000)
@@ -82,9 +85,13 @@ export const JobActionButton = (props: Props): ReactElement => {
                 const synced = await projectService.syncProject(project)
                 emitProjectSynched({ project: synced })
             }}
-            style={{ fontSize: '8px' }}
+            style={{
+                fontSize: '12px',
+                cursor: actionProps.disabled ? 'not-allowed' : 'pointer',
+                color: actionProps.disabled ? 'var(--bs-secondary)' : 'var(--bs-primary)',
+            }}
         >
             <FontAwesomeIcon icon={actionProps.icon}></FontAwesomeIcon>
-        </button>
+        </div>
     )
 }

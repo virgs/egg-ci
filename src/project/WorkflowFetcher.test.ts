@@ -48,7 +48,6 @@ function makeConfig(overrides = {}) {
         autoSyncInterval: 20000,
         minPipelineNumber: 1,
         pipelineWorkflowFetchSleepInMs: 0,
-        includeBuildJobs: false,
         ...overrides,
     }
 }
@@ -120,6 +119,110 @@ describe('WorkflowFetcher', () => {
         mockClient.listPipelineWorkflows.mockResolvedValue({ items: [workflow], next_page_token: '' })
         mockClient.listWorkflowJobs.mockResolvedValue({ items: jobs, next_page_token: '' })
     }
+
+    describe('setup workflow filtering', () => {
+        it('skips workflows named "setup"', async () => {
+            const pipeline = makePipeline('pipe-1', 1)
+            const setupWorkflow = makePipelineWorkflow('wf-setup', 'setup', 1)
+            const ciWorkflow = makePipelineWorkflow('wf-ci', 'ci', 1)
+            const job = makeWorkflowJob('j1', 'test', 'approval')
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipeline], next_page_token: '' })
+            mockClient.listPipelineWorkflows.mockResolvedValue({
+                items: [setupWorkflow, ciWorkflow],
+                next_page_token: '',
+            })
+            mockClient.listWorkflowJobs.mockResolvedValue({ items: [job], next_page_token: '' })
+
+            const result = await new WorkflowFetcher(testProject).getProjectWorkflows()
+
+            expect(result['setup']).toBeUndefined()
+            expect(result['ci']).toBeDefined()
+            expect(result['ci'].jobs[0].name).toBe('test')
+        })
+    })
+
+    describe('started_at filtering', () => {
+        it('excludes jobs that have no started_at from history', async () => {
+            const started = makeWorkflowJob('j1', 'deploy', 'approval')
+            const unstarted: typeof started = { ...makeWorkflowJob('j2', 'pending', 'approval'), started_at: undefined }
+            setupSinglePipeline([started, unstarted])
+
+            const result = await new WorkflowFetcher(testProject).getProjectWorkflows()
+
+            const jobNames = result['build']?.jobs.map((j) => j.name) ?? []
+            expect(jobNames).toContain('deploy')
+            expect(jobNames).not.toContain('pending')
+        })
+    })
+
+    describe('currentJobs filtering', () => {
+        it('excludes jobs whose names do not appear in the most recent pipeline', async () => {
+            const pipe1 = makePipeline('pipe-1', 2)
+            const pipe2 = makePipeline('pipe-2', 1)
+            const wf1 = makePipelineWorkflow('wf-1', 'build', 2)
+            const wf2 = makePipelineWorkflow('wf-2', 'build', 1)
+            const currentJob = makeWorkflowJob('j1', 'current-job', 'approval')
+            const obsoleteJob = makeWorkflowJob('j2', 'obsolete-job', 'approval')
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipe1, pipe2], next_page_token: '' })
+            mockClient.listPipelineWorkflows
+                .mockResolvedValueOnce({ items: [wf1], next_page_token: '' }) // listCurrentJobs uses pipe-1
+                .mockResolvedValueOnce({ items: [wf1], next_page_token: '' }) // main loop pipe-1
+                .mockResolvedValueOnce({ items: [wf2], next_page_token: '' }) // main loop pipe-2
+            mockClient.listWorkflowJobs
+                .mockResolvedValueOnce({ items: [currentJob], next_page_token: '' }) // listCurrentJobs
+                .mockResolvedValueOnce({ items: [currentJob], next_page_token: '' }) // main loop pipe-1
+                .mockResolvedValueOnce({ items: [obsoleteJob], next_page_token: '' }) // main loop pipe-2
+
+            const result = await new WorkflowFetcher(testProject).getProjectWorkflows()
+
+            const jobNames = result['build']?.jobs.map((j) => j.name) ?? []
+            expect(jobNames).toContain('current-job')
+            expect(jobNames).not.toContain('obsolete-job')
+        })
+    })
+
+    describe('pipeline pagination', () => {
+        it('fetches additional pages until minPipelineNumber is satisfied', async () => {
+            MockSettingsRepository.mockImplementation(function () {
+                return { getConfiguration: vi.fn().mockReturnValue(makeConfig({ minPipelineNumber: 2 })) }
+            })
+
+            const pipe1 = makePipeline('pipe-1', 1)
+            const pipe2 = makePipeline('pipe-2', 2)
+            const wf = makePipelineWorkflow('wf-1', 'build', 1)
+            const job = makeWorkflowJob('j1', 'deploy', 'approval')
+
+            mockClient.listProjectPipelines
+                .mockResolvedValueOnce({ items: [pipe1], next_page_token: 'page2' })
+                .mockResolvedValueOnce({ items: [pipe2], next_page_token: '' })
+            mockClient.listPipelineWorkflows.mockResolvedValue({ items: [wf], next_page_token: '' })
+            mockClient.listWorkflowJobs.mockResolvedValue({ items: [job], next_page_token: '' })
+
+            await new WorkflowFetcher(testProject).getProjectWorkflows()
+
+            expect(mockClient.listProjectPipelines).toHaveBeenCalledTimes(2)
+        })
+
+        it('stops fetching pages when next_page_token is absent even if below minPipelineNumber', async () => {
+            MockSettingsRepository.mockImplementation(function () {
+                return { getConfiguration: vi.fn().mockReturnValue(makeConfig({ minPipelineNumber: 10 })) }
+            })
+
+            const pipe1 = makePipeline('pipe-1', 1)
+            const wf = makePipelineWorkflow('wf-1', 'build', 1)
+            const job = makeWorkflowJob('j1', 'deploy', 'approval')
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipe1], next_page_token: '' })
+            mockClient.listPipelineWorkflows.mockResolvedValue({ items: [wf], next_page_token: '' })
+            mockClient.listWorkflowJobs.mockResolvedValue({ items: [job], next_page_token: '' })
+
+            await new WorkflowFetcher(testProject).getProjectWorkflows()
+
+            expect(mockClient.listProjectPipelines).toHaveBeenCalledTimes(1)
+        })
+    })
 
     describe('insertJob — new workflow created when first seen', () => {
         it('creates a new workflow entry with the job', async () => {
@@ -276,7 +379,7 @@ describe('WorkflowFetcher', () => {
             // Both have started_at so main loop won't filter them out
             setupSinglePipeline([buildJob, approvalJob])
 
-            const fetcher = new WorkflowFetcher(testProject)
+            const fetcher = new WorkflowFetcher({ ...testProject, includeBuildJobs: false })
             const result = await fetcher.getProjectWorkflows()
 
             const jobNames = result['build']?.jobs.map((j) => j.name) ?? []
@@ -285,15 +388,24 @@ describe('WorkflowFetcher', () => {
         })
 
         it('when includeBuildJobs=true, both build and approval jobs are included', async () => {
-            MockSettingsRepository.mockImplementation(function () {
-                return { getConfiguration: vi.fn().mockReturnValue(makeConfig({ includeBuildJobs: true })) }
-            })
-
             const buildJob = makeWorkflowJob('j-build', 'ci-build', 'build')
             const approvalJob = makeWorkflowJob('j-approval', 'approve-deploy', 'approval')
             setupSinglePipeline([buildJob, approvalJob])
 
-            const fetcher = new WorkflowFetcher(testProject)
+            const fetcher = new WorkflowFetcher({ ...testProject, includeBuildJobs: true })
+            const result = await fetcher.getProjectWorkflows()
+
+            const jobNames = result['build']?.jobs.map((j) => j.name) ?? []
+            expect(jobNames).toContain('ci-build')
+            expect(jobNames).toContain('approve-deploy')
+        })
+
+        it('when includeBuildJobs is unset, defaults to true and includes build jobs', async () => {
+            const buildJob = makeWorkflowJob('j-build', 'ci-build', 'build')
+            const approvalJob = makeWorkflowJob('j-approval', 'approve-deploy', 'approval')
+            setupSinglePipeline([buildJob, approvalJob])
+
+            const fetcher = new WorkflowFetcher(testProject) // no includeBuildJobs set
             const result = await fetcher.getProjectWorkflows()
 
             const jobNames = result['build']?.jobs.map((j) => j.name) ?? []

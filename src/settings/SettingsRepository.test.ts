@@ -15,6 +15,12 @@ describe('SettingsRepository', () => {
         expect(repo.getApiToken()).toBe('my-secret-token')
     })
 
+    it('setApiToken overwrites a previously stored token', () => {
+        repo.setApiToken('old-token')
+        repo.setApiToken('new-token')
+        expect(repo.getApiToken()).toBe('new-token')
+    })
+
     it('getApiToken returns undefined when not set', () => {
         expect(repo.getApiToken()).toBeUndefined()
     })
@@ -34,8 +40,14 @@ describe('SettingsRepository', () => {
     })
 
     it('setConfiguration / getConfiguration round-trip', () => {
-        const custom = { ...defaultConfig, jobExecutionsMaxHistory: 5, includeBuildJobs: true }
+        const custom = { ...defaultConfig, jobExecutionsMaxHistory: 5 }
         repo.setConfiguration(custom)
         expect(repo.getConfiguration()).toEqual(custom)
+    })
+
+    it('setConfiguration overwrites a previously stored configuration', () => {
+        repo.setConfiguration({ ...defaultConfig, minPipelineNumber: 50 })
+        repo.setConfiguration({ ...defaultConfig, minPipelineNumber: 100 })
+        expect(repo.getConfiguration().minPipelineNumber).toBe(100)
     })
 })
