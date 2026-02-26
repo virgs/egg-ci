@@ -1,4 +1,5 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { useRelativeTime } from '../time/UseRelativeTime'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
@@ -7,7 +8,6 @@ import { VersionControlComponent } from './VersionControlComponent'
 import { faBars, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
-import { formatDuration } from '../time/Time'
 
 const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
@@ -35,18 +35,16 @@ type Props = {
 const projectService: ProjectService = new ProjectService()
 
 export const SettingsProjectComponent = (props: Props): ReactElement => {
-    const [syncing, setSyncing] = useState<boolean>(false)
+    const initialData = projectService.loadProject(props.project)
+    const [syncing, setSyncing] = useState<boolean>(props.project.enabled && !initialData)
     const [includeBuildJobs, setIncludeBuildJobs] = useState<boolean>(props.project.includeBuildJobs ?? true)
     const [hiddenJobs, setHiddenJobs] = useState<string[]>(props.project.hiddenJobs ?? [])
-    const [lastSyncedAt, setLastSyncedAt] = useState<string | undefined>(
-        projectService.loadProject(props.project)?.lastSyncedAt
-    )
-    const [projectData, setProjectData] = useState<ProjectData | undefined>(
-        projectService.loadProject(props.project) ?? undefined
-    )
+    const [lastSyncedAt, setLastSyncedAt] = useState<string | undefined>(initialData?.lastSyncedAt)
+    const [projectData, setProjectData] = useState<ProjectData | undefined>(initialData)
+    const relativeTime = useRelativeTime(lastSyncedAt)
     const id = getProjectLabel(props.project)
 
-    const updateSyncing = () => {
+    const updateSyncing = useCallback(() => {
         const loaded = projectService.loadProject(props.project)
         setSyncing(props.project.enabled && !loaded)
         if (loaded?.lastSyncedAt) {
@@ -55,10 +53,9 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         if (loaded) {
             setProjectData(loaded)
         }
-    }
+    }, [props.project])
 
     useEffect(() => {
-        updateSyncing()
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
         Array.from(tooltipTriggerList).map(
             (tooltipTriggerEl) =>
@@ -130,13 +127,6 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         setHiddenJobs(newHidden)
     }
 
-    const formatLastSyncedAt = (): string | undefined => {
-        if (!lastSyncedAt) return undefined
-        const ms = Date.now() - new Date(lastSyncedAt).getTime()
-        const formatted = formatDuration(ms, 1)
-        return formatted ? `${formatted} ago` : 'just now'
-    }
-
     const renderMenu = () => {
         if (syncing) {
             return (
@@ -146,7 +136,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
             )
         }
 
-        const lastSyncedLabel = formatLastSyncedAt()
+        const lastSyncedLabel = relativeTime
         const isDisabled = !props.project.enabled
 
         return (

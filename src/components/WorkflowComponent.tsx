@@ -1,5 +1,5 @@
-import { ReactElement, createContext, useEffect, useState } from 'react'
-import { JobContextData, ProjectData, WorkflowData } from '../domain-models/models'
+import { ReactElement } from 'react'
+import { ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
@@ -10,14 +10,7 @@ type Props = {
     onHideJob: (jobName: string) => void
 }
 
-export const ProjectContext = createContext<ProjectData | undefined>(undefined)
-
 export const WorkflowComponent = (props: Props): ReactElement => {
-    const [jobs, setJobs] = useState<JobContextData[]>(props.workflow.jobs)
-
-    useEffect(() => {
-        setJobs(props.workflow.jobs)
-    }, [props.workflow])
 
     const versionControl = mapVersionControlFromString(props.project.vcsType)
     const versionControlComponent = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
@@ -47,17 +40,15 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 </ol>
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">
-                <ProjectContext.Provider value={props.project}>
-                    {jobs.map((job, index) => (
-                        <JobCardComponent
-                            key={`${props.workflow.latestId}.${index}`}
-                            job={job}
-                            jobOrder={index}
-                            projectUrl={projectUrl}
-                            onHideJob={props.onHideJob}
-                        ></JobCardComponent>
-                    ))}
-                </ProjectContext.Provider>
+                {props.workflow.jobs.map((job, index) => (
+                    <JobCardComponent
+                        key={`${props.workflow.latestId}.${index}`}
+                        job={job}
+                        jobOrder={index}
+                        projectUrl={projectUrl}
+                        onHideJob={props.onHideJob}
+                    ></JobCardComponent>
+                ))}
             </div>
         </>
     )

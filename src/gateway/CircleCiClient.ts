@@ -133,7 +133,7 @@ export class CircleCiClient {
         return response.json()
     }
 
-    public async getJobDetailsV1(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<any> {
+    public async getJobDetailsV1(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<unknown> {
         const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}`
         const response = await fetch(url, {
             headers: {

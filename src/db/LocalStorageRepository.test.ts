@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { LocalStorageRepository } from './LocalStorageRepository'
 
 class TestRepository extends LocalStorageRepository {
-    persistPublic(key: string, data: any) {
+    persistPublic(key: string, data: unknown) {
         return this.persist(key, data)
     }
     loadPublic(key: string) {

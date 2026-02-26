@@ -146,11 +146,12 @@ export class WorkflowFetcher {
                 workflow.latestBuildNumber = pipelineWorkflow.pipeline_number
                 workflow.latestId = pipelineWorkflow.id
             }
-            workflow.jobs.find((item) => item.name === workflowJob.name)?.history.push(jobData) ??
-                workflow.jobs.push({
-                    name: workflowJob.name,
-                    history: [jobData],
-                })
+            const existingJob = workflow.jobs.find((item) => item.name === workflowJob.name)
+            if (existingJob) {
+                existingJob.history.push(jobData)
+            } else {
+                workflow.jobs.push({ name: workflowJob.name, history: [jobData] })
+            }
         } else {
             this.projectWorkflows[workflowName] = {
                 name: workflowName,

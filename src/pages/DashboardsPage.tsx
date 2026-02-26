@@ -1,6 +1,6 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, createContext, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
 import { ProjectService } from '../project/ProjectService'
@@ -8,22 +8,31 @@ import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { useProjectSynchedListener } from '../events/Events'
 import { Config } from '../config'
 import { SettingsRepository } from '../settings/SettingsRepository'
+import { ConfigContext } from '../contexts/DashboardContext'
 
 const projectService: ProjectService = new ProjectService()
 
-export const ConfigContext = createContext<Config | undefined>(undefined)
-
 type ProjectPair = { tracked: TrackedProjectData; data: ProjectData }
+
+const computeProjectPairs = (filterText: string): ProjectPair[] =>
+    (projectService.loadTrackedProjects() || [])
+        .filter((t) => t.enabled)
+        .map((t) => ({ tracked: t, data: projectService.loadProject(t) }))
+        .filter(({ data }) => data !== undefined)
+        .map(({ tracked, data }) => ({ tracked, data: data as ProjectData }))
+        .filter(({ data }) =>
+            Object.keys(data.workflows).join().concat(data.reponame).concat(data.username).includes(filterText)
+        )
 
 export const DashboardsPage = (): ReactElement => {
     const navigate = useNavigate()
 
     const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())
-    const [projectPairs, setProjectPairs] = useState<ProjectPair[]>([])
+    const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
     const [filterText, setFilterText] = useState<string>('')
 
     useProjectSynchedListener(() => {
-        loadDashboards()
+        setProjectPairs(computeProjectPairs(filterText))
     })
 
     useEffect(() => {
@@ -33,36 +42,17 @@ export const DashboardsPage = (): ReactElement => {
         if (enabledProjects.length === 0) {
             navigate(`../settings`, { relative: 'route' })
         }
-    }, [])
+    }, [navigate])
 
-    useEffect(() => {
-        loadDashboards()
-    }, [filterText])
-
-    const loadDashboards = () => {
-        const trackedProjects = projectService.loadTrackedProjects()
-        const pairs = (trackedProjects || [])
-            .filter((trackedProject) => trackedProject.enabled)
-            .map((trackedProject) => ({ tracked: trackedProject, data: projectService.loadProject(trackedProject) }))
-            .filter(({ data }) => data !== undefined)
-            .map(({ tracked, data }) => ({ tracked, data: data as ProjectData }))
-            .filter(({ data }) =>
-                Object.keys(data.workflows)
-                    .join()
-                    .concat(data.reponame)
-                    .concat(data.username)
-                    .includes(filterText)
-            )
-        setProjectPairs(pairs)
-
-        return pairs
+    const handleFilterChange = (text: string) => {
+        setFilterText(text)
+        setProjectPairs(computeProjectPairs(text))
     }
 
     const handleHideJob = (tracked: TrackedProjectData, jobName: string) => {
-        const current = tracked.hiddenJobs ?? []
-        const newHidden = [...new Set([...current, jobName])]
+        const newHidden = [...new Set([...(tracked.hiddenJobs ?? []), jobName])]
         projectService.setProjectHiddenJobs(tracked, newHidden)
-        loadDashboards()
+        setProjectPairs(computeProjectPairs(filterText))
     }
 
     const renderWorkflows = () => {
@@ -115,7 +105,7 @@ export const DashboardsPage = (): ReactElement => {
                         <input
                             type="text"
                             value={filterText}
-                            onChange={(event) => setFilterText(event.target.value)}
+                            onChange={(event) => handleFilterChange(event.target.value)}
                             className="form-control py-0 me-3"
                             id="wokflowSearchLabel"
                         />

@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { Config } from '../config'
 
 type Props = {
@@ -13,15 +13,16 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
     )
     const [jobExecutionsMaxHistory, setJobExecutionsMaxHistory] = useState<number>(props.config.jobExecutionsMaxHistory)
 
-    useEffect(() => {
+    const notify = (overrides: Partial<Config>) => {
         props.onChange({
-            jobExecutionsMaxHistory: jobExecutionsMaxHistory,
+            jobExecutionsMaxHistory,
             jobHistoryColumnsPerLine: props.config.jobHistoryColumnsPerLine,
             autoSyncInterval: props.config.autoSyncInterval,
-            minPipelineNumber: minPipelineNumber,
-            pipelineWorkflowFetchSleepInMs: pipelineWorkflowFetchSleepInMs,
+            minPipelineNumber,
+            pipelineWorkflowFetchSleepInMs,
+            ...overrides,
         })
-    }, [minPipelineNumber, pipelineWorkflowFetchSleepInMs, jobExecutionsMaxHistory])
+    }
 
     return (
         <div className="row">
@@ -34,7 +35,11 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
                     step="10"
                     id="minPipelineNumber"
                     value={minPipelineNumber}
-                    onChange={(event) => setMinPipelineNumber(parseInt(event.target.value))}
+                    onChange={(event) => {
+                        const value = parseInt(event.target.value)
+                        setMinPipelineNumber(value)
+                        notify({ minPipelineNumber: value })
+                    }}
                 />
                 <label className="form-label w-100 ps-2" htmlFor="minPipelineNumber">
                     Minimum pipelines to retrieve: {minPipelineNumber}
@@ -49,7 +54,11 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
                     step="10"
                     id="pipelineWorkflowFetchSleepInMs"
                     value={pipelineWorkflowFetchSleepInMs}
-                    onChange={(event) => setPipelineWorkflowFetchSleepInMs(parseInt(event.target.value))}
+                    onChange={(event) => {
+                        const value = parseInt(event.target.value)
+                        setPipelineWorkflowFetchSleepInMs(value)
+                        notify({ pipelineWorkflowFetchSleepInMs: value })
+                    }}
                 />
                 <label className="form-label w-100 ps-2" htmlFor="pipelineWorkflowFetchSleepInMs">
                     Pipeline fetch interval: {pipelineWorkflowFetchSleepInMs}ms
@@ -64,7 +73,11 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
                     step="5"
                     id="jobExecutionsMaxHistory"
                     value={jobExecutionsMaxHistory}
-                    onChange={(event) => setJobExecutionsMaxHistory(parseInt(event.target.value))}
+                    onChange={(event) => {
+                        const value = parseInt(event.target.value)
+                        setJobExecutionsMaxHistory(value)
+                        notify({ jobExecutionsMaxHistory: value })
+                    }}
                 />
                 <label className="form-label w-100 ps-2" htmlFor="jobExecutionsMaxHistory">
                     Jobs Max History: {jobExecutionsMaxHistory}

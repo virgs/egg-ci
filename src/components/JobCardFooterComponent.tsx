@@ -1,7 +1,6 @@
-import { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useMemo } from 'react'
 import { JobData } from '../domain-models/models'
-import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
-import { ConfigContext } from '../pages/DashboardsPage'
+import { ConfigContext } from '../contexts/DashboardContext'
 import './JobCardFooterComponent.scss'
 import { jobExecutionProps } from './jobExecutionProps'
 
@@ -14,11 +13,7 @@ type Props = {
 export const JobCardFooterComponent = (props: Props): ReactElement => {
     const configuration = useContext(ConfigContext)!
 
-    const [executions, setExecutions] = useState<WorkflowJob[]>(JSON.parse(JSON.stringify(props.executions)).reverse())
-
-    useEffect(() => {
-        setExecutions(JSON.parse(JSON.stringify(props.executions)).reverse())
-    }, [props.executions])
+    const executions = useMemo(() => [...props.executions].reverse(), [props.executions])
 
     const gap = '3px'
     return (

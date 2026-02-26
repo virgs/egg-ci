@@ -18,7 +18,7 @@ type RecentJob = {
         job_id: string
     }
     build_num: number
-    messages: any[]
+    messages: unknown[]
     start_time: string
     stop_time: string
     build_time_millis: number

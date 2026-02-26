@@ -1,6 +1,6 @@
 import { faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged, useLoggedOutListener } from '../events/Events'
@@ -23,9 +23,11 @@ const getProjectLabel = (project: TrackedProjectData): string => {
 const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
 
 export const SettingsPage = (): ReactElement => {
-    const [token, setToken] = useState<string>('')
-    const [_, setUserInformation] = useState<UserInformationResponse | undefined>()
-    const [projects, setProjects] = useState<TrackedProjectData[]>([])
+    const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
+    const [, setUserInformation] = useState<UserInformationResponse | undefined>()
+    const [projects, setProjects] = useState<TrackedProjectData[]>(
+        () => projectService.loadTrackedProjects()?.sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b))) ?? []
+    )
 
     useLoggedOutListener(() => {
         setToken('')
@@ -50,18 +52,6 @@ export const SettingsPage = (): ReactElement => {
         }
     }
 
-    useInterval(() => {
-        refresh()
-    }, AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS)
-
-    useEffect(() => {
-        updateComponentStates()
-    }, [])
-
-    const onConfigurationsChange = (configuration: Config) => {
-        settingsRepository.setConfiguration(configuration)
-    }
-
     const refresh = async () => {
         if (token.length > 0) {
             initializeCircleCiClient(token)
@@ -74,10 +64,18 @@ export const SettingsPage = (): ReactElement => {
                 settingsRepository.setUserInformation(newUserInformation)
                 userProjects.forEach((project) => projectService.trackProject(project))
                 updateComponentStates()
-            } catch (error) {
+            } catch {
                 emitNewNotification({ message: `Invalid token` })
             }
         }
+    }
+
+    useInterval(() => {
+        refresh()
+    }, AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS)
+
+    const onConfigurationsChange = (configuration: Config) => {
+        settingsRepository.setConfiguration(configuration)
     }
 
     const renderProjects = () => {

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-type TimerCallback = (...params: any[]) => any
+type TimerCallback = () => void
 
 export function useInterval(callback: TimerCallback, delay?: number) {
     const savedCallback = useRef<TimerCallback | undefined>(undefined)
