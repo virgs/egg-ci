@@ -3,6 +3,7 @@ import { ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
+import { ProjectContext } from '../contexts/ProjectContext'
 
 type Props = {
     workflow: WorkflowData
@@ -40,15 +41,17 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 </ol>
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-4">
-                {props.workflow.jobs.map((job, index) => (
-                    <JobCardComponent
-                        key={`${props.workflow.latestId}.${index}`}
-                        job={job}
-                        jobOrder={index}
-                        projectUrl={projectUrl}
-                        onHideJob={props.onHideJob}
-                    ></JobCardComponent>
-                ))}
+                <ProjectContext.Provider value={props.project}>
+                    {props.workflow.jobs.map((job, index) => (
+                        <JobCardComponent
+                            key={`${props.workflow.latestId}.${index}`}
+                            job={job}
+                            jobOrder={index}
+                            projectUrl={projectUrl}
+                            onHideJob={props.onHideJob}
+                        ></JobCardComponent>
+                    ))}
+                </ProjectContext.Provider>
             </div>
         </>
     )

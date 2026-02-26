@@ -6,7 +6,7 @@ import { emitNewNotification, emitProjectSynched } from '../events/Events'
 import { circleCiClient } from '../gateway/CircleCiClient'
 import { ProjectService } from '../project/ProjectService'
 import { sleep } from '../time/Time'
-import { ProjectContext } from './WorkflowComponent'
+import { ProjectContext } from '../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
 
 type ActionButtonProps = {
