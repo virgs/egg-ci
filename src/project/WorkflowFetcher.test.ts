@@ -25,7 +25,7 @@ import type { PipelineWorkflow } from '../gateway/models/ListPipelineWorkflowsRe
 import type { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
 import type { TrackedProjectData } from '../domain-models/models'
 
-const mockClient = CircleCiModule.circleCiClient as {
+const mockClient = CircleCiModule.circleCiClient as unknown as {
     listProjectPipelines: ReturnType<typeof vi.fn>
     listPipelineWorkflows: ReturnType<typeof vi.fn>
     listWorkflowJobs: ReturnType<typeof vi.fn>
