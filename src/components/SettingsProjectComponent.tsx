@@ -296,25 +296,22 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                 >
                     <FontAwesomeIcon icon={faGripVertical} className="text-muted" />
                 </div>
-                <div className="form-check form-switch mb-0 flex-grow-1" onClick={(e) => e.stopPropagation()}>
+                <div className="form-check form-switch mb-0">
                     <input
                         className="form-check-input"
                         type="checkbox"
                         id={id}
                         checked={props.project.enabled}
                         onChange={() => onSwitchChange()}
+                        onClick={(e) => e.stopPropagation()}
                     />
-                    <label
-                        className="form-check-label"
-                        htmlFor={id}
-                        onClick={() => setIsExpanded((prev) => !prev)}
-                    >
-                        <span className="mx-2">{renderVersionControlComponent()}</span>
-                        <span>
-                            {props.project.username}/{props.project.reponame}
-                        </span>
-                    </label>
                 </div>
+                <label className="form-check-label flex-grow-1">
+                    <span className="mx-2">{renderVersionControlComponent()}</span>
+                    <span>
+                        {props.project.username}/{props.project.reponame}
+                    </span>
+                </label>
                 <div onClick={(e) => e.stopPropagation()}>
                     {renderMenu()}
                 </div>
