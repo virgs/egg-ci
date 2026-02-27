@@ -39,14 +39,15 @@ export const SettingsPage = (): ReactElement => {
         if (tokenInfoRef.current) {
             new Tooltip(tokenInfoRef.current, {
                 html: true,
+                customClass: 'tooltip-wide',
                 title: [
-                    '<strong>CircleCI Personal API Token</strong>',
+                    '<h4><strong>CircleCI Personal API Token</strong></h4><',
                     '<ol class="mb-1 ps-3">',
                     '<li>Click this icon to open CircleCI token settings</li>',
                     '<li>Click <em>Create New Token</em></li>',
                     '<li>Copy and paste the token here</li>',
                     '</ol>',
-                    '<small class="text-muted">Stored locally in your browser only — never shared.</small>',
+                    '<small class="text-muted text-info-emphasis">Stored locally in your browser only — never shared.</small>',
                 ].join(''),
                 delay: { show: 300, hide: 150 },
             })
@@ -187,7 +188,7 @@ export const SettingsPage = (): ReactElement => {
                                     rel="noopener noreferrer"
                                 >
                                     <FontAwesomeIcon
-                                        className="align-baseline text-x-small"
+                                        className="align-baseline text-info-emphasis"
                                         icon={faInfoCircle}
                                     />
                                 </a>
