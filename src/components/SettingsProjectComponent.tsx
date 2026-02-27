@@ -5,7 +5,7 @@ import { emitNewNotification, useProjectSynchedListener } from '../events/Events
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
 import './SettingsProjectComponent.scss'
@@ -126,6 +126,15 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         }
     }
 
+    const onSelectApprovalJobs = () => {
+        if (projectData) {
+            const allJobs = collectUniqueJobs(projectData)
+            const buildJobNames = allJobs.filter((j) => j.type === 'build').map((j) => j.name)
+            projectService.setProjectHiddenJobs(props.project, buildJobNames)
+            setHiddenJobs(buildJobNames)
+        }
+    }
+
     const toggleJobVisibility = (jobName: string) => {
         let newHidden: string[]
         if (hiddenJobs.includes(jobName)) {
@@ -188,6 +197,11 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                             Select build jobs
                         </button>
                     </li>
+                    <li>
+                        <button className="dropdown-item" type="button" onClick={onSelectApprovalJobs}>
+                            Select approval jobs
+                        </button>
+                    </li>
                 </ul>
             </div>
         )
@@ -205,7 +219,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         if (allJobs.length === 0) {
             return <p className="text-muted fst-italic mb-0">No jobs found for this project.</p>
         }
-        return allJobs.map(({ name, type }) => (
+        return allJobs.map(({ name, type }: UniqueJob, index: number) => (
             <div key={name} className="form-check d-flex align-items-center gap-2">
                 <input
                     className="form-check-input"
@@ -215,9 +229,13 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                     onChange={() => toggleJobVisibility(name)}
                 />
                 <label className="form-check-label flex-grow-1" htmlFor={`job-vis-${id}-${name}`}>
-                    {name}
+                    {index}. {name}
                 </label>
-                {type === 'build' && <span className="badge bg-secondary">build</span>}
+                {type === 'build' ? (
+                    <FontAwesomeIcon className="me-2 text-primary" icon={faScrewdriverWrench} />
+                ) : (
+                    <FontAwesomeIcon className="me-2 text-info" icon={faThumbsUp} />
+                )}
             </div>
         ))
     }
