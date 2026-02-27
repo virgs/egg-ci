@@ -1,9 +1,10 @@
 import { Tooltip } from 'bootstrap'
-import { faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useRef, useState } from 'react'
 import { emitLoggedOut, emitNewNotification, emitUserInformationChanged } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
+import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import './SettingsPage.scss'
@@ -14,6 +15,7 @@ const projectService: ProjectService = new ProjectService()
 export const SettingsPage = (): ReactElement => {
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
     const [hasSavedToken, setHasSavedToken] = useState<boolean>(() => !!settingsRepository.getApiToken())
+    const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(() => settingsRepository.getUserInformation())
     const tokenInfoRef = useRef<HTMLAnchorElement>(null)
 
     useEffect(() => {
@@ -49,6 +51,7 @@ export const SettingsPage = (): ReactElement => {
             settingsRepository.setUserInformation(newUserInformation)
             userProjects.forEach((project) => projectService.trackProject(project))
             emitUserInformationChanged(newUserInformation)
+            setUserInfo(newUserInformation)
             setHasSavedToken(true)
             emitNewNotification({ message: 'Connected successfully' })
         } catch {
@@ -60,6 +63,7 @@ export const SettingsPage = (): ReactElement => {
         settingsRepository.clearApiToken()
         emitLoggedOut()
         setToken('')
+        setUserInfo(undefined)
         setHasSavedToken(false)
     }
 
@@ -67,6 +71,7 @@ export const SettingsPage = (): ReactElement => {
         emitLoggedOut()
         localStorage.clear()
         setToken('')
+        setUserInfo(undefined)
         setHasSavedToken(false)
     }
 
@@ -102,6 +107,15 @@ export const SettingsPage = (): ReactElement => {
                     )}
                 </div>
             </div>
+            {hasSavedToken && userInfo && (
+                <div className="d-flex align-items-center gap-2 text-success mb-4">
+                    <FontAwesomeIcon icon={faCircleCheck} />
+                    <span>
+                        Signed in as <strong>{userInfo.name}</strong>{' '}
+                        <small className="text-muted">@{userInfo.login}</small>
+                    </span>
+                </div>
+            )}
             <div className="d-grid gap-2">
                 <button
                     className="btn btn-outline-danger"
