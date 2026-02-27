@@ -105,9 +105,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
     }
 
     const handleHeaderClick = () => {
-        if (props.project.enabled) {
-            setIsExpanded((prev) => !prev)
-        }
+        setIsExpanded((prev) => !prev)
     }
 
     const onSelectAll = () => {
@@ -286,7 +284,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
             onDrop={props.onDrop}
         >
             <div
-                className={`px-4 py-2 d-flex align-items-center gap-2${props.project.enabled ? ' project-item--enabled project-header-clickable' : ''}`}
+                className={`px-4 py-2 d-flex align-items-center gap-2 project-header-clickable${props.project.enabled ? ' project-item--enabled' : ''}`}
                 onClick={handleHeaderClick}
             >
                 <div
@@ -306,7 +304,11 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                         checked={props.project.enabled}
                         onChange={() => onSwitchChange()}
                     />
-                    <label className="form-check-label" htmlFor={id}>
+                    <label
+                        className="form-check-label"
+                        htmlFor={id}
+                        onClick={() => setIsExpanded((prev) => !prev)}
+                    >
                         <span className="mx-2">{renderVersionControlComponent()}</span>
                         <span>
                             {props.project.username}/{props.project.reponame}
