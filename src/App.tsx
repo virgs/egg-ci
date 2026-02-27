@@ -2,10 +2,11 @@ import { NavBarComponent } from './components/NavBarComponent'
 import { initializeCircleCiClient } from './gateway/CircleCiClient'
 import { DashboardsPage } from './pages/DashboardsPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { ProjectsPage } from './pages/ProjectsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
 import { ReactElement } from 'react'
-import { RouterProvider, createHashRouter, useRouteError } from 'react-router-dom'
+import { Navigate, RouterProvider, createHashRouter, useRouteError } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
 import { useInterval } from './time/UseInterval'
@@ -42,25 +43,25 @@ const RouteErrorElement = (): ReactElement => {
     )
 }
 
-//ghpage doesnt work with browser router: https://stackoverflow.com/a/71985764
 const router = createHashRouter([
     {
         path: '/settings',
-        element: (
-            <AppShell>
-                <SettingsPage />
-            </AppShell>
-        ),
+        element: <AppShell><SettingsPage /></AppShell>,
+        errorElement: <RouteErrorElement />,
+    },
+    {
+        path: '/projects',
+        element: <AppShell><ProjectsPage /></AppShell>,
+        errorElement: <RouteErrorElement />,
+    },
+    {
+        path: '/workflows',
+        element: <AppShell><DashboardsPage /></AppShell>,
         errorElement: <RouteErrorElement />,
     },
     {
         path: '/*',
-        element: (
-            <AppShell>
-                <DashboardsPage />
-            </AppShell>
-        ),
-        errorElement: <RouteErrorElement />,
+        element: <Navigate to={settingsRepository.getApiToken() ? '/workflows' : '/settings'} replace />,
     },
 ])
 

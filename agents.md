@@ -169,11 +169,11 @@ Build incrementally and safely.
 
 
 # TODO list
-2. Dashboard e settings são navbar
-3. Tirar o menu do navbar
-4. Limpar dados deveria estar em uma área de risco dentro da página de settings. Perto do token
-5. Limpar dados, rodar job e aprovar job devem abrir um pequeno modal solicitando confirmação. O modal deve receber uma string de mensagem.
-6. Remover as configurações da página de settings. Não vai ser mais possível alterar por ali. Só via código mesmo
-7. Enquanto não existir uma api key válida. Não exibir lista de projetos nem no Dashboard e nem no settings. Depois de validar uma, o input text deve ficar desabilitado e só ser possível habilitar novamente se o usuário clicar em limpar chave. Um novo botão na área de risco. Essa área de risco vai ficar no fim da área de settings
-8. Fazer com que o chevron do accordion do dah lard tenha uma animação suave
-9. Ajeitar o posicionamento dos botões e do filtro de pesquisa no Dashboard 
+1. [x] Navbar to have three sections: Settings, Projects, Workflows (and a GitHub icon linking to the project repo in the far right end). No Menu anymore. The sections should be on the left side of the navbar, next to each other.
+   - Each section should link to a page whose title is the same as the section.
+   - The settings page will have the API key input, the clear API key button and the clear all data (pretty much the top of the current settings page). Both block buttons. The buttons should only be enabled if there's a valid API key. If there's no valid API key, only the input should be enabled. The clear API key button should clear the API key and disable itself and the clear all data button. The clear all data button should clear all data and disable itself and the clear API key button. This page should be the default page when the user opens the app for the first time or when there's no valid API key.
+   - The projects page will have the list of project and the "Restore deleted projects" button (pretty much the current settings page except for the API Key part). The button should be enabled only if there's at least one deleted project. Remove the others configurations options. They should only be changed via code, not via UI. 
+     - The dashboard page is the default page when the user opens the app and there's a valid API key (the current dashboard page). It will have the list of projects and the workflow page will have the list of workflows.
+2. [ ] Create a confirmation modal to be reused by several components. It should receive a string as a message and two callbacks, one for confirming and another for canceling (the latter defaulting to an empty function). This modal should be used for confirming the clearing of all data, api key, and also when the JobActionButton is clicked (run, approve or others).
+3. [ ] Accordion chevrons should rotate 45 degrees on hovering and 90 degrees when the accordion is open. The rotation should be animated.
+4. [ ] Improve workflow page menu (filter, view, and expand) by putting them all in the same line (when the screen is wide enough) and adding icons to them.

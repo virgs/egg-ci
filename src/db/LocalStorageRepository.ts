@@ -29,4 +29,9 @@ export abstract class LocalStorageRepository {
     public onChange(listener: RepositoryListener) {
         this.listeners.push(listener)
     }
+
+    protected delete(key: string) {
+        const storageKey = this.cryptData ? btoa(key) : key
+        localStorage.removeItem(storageKey)
+    }
 }

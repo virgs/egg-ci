@@ -36,4 +36,9 @@ export class SettingsRepository extends LocalStorageRepository {
     public setDashboardView(view: DashboardView) {
         return this.persist('dashboardView', view)
     }
+
+    public clearApiToken() {
+        this.delete('token')
+        this.delete('userInformation')
+    }
 }

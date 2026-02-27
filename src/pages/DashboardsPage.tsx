@@ -47,11 +47,13 @@ export const DashboardsPage = (): ReactElement => {
     })
 
     useEffect(() => {
-        const trackedProjects = projectService.loadTrackedProjects()
-        const enabledProjects = (trackedProjects || []).filter((project) => project.enabled)
-
+        if (!settingsRepository.getApiToken()) {
+            navigate('/settings')
+            return
+        }
+        const enabledProjects = (projectService.loadTrackedProjects() || []).filter((p) => p.enabled)
         if (enabledProjects.length === 0) {
-            navigate(`../settings`, { relative: 'route' })
+            navigate('/projects')
         }
     }, [navigate])
 
