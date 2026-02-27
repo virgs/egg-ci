@@ -30,7 +30,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 <ol className="breadcrumb mb-0">
                     {showProjectHeader && (
                         <li className="breadcrumb-item d-flex align-items-center fs-4">
-                            <a className="vcs-link" href={props.project.vcsUrl}>
+                            <a id="project-reponame" href={props.project.vcsUrl}>
                                 {versionControlComponent}
                                 <span className="ms-2">{props.project.reponame}</span>
                             </a>
