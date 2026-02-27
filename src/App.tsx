@@ -20,7 +20,7 @@ const AppShell = ({ children }: { children: ReactElement }): ReactElement => {
     return (
         <>
             <NavBarComponent />
-            <div style={{ height: '100%', overflowY: 'auto' }}>
+            <div className="app-scroll-container">
                 <ToastsComponent></ToastsComponent>
                 <div className="container py-2">{children}</div>
             </div>

@@ -66,7 +66,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     data-bs-toggle="dropdown"
                     data-bs-auto-close="true"
                     aria-expanded="false"
-                    style={{ float: 'right', cursor: 'pointer' }}
+                    className="job-menu-trigger"
                     icon={faBars}
                 />
                 <ul className="dropdown-menu">
@@ -127,14 +127,14 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     <a href=""></a>#{props.job.workflow.pipeline_number}
                 </div>
                 <div className="col card-header-details">
-                    <div style={{ float: 'right', display: 'inline-flex', alignItems: 'center' }}>
-                        <small className="me-1" style={{ textTransform: 'capitalize' }}>
+                    <div className="job-status-inline">
+                        <small className="me-1 text-capitalize">
                             {getStatusDisplay(props.job.status)}
                         </small>
                         <span>{getBadge(props.job)}</span>
                     </div>
                 </div>
-                <div className="col-4 card-header-details" style={{ textAlign: 'right' }}>
+                <div className="col-4 card-header-details text-end">
                     <JobActionButton job={props.job}></JobActionButton>
                 </div>
             </div>

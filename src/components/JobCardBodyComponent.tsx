@@ -44,8 +44,7 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
             <div className="card-details text-body-secondary">
                 <strong>Triggered by:</strong>
                 <img
-                    className="img-fluid mx-2"
-                    style={{ borderRadius: '100%', width: '16px' }}
+                    className="img-fluid mx-2 job-avatar"
                     alt="Pipeline author"
                     src={props.job.pipeline.trigger.actor.avatar_url}
                 ></img>

@@ -8,6 +8,7 @@ import { VersionControlComponent } from './VersionControlComponent'
 import { faBars, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
+import './SettingsProjectComponent.css'
 
 const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
@@ -145,16 +146,12 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                     icon={faBars}
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                    style={{
-                        cursor: isDisabled ? 'default' : 'pointer',
-                        opacity: isDisabled ? 0.35 : 1,
-                        pointerEvents: isDisabled ? 'none' : 'auto',
-                    }}
+                    className={isDisabled ? 'project-item__action--disabled' : undefined}
                 />
                 <ul className="dropdown-menu dropdown-menu-end">
                     {lastSyncedLabel && (
                         <li>
-                            <span className="dropdown-item-text text-muted" style={{ fontSize: '0.75rem' }}>
+                            <span className="dropdown-item-text text-muted text-xs">
                                 Updated {lastSyncedLabel}
                             </span>
                         </li>
@@ -221,8 +218,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
     return (
         <div className="accordion-item">
             <div
-                className="px-4 py-2 d-flex align-items-center justify-content-between gap-2"
-                style={{ backgroundColor: props.project.enabled ? 'var(--bs-success-bg-subtle)' : 'unset' }}
+                className={`px-4 py-2 d-flex align-items-center justify-content-between gap-2${props.project.enabled ? ' project-item--enabled' : ''}`}
             >
                 <div className="form-check form-switch mb-0">
                     <input
@@ -241,13 +237,12 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                 </div>
                 <div className="d-flex align-items-center gap-3">
                     <button
-                        className="btn btn-sm p-0 border-0 bg-transparent"
+                        className={`btn btn-sm p-0 border-0 bg-transparent${props.project.enabled ? '' : ' project-item__action--disabled'}`}
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target={`#${collapseId}`}
                         aria-expanded="false"
                         aria-controls={collapseId}
-                        style={{ opacity: props.project.enabled ? 1 : 0.35, pointerEvents: props.project.enabled ? 'auto' : 'none' }}
                     >
                         <FontAwesomeIcon icon={faChevronDown} />
                     </button>

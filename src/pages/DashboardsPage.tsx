@@ -1,3 +1,4 @@
+import './DashboardsPage.css'
 import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useTransition, useState } from 'react'
@@ -122,15 +123,14 @@ export const DashboardsPage = (): ReactElement => {
             const versionControlIcon = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
             return (
                 <div key={projectKey}>
-                    <div style={{ height: '1px', backgroundColor: 'var(--bs-gray-200)', marginBottom: '4px' }}></div>
-                    <div style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleToggleCollapsed(tracked)}>
+                    <div className="section-divider"></div>
+                    <div className="project-header-toggle" onClick={() => handleToggleCollapsed(tracked)}>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item d-flex align-items-center">
                                     <FontAwesomeIcon
                                         icon={isCollapsed ? faChevronRight : faChevronDown}
-                                        className="text-secondary"
-                                        style={{ width: '12px' }}
+                                        className="text-secondary chevron-icon"
                                     />
                                 </li>
                                 <li className="breadcrumb-item d-flex align-items-center fs-4">
@@ -145,14 +145,8 @@ export const DashboardsPage = (): ReactElement => {
                             </ol>
                         </nav>
                     </div>
-                    <div
-                        style={{
-                            display: 'grid',
-                            gridTemplateRows: isCollapsed ? '0fr' : '1fr',
-                            transition: 'grid-template-rows 0.3s ease',
-                        }}
-                    >
-                        <div style={{ overflow: 'hidden' }}>
+                    <div className={`accordion-body${isCollapsed ? ' accordion-body--collapsed' : ''}`}>
+                        <div className="accordion-inner">
                             {renderProjectContent(tracked, data)}
                         </div>
                     </div>

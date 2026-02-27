@@ -60,6 +60,12 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+.section-divider {
+    height: 1px;
+    background-color: var(--bs-gray-200);
+    margin-bottom: 4px;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;

@@ -1,0 +1,12 @@
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.project-item--enabled {
+    background-color: var(--bs-success-bg-subtle);
+}
+
+.project-item__action--disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}

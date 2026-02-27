@@ -22,9 +22,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
     const workflowUrl = `${projectUrl}/${props.workflow.latestBuildNumber}/workflows/${props.workflow.latestId}`
     return (
         <>
-            {showProjectHeader && (
-                <div style={{ height: '1px', backgroundColor: 'var(--bs-gray-200)', marginBottom: '4px' }}></div>
-            )}
+            {showProjectHeader && <div className="section-divider"></div>}
             <nav aria-label="breadcrumb">
                 <ol className="breadcrumb mb-0">
                     {showProjectHeader && (

@@ -12,3 +12,14 @@
     white-space: nowrap;
     overflow: hidden;
 }
+
+.job-menu-trigger {
+    float: right;
+    cursor: pointer;
+}
+
+.job-status-inline {
+    float: right;
+    display: inline-flex;
+    align-items: center;
+}

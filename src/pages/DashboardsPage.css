@@ -1,0 +1,22 @@
+.project-header-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+.chevron-icon {
+    width: 12px;
+}
+
+.accordion-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.accordion-body--collapsed {
+    grid-template-rows: 0fr;
+}
+
+.accordion-inner {
+    overflow: hidden;
+}

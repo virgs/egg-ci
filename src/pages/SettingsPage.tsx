@@ -108,8 +108,7 @@ export const SettingsPage = (): ReactElement => {
                                     rel="noopener noreferrer"
                                 >
                                     <FontAwesomeIcon
-                                        className="align-baseline"
-                                        style={{ fontSize: 'x-small' }}
+                                        className="align-baseline text-x-small"
                                         icon={faInfoCircle}
                                     />
                                 </a>
