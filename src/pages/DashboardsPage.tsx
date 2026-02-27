@@ -145,8 +145,8 @@ export const DashboardsPage = (): ReactElement => {
                             </ol>
                         </nav>
                     </div>
-                    <div className={`accordion-body${isCollapsed ? ' accordion-body--collapsed' : ''}`}>
-                        <div className="accordion-inner">
+                    <div className={`collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
+                        <div className="collapsible-grid__inner">
                             {renderProjectContent(tracked, data)}
                         </div>
                     </div>

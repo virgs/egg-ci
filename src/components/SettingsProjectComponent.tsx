@@ -5,7 +5,7 @@ import { emitNewNotification, useProjectSynchedListener } from '../events/Events
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
-import { faBars, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
 import './SettingsProjectComponent.scss'
@@ -38,10 +38,10 @@ const projectService: ProjectService = new ProjectService()
 export const SettingsProjectComponent = (props: Props): ReactElement => {
     const initialData = projectService.loadProject(props.project)
     const [syncing, setSyncing] = useState<boolean>(props.project.enabled && !initialData)
-    const [includeBuildJobs, setIncludeBuildJobs] = useState<boolean>(props.project.includeBuildJobs ?? true)
     const [hiddenJobs, setHiddenJobs] = useState<string[]>(props.project.hiddenJobs ?? [])
     const [lastSyncedAt, setLastSyncedAt] = useState<string | undefined>(initialData?.lastSyncedAt)
     const [projectData, setProjectData] = useState<ProjectData | undefined>(initialData)
+    const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const relativeTime = useRelativeTime(lastSyncedAt)
     const id = getProjectLabel(props.project)
 
@@ -98,22 +98,31 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         }
     }
 
-    const onIncludeBuildJobsChange = () => {
-        const newValue = !includeBuildJobs
-        projectService.setProjectIncludeBuildJobs(props.project, newValue)
-        setIncludeBuildJobs(newValue)
+    const handleHeaderClick = () => {
+        if (props.project.enabled) {
+            setIsExpanded((prev) => !prev)
+        }
+    }
 
+    const onSelectAll = () => {
+        projectService.setProjectHiddenJobs(props.project, [])
+        setHiddenJobs([])
+    }
+
+    const onUnselectAll = () => {
+        if (projectData) {
+            const allJobNames = collectUniqueJobs(projectData).map((j) => j.name)
+            projectService.setProjectHiddenJobs(props.project, allJobNames)
+            setHiddenJobs(allJobNames)
+        }
+    }
+
+    const onSelectBuildJobs = () => {
         if (projectData) {
             const allJobs = collectUniqueJobs(projectData)
-            const buildJobNames = allJobs.filter((j) => j.type === 'build').map((j) => j.name)
-            let newHidden: string[]
-            if (!newValue) {
-                newHidden = [...new Set([...hiddenJobs, ...buildJobNames])]
-            } else {
-                newHidden = hiddenJobs.filter((name) => !buildJobNames.includes(name))
-            }
-            projectService.setProjectHiddenJobs(props.project, newHidden)
-            setHiddenJobs(newHidden)
+            const approvalJobNames = allJobs.filter((j) => j.type === 'approval').map((j) => j.name)
+            projectService.setProjectHiddenJobs(props.project, approvalJobNames)
+            setHiddenJobs(approvalJobNames)
         }
     }
 
@@ -165,20 +174,19 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                         <hr className="dropdown-divider" />
                     </li>
                     <li>
-                        <div className="dropdown-item">
-                            <div className="form-check">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    id={`includeBuildJobs-${id}`}
-                                    checked={includeBuildJobs}
-                                    onChange={onIncludeBuildJobsChange}
-                                />
-                                <label className="form-check-label" htmlFor={`includeBuildJobs-${id}`}>
-                                    Include build jobs
-                                </label>
-                            </div>
-                        </div>
+                        <button className="dropdown-item" type="button" onClick={onSelectAll}>
+                            Select all
+                        </button>
+                    </li>
+                    <li>
+                        <button className="dropdown-item" type="button" onClick={onUnselectAll}>
+                            Unselect all
+                        </button>
+                    </li>
+                    <li>
+                        <button className="dropdown-item" type="button" onClick={onSelectBuildJobs}>
+                            Select build jobs
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -197,8 +205,8 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         if (allJobs.length === 0) {
             return <p className="text-muted fst-italic mb-0">No jobs found for this project.</p>
         }
-        return allJobs.map(({ name }) => (
-            <div key={name} className="form-check">
+        return allJobs.map(({ name, type }) => (
+            <div key={name} className="form-check d-flex align-items-center gap-2">
                 <input
                     className="form-check-input"
                     type="checkbox"
@@ -206,21 +214,21 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                     checked={!hiddenJobs.includes(name)}
                     onChange={() => toggleJobVisibility(name)}
                 />
-                <label className="form-check-label" htmlFor={`job-vis-${id}-${name}`}>
+                <label className="form-check-label flex-grow-1" htmlFor={`job-vis-${id}-${name}`}>
                     {name}
                 </label>
+                {type === 'build' && <span className="badge bg-secondary">build</span>}
             </div>
         ))
     }
 
-    const collapseId = `jobs-collapse-${id.replace(/[^a-zA-Z0-9]/g, '-')}`
-
     return (
         <div className="accordion-item">
             <div
-                className={`px-4 py-2 d-flex align-items-center justify-content-between gap-2${props.project.enabled ? ' project-item--enabled' : ''}`}
+                className={`px-4 py-2 d-flex align-items-center justify-content-between gap-2${props.project.enabled ? ' project-item--enabled project-header-clickable' : ''}`}
+                onClick={handleHeaderClick}
             >
-                <div className="form-check form-switch mb-0">
+                <div className="form-check form-switch mb-0" onClick={(e) => e.stopPropagation()}>
                     <input
                         className="form-check-input"
                         type="checkbox"
@@ -235,22 +243,14 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                         </span>
                     </label>
                 </div>
-                <div className="d-flex align-items-center gap-3">
-                    <button
-                        className={`btn btn-sm p-0 border-0 bg-transparent${props.project.enabled ? '' : ' project-item__action--disabled'}`}
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#${collapseId}`}
-                        aria-expanded="false"
-                        aria-controls={collapseId}
-                    >
-                        <FontAwesomeIcon icon={faChevronDown} />
-                    </button>
+                <div onClick={(e) => e.stopPropagation()}>
                     {renderMenu()}
                 </div>
             </div>
-            <div id={collapseId} className="accordion-collapse collapse">
-                <div className="accordion-body py-2 ps-5">{renderJobList()}</div>
+            <div className={`collapsible-grid${isExpanded ? '' : ' collapsible-grid--collapsed'}`}>
+                <div className="collapsible-grid__inner">
+                    <div className="py-2 ps-5">{renderJobList()}</div>
+                </div>
             </div>
         </div>
     )

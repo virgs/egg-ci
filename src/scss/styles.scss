@@ -79,6 +79,20 @@ button:focus-visible {
     overflow-y: auto;
 }
 
+.collapsible-grid {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.collapsible-grid--collapsed {
+    grid-template-rows: 0fr;
+}
+
+.collapsible-grid__inner {
+    overflow: hidden;
+}
+
 .section-divider {
     height: 1px;
     background-color: var(--bs-gray-200);
