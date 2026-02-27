@@ -1,4 +1,5 @@
 import { ReactElement } from 'react'
+import { createPortal } from 'react-dom'
 import './ConfirmationModalComponent.scss'
 
 type Props = {
@@ -8,14 +9,14 @@ type Props = {
 }
 
 export const ConfirmationModalComponent = ({ message, onConfirm, onCancel = () => {} }: Props): ReactElement => {
-    return (
+    return createPortal(
         <>
             <div className="modal-backdrop fade show" onClick={onCancel} />
-            <div className="modal d-block" tabIndex={-1}>
+            <div className="modal d-block confirmation-modal" tabIndex={-1}>
                 <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
+                    <div className="modal-content text-center">
                         <div className="modal-body py-4">
-                            <p className="mb-0">{message}</p>
+                            <p className="mb-0 fs-3">{message}</p>
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={onCancel}>
@@ -28,6 +29,7 @@ export const ConfirmationModalComponent = ({ message, onConfirm, onCancel = () =
                     </div>
                 </div>
             </div>
-        </>
+        </>,
+        document.body
     )
 }

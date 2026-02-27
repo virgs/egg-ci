@@ -1,3 +1,11 @@
-.modal.d-block {
+.confirmation-modal {
     z-index: 1055;
+
+    // .modal-dialog-centered stretches to full viewport height via min-height: calc(100% - margin).
+    // Bootswatch applies box-shadow to .modal-dialog, making this full-height container visible
+    // as a ghost behind the actual dialog. Remove the shadow from the wrapper; .modal-content
+    // retains its own box-shadow from Bootstrap for the dialog popup look.
+    .modal-dialog {
+        box-shadow: none;
+    }
 }
