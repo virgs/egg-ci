@@ -23,8 +23,7 @@ const getProjectLabel = (project: TrackedProjectData): string => {
 
 const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
 
-const computeExcludedCount = () =>
-    projectService.loadTrackedProjects()?.filter((p) => p.excluded).length ?? 0
+const computeExcludedCount = () => projectService.loadTrackedProjects()?.filter((p) => p.excluded).length ?? 0
 
 export const SettingsPage = (): ReactElement => {
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
@@ -44,14 +43,14 @@ export const SettingsPage = (): ReactElement => {
                 title: [
                     '<h5 class="card-title my-1">CircleCI Personal API Token</h5>',
                     '<ol class="mb-1 ps-3">',
-                    '<li>Click this icon to open CircleCI token settings</li>',
-                    '<li>Click <em>Create New Token</em></li>',
+                    '<li>Click the icon to open CircleCI token settings</li>',
+                    '<li>Click <em>"Create New Token"</em></li>',
                     '<li>Copy and paste the token here</li>',
                     '<li>Make sure the projects are being followed in CircleCI (Projects > Follow)</li>',
                     '</ol>',
-                    '<small class="text-info-emphasis">Stored locally in your browser only — never shared.</small>',
+                    '<em class="text-warning">Stored locally in your browser only — never shared.</em>',
                 ].join(''),
-                delay: { show: 300, hide: 150 },
+                delay: { show: 150, hide: 150 },
             })
         }
     }, [])
