@@ -89,9 +89,7 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
                 <div className="col-12 pb-2">
                     <button className="btn btn-sm btn-outline-secondary" type="button" onClick={props.onUnexcludeAll}>
                         Restore excluded projects
-                        {!!props.excludedProjectsCount && (
-                            <span className="badge bg-secondary ms-2">{props.excludedProjectsCount}</span>
-                        )}
+                        <span className="badge bg-secondary ms-2">{props.excludedProjectsCount ?? 0}</span>
                     </button>
                 </div>
             )}

@@ -38,8 +38,17 @@ export const SettingsPage = (): ReactElement => {
     useEffect(() => {
         if (tokenInfoRef.current) {
             new Tooltip(tokenInfoRef.current, {
-                title: 'Visit circleci.com/settings/user/tokens to generate a personal API token. Your token is stored locally in your browser only and is never shared with anyone.',
-                delay: { show: 300, hide: 100 },
+                html: true,
+                title: [
+                    '<strong>CircleCI Personal API Token</strong>',
+                    '<ol class="mb-1 ps-3">',
+                    '<li>Click this icon to open CircleCI token settings</li>',
+                    '<li>Click <em>Create New Token</em></li>',
+                    '<li>Copy and paste the token here</li>',
+                    '</ol>',
+                    '<small class="text-muted">Stored locally in your browser only — never shared.</small>',
+                ].join(''),
+                delay: { show: 300, hide: 150 },
             })
         }
     }, [])
