@@ -6,8 +6,8 @@ import { jobExecutionProps } from './jobExecutionProps'
 
 type Props = {
     executions: JobData[]
-    onHighligthedExecutionIndexChanged: (index: number) => void
-    highligthedExecutionIndex: number
+    onHighlightedExecutionIndexChanged: (index: number) => void
+    highlightedExecutionIndex: number
 }
 
 export const JobCardFooterComponent = (props: Props): ReactElement => {
@@ -26,7 +26,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
                 return (
                     <div
                         key={`job-history-${execution.id}-${index}-${execution.started_at}`}
-                        onPointerDown={() => props.onHighligthedExecutionIndexChanged(executions.length - index - 1)}
+                        onPointerDown={() => props.onHighlightedExecutionIndexChanged(executions.length - index - 1)}
                         className="progress border"
                         role="progressbar"
                         aria-label="Job status"
@@ -38,7 +38,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
                             marginRight: gap,
                             borderRadius: '3px',
                             boxShadow:
-                                executions.length - index - 1 !== props.highligthedExecutionIndex
+                                executions.length - index - 1 !== props.highlightedExecutionIndex
                                     ? 'unset'
                                     : `0 0 3px 2px var(--bs-${classes.color})`,
                         }}

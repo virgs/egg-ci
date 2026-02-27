@@ -22,7 +22,10 @@ export const JobCardComponent = (props: Props): ReactElement => {
     return (
         <div className="col">
             <div
-                className={`card h-100 ${execution.status === 'success' ? 'border-success' : `border-${jobExecutionProps(execution).color}`}${props.listView ? ' card--list' : ''}`}
+                className={`card h-100 border-${jobExecutionProps(execution).color}${props.listView ? ' card--list' : ''}`}
+                style={{
+                    boxShadow: `0 0 1px 0.5px var(--bs-${jobExecutionProps(execution).color})`,
+                }}
             >
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
@@ -34,8 +37,8 @@ export const JobCardComponent = (props: Props): ReactElement => {
                 <JobCardBodyComponent job={execution} listView={props.listView} />
                 <JobCardFooterComponent
                     executions={props.job.history}
-                    highligthedExecutionIndex={safeIndex}
-                    onHighligthedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
+                    highlightedExecutionIndex={safeIndex}
+                    onHighlightedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
                 />
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useRef } from 'react'
 import { Tooltip } from 'bootstrap'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCode, faCodeCompare, faEyeSlash, faMicroscope } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../../domain-models/models'
 import { WorkflowJob } from '../../gateway/models/ListWorkflowJobsResponse'
@@ -72,6 +72,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                 <ul className="dropdown-menu">
                     <li>
                         <button className="dropdown-item" type="button" onClick={() => props.onHideJob(props.job.name)}>
+                            <FontAwesomeIcon className="me-2" icon={faEyeSlash} />
                             Hide job
                         </button>
                     </li>
@@ -80,6 +81,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     </li>
                     <li>
                         <a className="dropdown-item disabled" href="#">
+                            <FontAwesomeIcon className="me-2" icon={faMicroscope} />
                             Details
                         </a>
                     </li>
@@ -90,6 +92,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                             target="_blank"
                             rel="noreferrer"
                         >
+                            <FontAwesomeIcon className="me-2" icon={faCodeCompare} />
                             Browse repo at this point
                         </a>
                     </li>
@@ -100,6 +103,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                             target="_blank"
                             rel="noreferrer"
                         >
+                            <FontAwesomeIcon className="me-2" icon={faCode} />
                             Compare against previous execution
                         </a>
                     </li>
@@ -126,7 +130,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                 <div className="col card-header-details">
                     <a href=""></a>#{props.job.workflow.pipeline_number}
                 </div>
-                <div className="col card-header-details">
+                <div className="col card-header-details card-details-job-status">
                     <div className="job-status-inline">
                         <small className="me-1 text-capitalize">
                             {getStatusDisplay(props.job.status)}

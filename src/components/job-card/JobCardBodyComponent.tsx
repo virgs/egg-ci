@@ -28,8 +28,8 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
     }
 
     return (
-        <div className={`card-body p-2 px-3${props.listView ? ' card-body--list' : ''}`}>
-            <p className="card-text">
+        <div className={`card-body row justify-content-between g-0 p-2 px-3${props.listView ? ' card-body--list' : ''}`}>
+            <p className="col-12 card-text">
                 <a
                     href={props.job.pipeline.vcs?.origin_repository_url
                         .concat('/commit/')
@@ -39,10 +39,11 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
                 </a>
                 {getCommitMessage()}
             </p>
-            <div className="card-details text-body-secondary">
+            <div className="w-100"></div>
+            <div className="col-auto card-details text-body-secondary">
                 <strong>Duration:</strong> {props.job.stopped_at ? latestExecutionDurationInMinutes : '-'}
             </div>
-            <div className="card-details text-body-secondary">
+            <div className="col-auto card-details text-body-secondary">
                 <strong>Triggered by:</strong>
                 <img
                     className="img-fluid mx-2 job-avatar"
@@ -51,7 +52,7 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
                 ></img>
                 {props.job.pipeline.trigger.actor.login}
             </div>
-            <div className="card-details text-body-secondary d-flex justify-content-between">
+            <div className="col-auto card-details text-body-secondary d-flex justify-content-between">
                 <span>
                     <strong>On: </strong>
                     {new Date(props.job.started_at!).toLocaleString()}

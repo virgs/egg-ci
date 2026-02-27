@@ -169,4 +169,11 @@ Build incrementally and safely.
 
 
 # TODO list
-- [x] Clean up and refactor existing code to meet standards. I see some huge classes and functions that need to be broken down, like the ones inside WorkflowFetcher. I also see the components folder has too many files. Create subfolders for better organization abd group related components together. I noticed a few warnings. Fix them.
+2. Dashboard e settings são navbar
+3. Tirar o menu do navbar
+4. Limpar dados deveria estar em uma área de risco dentro da página de settings. Perto do token
+5. Limpar dados, rodar job e aprovar job devem abrir um pequeno modal solicitando confirmação. O modal deve receber uma string de mensagem.
+6. Remover as configurações da página de settings. Não vai ser mais possível alterar por ali. Só via código mesmo
+7. Enquanto não existir uma api key válida. Não exibir lista de projetos nem no Dashboard e nem no settings. Depois de validar uma, o input text deve ficar desabilitado e só ser possível habilitar novamente se o usuário clicar em limpar chave. Um novo botão na área de risco. Essa área de risco vai ficar no fim da área de settings
+8. Fazer com que o chevron do accordion do dah lard tenha uma animação suave
+9. Ajeitar o posicionamento dos botões e do filtro de pesquisa no Dashboard 

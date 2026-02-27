@@ -4,6 +4,10 @@
 
 .card-header-details {
     font-size: small;
+
+    &.card-details-job-status {
+        text-align: center;
+    }
 }
 
 .card-title {
@@ -19,7 +23,8 @@
 }
 
 .job-status-inline {
-    float: right;
+    //float: right;
+    align-self: center;
     display: inline-flex;
     align-items: center;
 }
