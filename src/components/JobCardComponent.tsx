@@ -11,6 +11,7 @@ export type Props = {
     jobOrder: number
     projectUrl: string
     onHideJob: (jobName: string) => void
+    listView?: boolean
 }
 
 export const JobCardComponent = (props: Props): ReactElement => {
@@ -21,7 +22,7 @@ export const JobCardComponent = (props: Props): ReactElement => {
     return (
         <div className="col">
             <div
-                className={`card h-100 ${execution.status === 'success' ? 'border-success' : `border-${jobExecutionProps(execution).color}`}`}
+                className={`card h-100 ${execution.status === 'success' ? 'border-success' : `border-${jobExecutionProps(execution).color}`}${props.listView ? ' card--list' : ''}`}
             >
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}
@@ -30,7 +31,7 @@ export const JobCardComponent = (props: Props): ReactElement => {
                     previousExecution={props.job.history[safeIndex + 1]}
                     onHideJob={props.onHideJob}
                 />
-                <JobCardBodyComponent job={execution} />
+                <JobCardBodyComponent job={execution} listView={props.listView} />
                 <JobCardFooterComponent
                     executions={props.job.history}
                     highligthedExecutionIndex={safeIndex}

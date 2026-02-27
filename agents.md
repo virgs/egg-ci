@@ -1,15 +1,171 @@
-# Instructions:
-1. Reason step by step. Think about the problem and how to solve it before writing the code and plan for the long term. Don't just write code without thinking about the problem and how to solve it. Always think about the problem and how to solve it before writing code. Consider even the next steps.
-2. Write code that is clean, maintainable, and well-documented. Follow best practices and coding standards. Write code that is easy to understand and modify in the future. Write code that is modular and reusable. Write code that is efficient and performant. Write code that is secure and handles edge cases. Write code that is tested and has good coverage. Write code that is easy to debug and troubleshoot.
-3. Always consider the user experience and how the user will interact with the extension.
-4. Avoid big refactors. Instead, make small incremental changes that can be easily tested and rolled back if necessary. This will help to ensure that the extension remains stable and functional while new features are being added.
-5. Always keep in mind the long-term vision for the extension and how new features will fit into that vision. Consider how new features will impact the overall user experience and how they will interact with
-6. Avoid big classes, components and functions. Instead, break down the code into smaller, more manageable pieces that can be easily tested and maintained. This will help to improve the readability and maintainability of the codebase. Everytime you notice a class, component or function that is getting too big, break it down into smaller pieces. Consider the single responsibility principle and try to make sure that each class, component or function has a clear and focused responsibility. This will help to make the code easier to understand and modify in the future.
-7. Keep the scss files synced with the components. Every time you create a new component, create a corresponding scss file for it and make sure to keep the styles organized and consistent across the extension. Do the same when renaming a file and/or renaming one. This will help to improve the maintainability of the codebase and make it easier to find and modify styles in the future. Consider using a naming convention for the scss files that corresponds to the component names (e.g. `ComponentName.scss` for `ComponentName.tsx`) to make it easier to identify which styles belong to which components.
-8. Always keep the tests up to date and ensure that they cover all new features and changes to the codebase. This will help to catch any bugs or issues early on and ensure that the extension remains stable and functional.
-9. Since I don't have the best Claude plan, and it keeps running out of tokens: Keep track of what you're doing and what you have done in a separate file (e.g. a TODO list) to avoid losing context and to help you stay organized. This will also help you to keep track of what features have been implemented and what still needs to be done, even if the conversation is interrupted or if you need to take a break.
-10. Avoid .then() and use async/await instead for better readability and maintainability of the code. This will help to make the code easier to understand and modify in the future. Using async/await can also help to reduce the amount of nested code and make it easier to handle errors and edge cases. Always try to use async/await whenever possible and avoid using .then() unless there is a specific reason to do so.
-11. Use arrow functions instead of regular functions for better readability and maintainability of the code. This will help to make the code easier to understand and modify in the future. Arrow functions can also help to reduce the amount of boilerplate code and make it easier to handle the `this` keyword in JavaScript. Always try to use arrow functions whenever possible and avoid using regular functions unless there is a specific reason to do so.
+# Engineering Guidelines for AI Agent
+
+## 1. Think Before Coding
+
+* Always reason step by step before writing code.
+* Understand the problem, constraints, edge cases, and future impact.
+* Design with long-term maintainability in mind.
+* Plan how the feature integrates with the existing architecture.
+* Prefer extensible patterns over quick fixes.
+
+---
+
+## 2. Code Quality Standards
+
+All code must be:
+
+* Clean and readable
+* Modular and reusable
+* Well-documented (clear naming over excessive comments)
+* Secure and defensive (handle edge cases)
+* Efficient and performant
+* Easy to debug and test
+* Following TypeScript and React best practices
+
+Prefer:
+
+* Strong typing (avoid `any`)
+* Explicit return types where helpful
+* Clear naming conventions
+* Predictable data flow
+
+---
+
+## 3. Architecture & Size Constraints
+
+Keep everything small and focused.
+
+### Size Limits (Soft Constraints)
+
+* Functions: ≤ 30 lines, ≤ 4 parameters
+* Components: ≤ 150 lines
+* Classes: ≤ 150 lines
+* Files: ≤ 200 lines
+
+If something grows too large:
+
+* Extract smaller components
+* Extract custom hooks
+* Extract utility modules
+* Apply Single Responsibility Principle
+
+Each unit should have one clear responsibility.
+
+---
+
+## 4. Incremental Development
+
+* Avoid large refactors.
+* Make small, testable changes.
+* Ensure each step can be validated and rolled back.
+* Preserve system stability while adding features.
+
+---
+
+## 5. User Experience First
+
+* Consider how users interact with the feature.
+* Optimize clarity, feedback, and usability.
+* Avoid unnecessary complexity in UI.
+* Keep state management predictable.
+
+---
+
+## 6. Styling Rules
+
+* Each component must have a matching SCSS file.
+
+    * `ComponentName.tsx`
+    * `ComponentName.scss`
+* Keep styles scoped and organized.
+* Maintain naming consistency.
+* Update SCSS files when renaming components.
+
+---
+
+## 7. Async & Function Conventions
+
+* Use `async/await` instead of `.then()`
+* Prefer arrow functions over regular functions
+* Handle errors explicitly with try/catch
+* Avoid nested async logic
+
+---
+
+## 8. Testing Requirements
+
+* Keep tests updated with every change.
+* Cover:
+
+    * New features
+    * Edge cases
+    * Critical flows
+* Maintain strong coverage.
+* Tests must reflect real usage scenarios.
+
+---
+
+## 9. Documentation & Project Memory
+
+Maintain these files:
+
+### `TODO.md`
+
+* Track completed and pending tasks.
+* Update after every step.
+* Add new tasks discovered during implementation.
+
+### `memento.md`
+
+Store:
+
+* Architectural decisions
+* Important design choices
+* Context and constraints
+* Trade-offs made
+* Key references or links
+
+### `README.md`
+
+Update when:
+
+* Adding features
+* Changing behavior
+* Modifying setup or usage
+
+---
+
+## 10. After Completing Any Task
+
+Always:
+
+1. Update `TODO.md`
+2. Update `memento.md` with decisions/context
+3. Update `README.md` if behavior changed
+4. Update/add tests
+5. Review code quality
+6. Refactor if needed
+7. Ensure size constraints are respected
+
+---
+
+## 11. Long-Term Vision
+
+* Ensure new features align with overall architecture.
+* Avoid shortcuts that create technical debt.
+* Think about scalability and future extensibility.
+* Prefer composability over monolithic solutions.
+
+---
+
+# Summary Philosophy
+
+Think long-term.
+Keep everything small.
+Write predictable, testable, modular code.
+Prioritize clarity over cleverness.
+Update documentation continuously.
+Build incrementally and safely.
 
 
 # TODO list
@@ -55,12 +211,12 @@
 26. [x] The "Unexclude projects" button should be renamed to "Restore excluded projects" and it should have a badge telling the number of excluded projects. Also, the info icon in API token should show a tooltip when hovered. The tooltip should explain the steps to get an API token (including the current link in an anchor tag) and also explain that the token is only stored locally in the user's browser and is not shared with anyone. This will help to improve the user experience and provide clear instructions on how to get an API token, which is necessary for the extension to function properly. The tooltip should be concise and easy to understand, and it should provide all the necessary information for the user to get an API token and use the extension without any confusion or issues.
 27. [x] To avoid a bad UX. Keep the vertical scroll bars always visible in the scrollable area of both pages. This will prevent the UI from shifting when the scroll bars appear and disappear, which can be jarring and confusing for the user. By keeping the scroll bars always visible, the user will have a consistent experience and will be able to easily scroll through the content without any unexpected changes in the layout. This will also make it easier for the user to navigate through the extension and find the information they need without any distractions or interruptions caused by shifting UI elements.
 28. [x] In the dashboard, keep the item enumeration even when there are unselected jobs. For example, if there are 5 jobs and the user unselects job 2 and 4, the dashboard should show the jobs as 1, 3, 5 instead of 1, 2, 3. This will make it easier for the user to keep track of the jobs and their order, even when some jobs are hidden. It will also make the UI more consistent and less confusing for the user. The enumeration should be based on the original order of the jobs, not on the order of the selected jobs. This way, the user can easily identify which jobs are hidden and which are shown based on their original position in the list.
-29. [ ] Add a radio button in the dashboard page to switch the jobs between grid and list view. 
-    The grid view is the current view where the jobs are displayed in cards.
-    The list view is a new view where the jobs are displayed one per line. It's almost the same. The jobs are still cards, but wider (100% of the container) and shorter. The same information and buttons are displayed in the same position. Maximize reuse wherever you can.
-    The user should be able to switch between the two views by clicking on the button. The selected view should be persisted so that when the user comes back to the dashboard page, they see the jobs in the view they selected.
-30. ~[ ] Be able to merge workflow data (autosync pipelines)~
-31. ~[ ] Card placeholders~
-32. [x] Job more options:
+29. [x] Job more options:
     1. [x] Compare against previous execution (https://docs.github.com/en/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits/comparing-commits)
     2. [x] Browse repo at this point: https://github.com/virgs/jsonPlaceholderReplacer/tree/<commit-hash>
+30. [x] In the same button toolbar, but in a different button group, add two radio buttons in the dashboard page to switch the jobs between grid and list view.
+    The grid view is the current view where the jobs are displayed in cards.
+    The list view is a new view where the jobs are displayed one per line. It's almost the same. The jobs are still cards, but wider (100% of the container) and shorter. The same information and buttons are displayed in the same position (except the card details that are placed side by side in the same line, rather than on top of each other). Maximize reuse wherever you can.
+    The user should be able to switch between the two views by clicking on the button. The selected view should be persisted so that when the user comes back to the dashboard page, they see the jobs in the view they selected.
+31. ~[ ] Be able to merge workflow data (autosync pipelines)~
+32. ~[ ] Card placeholders~

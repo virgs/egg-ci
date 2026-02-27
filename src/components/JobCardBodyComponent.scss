@@ -8,3 +8,21 @@
     border-radius: 100%;
     width: 16px;
 }
+
+.card-body--list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1rem;
+
+    p.card-text {
+        flex: 0 0 100%;
+        height: auto;
+        overflow-y: visible;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-details {
+        flex: 1 1 auto;
+    }
+}

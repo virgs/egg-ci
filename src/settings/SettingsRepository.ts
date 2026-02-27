@@ -2,6 +2,8 @@ import { Config, defaultConfig } from '../config'
 import { LocalStorageRepository } from '../db/LocalStorageRepository'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 
+export type DashboardView = 'grid' | 'list'
+
 export class SettingsRepository extends LocalStorageRepository {
     public setApiToken(token: string) {
         return this.persist('token', token)
@@ -25,5 +27,13 @@ export class SettingsRepository extends LocalStorageRepository {
 
     public setConfiguration(configuration: Config) {
         return this.persist('configuration', configuration)
+    }
+
+    public getDashboardView(): DashboardView {
+        return super.load('dashboardView') ?? 'grid'
+    }
+
+    public setDashboardView(view: DashboardView) {
+        return this.persist('dashboardView', view)
     }
 }

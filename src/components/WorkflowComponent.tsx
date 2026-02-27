@@ -11,6 +11,7 @@ type Props = {
     onHideJob: (jobName: string) => void
     showProjectHeader?: boolean
     hiddenJobs?: string[]
+    listView?: boolean
 }
 
 export const WorkflowComponent = (props: Props): ReactElement => {
@@ -47,7 +48,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                     )}
                 </ol>
             </nav>
-            <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-2">
+            <div className={`row m-0 gx-2 gy-2 ${props.listView ? 'row-cols-1' : 'row-cols-3 row-cols-lg-4 row-cols-xxl-5'}`}>
                 <ProjectContext.Provider value={props.project}>
                     {props.workflow.jobs.map((job, index) => {
                         if ((props.hiddenJobs ?? []).includes(job.name)) return null
@@ -58,6 +59,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                                 jobOrder={index}
                                 projectUrl={projectUrl}
                                 onHideJob={props.onHideJob}
+                                listView={props.listView}
                             />
                         )
                     })}

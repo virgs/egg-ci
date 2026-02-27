@@ -1,5 +1,5 @@
 import './DashboardsPage.scss'
-import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useTransition, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -9,11 +9,12 @@ import { ProjectService } from '../project/ProjectService'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { useProjectSynchedListener } from '../events/Events'
 import { Config } from '../config'
-import { SettingsRepository } from '../settings/SettingsRepository'
+import { DashboardView, SettingsRepository } from '../settings/SettingsRepository'
 import { ConfigContext } from '../contexts/DashboardContext'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 
 const projectService: ProjectService = new ProjectService()
+const settingsRepository: SettingsRepository = new SettingsRepository()
 
 type ProjectPair = { tracked: TrackedProjectData; data: ProjectData }
 
@@ -34,6 +35,12 @@ export const DashboardsPage = (): ReactElement => {
     const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())
     const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
     const [filterText, setFilterText] = useState<string>('')
+    const [dashboardView, setDashboardView] = useState<DashboardView>(() => settingsRepository.getDashboardView())
+
+    const handleViewChange = (view: DashboardView) => {
+        settingsRepository.setDashboardView(view)
+        setDashboardView(view)
+    }
 
     useProjectSynchedListener(() => {
         setProjectPairs(computeProjectPairs(filterText))
@@ -105,6 +112,7 @@ export const DashboardsPage = (): ReactElement => {
                         hiddenJobs={tracked.hiddenJobs ?? []}
                         onHideJob={(jobName) => handleHideJob(tracked, jobName)}
                         showProjectHeader={false}
+                        listView={dashboardView === 'list'}
                     />
                 </div>
             )
@@ -156,13 +164,39 @@ export const DashboardsPage = (): ReactElement => {
             <ConfigContext.Provider value={configuration}>
                 <div className="d-flex align-items-center justify-content-between mb-2">
                     <h3 className="mb-0">Workflows ({projectPairs.reduce((acc, { data }) => Object.keys(data.workflows).length + acc, 0)})</h3>
-                    <button
-                        className="btn btn-sm btn-outline-secondary"
-                        title={allCollapsed ? 'Expand all' : 'Collapse all'}
-                        onClick={handleToggleAll}
-                    >
-                        <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
-                    </button>
+                    <div className="d-flex gap-2">
+                        <div className="btn-group btn-group-sm">
+                            <input
+                                type="radio"
+                                className="btn-check"
+                                name="dashboard-view"
+                                id="dashboard-view-grid"
+                                checked={dashboardView === 'grid'}
+                                onChange={() => handleViewChange('grid')}
+                            />
+                            <label className="btn btn-outline-secondary" htmlFor="dashboard-view-grid" title="Grid view">
+                                <FontAwesomeIcon icon={faTableCellsLarge} />
+                            </label>
+                            <input
+                                type="radio"
+                                className="btn-check"
+                                name="dashboard-view"
+                                id="dashboard-view-list"
+                                checked={dashboardView === 'list'}
+                                onChange={() => handleViewChange('list')}
+                            />
+                            <label className="btn btn-outline-secondary" htmlFor="dashboard-view-list" title="List view">
+                                <FontAwesomeIcon icon={faList} />
+                            </label>
+                        </div>
+                        <button
+                            className="btn btn-sm btn-outline-secondary"
+                            title={allCollapsed ? 'Expand all' : 'Collapse all'}
+                            onClick={handleToggleAll}
+                        >
+                            <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
+                        </button>
+                    </div>
                 </div>
                 <div className="mb-3">
                     <div className="input-group w-100 d-flex align-items-center">

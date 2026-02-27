@@ -7,6 +7,7 @@ import { JobData } from '../domain-models/models'
 
 type Props = {
     job: JobData
+    listView?: boolean
 }
 export const JobCardBodyComponent = (props: Props): ReactElement => {
     const latestExecutionDurationInMinutes = formatDuration(
@@ -27,7 +28,7 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
     }
 
     return (
-        <div className="card-body p-2 px-3">
+        <div className={`card-body p-2 px-3${props.listView ? ' card-body--list' : ''}`}>
             <p className="card-text">
                 <a
                     href={props.job.pipeline.vcs?.origin_repository_url
