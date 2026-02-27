@@ -162,6 +162,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         }
 
         const lastSyncedLabel = relativeTime
+        const isDisabled = !props.project.enabled
 
         return (
             <div className="dropdown">
@@ -174,52 +175,72 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                             </span>
                         </li>
                     )}
-                    {props.project.enabled && (
-                        <li>
-                            <button className="dropdown-item" type="button" onClick={updateProject}>
-                                Refresh
-                            </button>
-                        </li>
-                    )}
+                    <li>
+                        <button
+                            className="dropdown-item"
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={updateProject}
+                        >
+                            Refresh
+                        </button>
+                    </li>
                     <li>
                         <hr className="dropdown-divider" />
                     </li>
                     <li>
-                        <button className="dropdown-item" type="button" onClick={onSelectAll}>
+                        <button
+                            className="dropdown-item"
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={onSelectAll}
+                        >
                             Select all
                         </button>
                     </li>
                     <li>
-                        <button className="dropdown-item" type="button" onClick={onUnselectAll}>
+                        <button
+                            className="dropdown-item"
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={onUnselectAll}
+                        >
                             Unselect all
                         </button>
                     </li>
                     <li>
-                        <button className="dropdown-item" type="button" onClick={onSelectBuildJobs}>
+                        <button
+                            className="dropdown-item"
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={onSelectBuildJobs}
+                        >
                             Select build jobs
                         </button>
                     </li>
                     <li>
-                        <button className="dropdown-item" type="button" onClick={onSelectApprovalJobs}>
+                        <button
+                            className="dropdown-item"
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={onSelectApprovalJobs}
+                        >
                             Select approval jobs
                         </button>
                     </li>
-                    {!props.project.enabled && (
-                        <>
-                            <li>
-                                <hr className="dropdown-divider" />
-                            </li>
-                            <li>
-                                <button
-                                    className="dropdown-item text-danger"
-                                    type="button"
-                                    onClick={props.onExclude}
-                                >
-                                    Exclude project
-                                </button>
-                            </li>
-                        </>
-                    )}
+                    <li>
+                        <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                        <button
+                            className="dropdown-item text-danger"
+                            type="button"
+                            disabled={!isDisabled}
+                            onClick={props.onExclude}
+                        >
+                            Exclude project
+                        </button>
+                    </li>
                 </ul>
             </div>
         )
@@ -261,17 +282,20 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
     return (
         <div
             className={`accordion-item${props.isDragOver ? ' project-item--drag-over' : ''}`}
-            draggable
-            onDragStart={props.onDragStart}
             onDragOver={props.onDragOver}
             onDrop={props.onDrop}
-            onDragEnd={props.onDragEnd}
         >
             <div
                 className={`px-4 py-2 d-flex align-items-center gap-2${props.project.enabled ? ' project-item--enabled project-header-clickable' : ''}`}
                 onClick={handleHeaderClick}
             >
-                <div className="drag-handle flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="drag-handle flex-shrink-0"
+                    draggable
+                    onDragStart={props.onDragStart}
+                    onDragEnd={props.onDragEnd}
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <FontAwesomeIcon icon={faGripVertical} className="text-muted" />
                 </div>
                 <div className="form-check form-switch mb-0 flex-grow-1" onClick={(e) => e.stopPropagation()}>
