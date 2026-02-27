@@ -40,6 +40,10 @@ export class ProjectService {
         return this.dashboardRepository.setProjectHiddenJobs(project, hiddenJobs)
     }
 
+    public setProjectCollapsed(project: TrackedProjectData, collapsed: boolean): void {
+        return this.dashboardRepository.setProjectCollapsed(project, collapsed)
+    }
+
     public loadTrackedProjects(): TrackedProjectData[] {
         return this.dashboardRepository.loadTrackedProjects() || []
     }

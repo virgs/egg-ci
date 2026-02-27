@@ -63,6 +63,19 @@ export class DashboardRepository extends LocalStorageRepository {
         return this.persist(key, project)
     }
 
+    public setProjectCollapsed(project: TrackedProjectData | ProjectData, collapsed: boolean): void {
+        const id = `${this.projectIdentifier(project)}`
+        let currentProjects = this.loadTrackedProjects() ?? []
+        currentProjects = currentProjects?.map((trackedProject) => {
+            const trackedProjectId = `${this.projectIdentifier(trackedProject)}`
+            if (trackedProjectId === id) {
+                trackedProject.collapsed = collapsed
+            }
+            return trackedProject
+        })
+        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+    }
+
     public setProjectHiddenJobs(project: TrackedProjectData | ProjectData, hiddenJobs: string[]): void {
         const id = `${this.projectIdentifier(project)}`
         let currentProjects = this.loadTrackedProjects() ?? []

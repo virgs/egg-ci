@@ -27,6 +27,7 @@ export const JobCardComponent = (props: Props): ReactElement => {
                     projectUrl={props.projectUrl}
                     jobOrder={props.jobOrder}
                     job={execution}
+                    previousExecution={props.job.history[safeIndex + 1]}
                     onHideJob={props.onHideJob}
                 />
                 <JobCardBodyComponent job={execution} />

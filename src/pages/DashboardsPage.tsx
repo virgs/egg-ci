@@ -1,14 +1,16 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useTransition, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { WorkflowComponent } from '../components/WorkflowComponent'
+import { VersionControlComponent } from '../components/VersionControlComponent'
 import { ProjectService } from '../project/ProjectService'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { useProjectSynchedListener } from '../events/Events'
 import { Config } from '../config'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { ConfigContext } from '../contexts/DashboardContext'
+import { mapVersionControlFromString } from '../version-control/VersionControl'
 
 const projectService: ProjectService = new ProjectService()
 
@@ -26,6 +28,7 @@ const computeProjectPairs = (filterText: string): ProjectPair[] =>
 
 export const DashboardsPage = (): ReactElement => {
     const navigate = useNavigate()
+    const [, startTransition] = useTransition()
 
     const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())
     const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
@@ -55,48 +58,122 @@ export const DashboardsPage = (): ReactElement => {
         setProjectPairs(computeProjectPairs(filterText))
     }
 
+    const handleToggleCollapsed = (tracked: TrackedProjectData) => {
+        const newCollapsed = !(tracked.collapsed ?? false)
+        projectService.setProjectCollapsed(tracked, newCollapsed)
+        setProjectPairs((prev) =>
+            prev.map((pair) =>
+                pair.tracked === tracked ? { ...pair, tracked: { ...pair.tracked, collapsed: newCollapsed } } : pair
+            )
+        )
+    }
+
+    const allCollapsed = projectPairs.length > 0 && projectPairs.every(({ tracked }) => tracked.collapsed ?? false)
+
+    const handleToggleAll = () => {
+        const newCollapsed = !allCollapsed
+        projectPairs.forEach(({ tracked }) => projectService.setProjectCollapsed(tracked, newCollapsed))
+        startTransition(() => {
+            setProjectPairs((prev) =>
+                prev.map((pair) => ({ ...pair, tracked: { ...pair.tracked, collapsed: newCollapsed } }))
+            )
+        })
+    }
+
+    const renderProjectContent = (tracked: TrackedProjectData, data: ProjectData) => {
+        const workflowKeys = Object.keys(data.workflows)
+        if (workflowKeys.length === 0) {
+            return (
+                <div className="py-4">
+                    <p className="text-muted fst-italic">
+                        No jobs found. Enable <strong>Include build jobs</strong> for this project in Settings to
+                        display build jobs here.
+                    </p>
+                </div>
+            )
+        }
+        return workflowKeys.map((workflowName, index) => {
+            const workflow = data.workflows[workflowName]
+            const hiddenJobs = tracked.hiddenJobs ?? []
+            const visibleWorkflow = {
+                ...workflow,
+                jobs: workflow.jobs.filter((j) => !hiddenJobs.includes(j.name)),
+            }
+            const id = `workflow-${workflowName}-${index}-${workflow.latestId}`
+            return (
+                <div key={id} id={id} className="py-1">
+                    <WorkflowComponent
+                        project={data}
+                        key={`workflow-child-${index}`}
+                        workflow={visibleWorkflow}
+                        onHideJob={(jobName) => handleHideJob(tracked, jobName)}
+                        showProjectHeader={false}
+                    ></WorkflowComponent>
+                </div>
+            )
+        })
+    }
+
     const renderWorkflows = () => {
-        return projectPairs
-            .map(({ tracked, data }) => {
-                const workflowKeys = Object.keys(data.workflows)
-                if (workflowKeys.length === 0) {
-                    return (
-                        <div key={`no-jobs-${data.username}-${data.reponame}`} className="py-4">
-                            <p className="text-muted fst-italic">
-                                No jobs found for <strong>{data.username}/{data.reponame}</strong>. Enable{' '}
-                                <strong>Include build jobs</strong> for this project in Settings to display build jobs
-                                here.
-                            </p>
+        return projectPairs.map(({ tracked, data }) => {
+            const isCollapsed = tracked.collapsed ?? false
+            const projectKey = `${data.vcsType}/${data.username}/${data.reponame}`
+            const versionControl = mapVersionControlFromString(data.vcsType)
+            const versionControlIcon = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
+            return (
+                <div key={projectKey}>
+                    <div style={{ height: '1px', backgroundColor: 'var(--bs-gray-200)', marginBottom: '4px' }}></div>
+                    <div style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleToggleCollapsed(tracked)}>
+                        <nav aria-label="breadcrumb">
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item d-flex align-items-center">
+                                    <FontAwesomeIcon
+                                        icon={isCollapsed ? faChevronRight : faChevronDown}
+                                        className="text-secondary"
+                                        style={{ width: '12px' }}
+                                    />
+                                </li>
+                                <li className="breadcrumb-item d-flex align-items-center fs-4">
+                                    <a href={data.vcsUrl} onClick={(e) => e.stopPropagation()}>
+                                        {versionControlIcon}
+                                        <span className="ms-2">{data.reponame}</span>
+                                    </a>
+                                </li>
+                                <li className="breadcrumb-item d-flex align-items-center fs-6">
+                                    <small>{data.defaultBranch}</small>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateRows: isCollapsed ? '0fr' : '1fr',
+                            transition: 'grid-template-rows 0.3s ease',
+                        }}
+                    >
+                        <div style={{ overflow: 'hidden' }}>
+                            {renderProjectContent(tracked, data)}
                         </div>
-                    )
-                }
-                return workflowKeys.map((workflowName, index) => {
-                    const workflow = data.workflows[workflowName]
-                    const hiddenJobs = tracked.hiddenJobs ?? []
-                    const visibleWorkflow = {
-                        ...workflow,
-                        jobs: workflow.jobs.filter((j) => !hiddenJobs.includes(j.name)),
-                    }
-                    const id = `workflow-${workflowName}-${index}-${workflow.latestId}`
-                    return (
-                        <div key={id} id={id} className="py-4">
-                            <WorkflowComponent
-                                project={data}
-                                key={`workflow-child-${index}`}
-                                workflow={visibleWorkflow}
-                                onHideJob={(jobName) => handleHideJob(tracked, jobName)}
-                            ></WorkflowComponent>
-                        </div>
-                    )
-                })
-            })
-            .flat()
+                    </div>
+                </div>
+            )
+        })
     }
 
     return (
         <>
             <ConfigContext.Provider value={configuration}>
-                <h3>Workflows ({projectPairs.reduce((acc, { data }) => Object.keys(data.workflows).length + acc, 0)})</h3>
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                    <h3 className="mb-0">Workflows ({projectPairs.reduce((acc, { data }) => Object.keys(data.workflows).length + acc, 0)})</h3>
+                    <button
+                        className="btn btn-sm btn-outline-secondary"
+                        title={allCollapsed ? 'Expand all' : 'Collapse all'}
+                        onClick={handleToggleAll}
+                    >
+                        <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
+                    </button>
+                </div>
                 <div className="mb-3">
                     <div className="input-group w-100 d-flex align-items-center">
                         <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">

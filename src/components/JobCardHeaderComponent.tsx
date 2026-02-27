@@ -10,6 +10,7 @@ import { jobExecutionProps } from './jobExecutionProps'
 
 type Props = {
     job: JobData
+    previousExecution?: JobData
     jobOrder: number
     projectUrl: string
     onHideJob: (jobName: string) => void
@@ -32,6 +33,13 @@ const getBadge = (job: WorkflowJob): ReactElement => {
 export const JobCardHeaderComponent = (props: Props): ReactElement => {
     const titleRef = useRef<HTMLHeadingElement>(null)
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
+    const vcs = props.job.pipeline.vcs
+    const browseUrl = vcs ? `${vcs.origin_repository_url}/tree/${vcs.revision}` : undefined
+    const prevVcs = props.previousExecution?.pipeline.vcs
+    const compareUrl =
+        vcs && prevVcs
+            ? `${vcs.origin_repository_url}/compare/${prevVcs.revision}...${vcs.revision}`
+            : undefined
 
     useEffect(() => {
         if (titleRef.current) {
@@ -76,12 +84,22 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                         </a>
                     </li>
                     <li>
-                        <a className="dropdown-item disabled" href="#">
+                        <a
+                            className={`dropdown-item${browseUrl ? '' : ' disabled'}`}
+                            href={browseUrl ?? '#'}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
                             Browse repo at this point
                         </a>
                     </li>
                     <li>
-                        <a className="dropdown-item disabled" href="#">
+                        <a
+                            className={`dropdown-item${compareUrl ? '' : ' disabled'}`}
+                            href={compareUrl ?? '#'}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
                             Compare against previous execution
                         </a>
                     </li>

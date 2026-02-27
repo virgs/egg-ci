@@ -7,6 +7,7 @@ export interface TrackedProjectData {
     defaultBranch: string
     includeBuildJobs?: boolean
     hiddenJobs?: string[]
+    collapsed?: boolean
 }
 
 export interface ProjectData {

@@ -38,8 +38,20 @@
     - The "enable/disable build jobs" option should be a shortcut for hiding/showing all build jobs for that project.
     - If the user unchecks "include build jobs", all build jobs for that project are hidden. If the user checks "include build jobs", all build jobs for that project are shown.
     - It should also be possible to hide invididual jobs in the dashboard page. There should be a "hide job" option in the job card menu. If the user clicks on it, the job is hidden from the dashboard and the settings page is updated to reflect that change (the checkbox for that job is unchecked).
-20. ~[ ] Be able to merge workflow data (autosync pipelines)~
-21. ~[ ] Card placeholders~
-22. [ ] Job more options:
-    1. [ ] Compare against previous execution (https://docs.github.com/en/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits/comparing-commits)
-    2. [ ] Browse repo at this point: https://github.com/virgs/jsonPlaceholderReplacer/tree/<commit-hash>
+20. In the dashboard page, each project should be collapsible.
+    - By default, all projects are expanded and show their jobs. If the user clicks on the project name, it collapses the project and hides its jobs.
+    - If the user clicks on the project name again, it expands the project and shows its jobs.
+    - The collapsed/expanded state of each project should be persisted so that when the user comes back to the dashboard page, they can see which projects are collapsed and which are expanded.
+    - There should be a chevron icon next to the project name that indicates whether the project is collapsed or expanded. The chevron should point down when the project is expanded and point right when the project is collapsed.
+    - There should be a button on the top of the dashboard (with a fontawesome icon) page that allows the user to expand/collapse all projects at once. If the user clicks on it, all projects are expanded if they were previously collapsed, and all projects are collapsed if they were previously expanded.
+21. 
+22. [ ] Reorder projects in the settings page and have that reflected in the dashboard page. The order of the projects should be persisted so that when the user comes back to the settings page or the dashboard page, they see the projects in the order they set.
+23. [ ] Add a button in the dashboard page to switch the jobs between grid and list view. 
+    The grid view is the current view where the jobs are displayed in cards.
+    The user should be able to switch between the two views by clicking on the button. The selected view should be persisted so that when the user comes back to the dashboard page, they see the jobs in the view they selected.
+    The list view is a new view where the jobs are displayed one per line. They are still cards, but wider (100% of the container) and shorter in height. The same informations and buttos are displayed and only reorganized. Maximize reusage wherever you can
+24. ~[ ] Be able to merge workflow data (autosync pipelines)~
+25. ~[ ] Card placeholders~
+26. [x] Job more options:
+    1. [x] Compare against previous execution (https://docs.github.com/en/pull-requests/committing-changes-to-your-project/viewing-and-comparing-commits/comparing-commits)
+    2. [x] Browse repo at this point: https://github.com/virgs/jsonPlaceholderReplacer/tree/<commit-hash>
