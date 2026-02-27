@@ -1,4 +1,4 @@
-import './DashboardsPage.scss'
+import './WorkflowsPage.scss'
 import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useTransition, useState } from 'react'
@@ -9,8 +9,8 @@ import { ProjectService } from '../project/ProjectService'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { useProjectSynchedListener } from '../events/Events'
 import { Config } from '../config'
-import { DashboardView, SettingsRepository } from '../settings/SettingsRepository'
-import { ConfigContext } from '../contexts/DashboardContext'
+import { WorkflowView, SettingsRepository } from '../settings/SettingsRepository'
+import { ConfigContext } from '../contexts/ConfigContext'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 
 const projectService: ProjectService = new ProjectService()
@@ -28,18 +28,18 @@ const computeProjectPairs = (filterText: string): ProjectPair[] =>
             Object.keys(data.workflows).join().concat(data.reponame).concat(data.username).includes(filterText)
         )
 
-export const DashboardsPage = (): ReactElement => {
+export const WorkflowsPage = (): ReactElement => {
     const navigate = useNavigate()
     const [, startTransition] = useTransition()
 
     const [configuration] = useState<Config>(new SettingsRepository().getConfiguration())
     const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
     const [filterText, setFilterText] = useState<string>('')
-    const [dashboardView, setDashboardView] = useState<DashboardView>(() => settingsRepository.getDashboardView())
+    const [workflowView, setWorkflowView] = useState<WorkflowView>(() => settingsRepository.getWorkflowView())
 
-    const handleViewChange = (view: DashboardView) => {
-        settingsRepository.setDashboardView(view)
-        setDashboardView(view)
+    const handleViewChange = (view: WorkflowView) => {
+        settingsRepository.setWorkflowView(view)
+        setWorkflowView(view)
     }
 
     useProjectSynchedListener(() => {
@@ -114,7 +114,7 @@ export const DashboardsPage = (): ReactElement => {
                         hiddenJobs={tracked.hiddenJobs ?? []}
                         onHideJob={(jobName) => handleHideJob(tracked, jobName)}
                         showProjectHeader={false}
-                        listView={dashboardView === 'list'}
+                        listView={workflowView === 'list'}
                     />
                 </div>
             )
@@ -140,7 +140,11 @@ export const DashboardsPage = (): ReactElement => {
                                     />
                                 </li>
                                 <li className="breadcrumb-item d-flex align-items-center fs-4">
-                                    <a href={data.vcsUrl} onClick={(e) => e.stopPropagation()}>
+                                    <a
+                                        className="text-decoration-none"
+                                        href={data.vcsUrl}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         {versionControlIcon}
                                         <span className="ms-2">{data.reponame}</span>
                                     </a>
@@ -191,7 +195,7 @@ export const DashboardsPage = (): ReactElement => {
                                 className="btn-check"
                                 name="dashboard-view"
                                 id="dashboard-view-grid"
-                                checked={dashboardView === 'grid'}
+                                checked={workflowView === 'grid'}
                                 onChange={() => handleViewChange('grid')}
                             />
                             <label
@@ -206,7 +210,7 @@ export const DashboardsPage = (): ReactElement => {
                                 className="btn-check"
                                 name="dashboard-view"
                                 id="dashboard-view-list"
-                                checked={dashboardView === 'list'}
+                                checked={workflowView === 'list'}
                                 onChange={() => handleViewChange('list')}
                             />
                             <label

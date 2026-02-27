@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react'
-import { SettingsProjectComponent } from '../components/settings/SettingsProjectComponent'
+import { ProjectItemComponent } from '../components/project/ProjectItemComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
@@ -113,7 +113,7 @@ export const ProjectsPage = (): ReactElement => {
             </div>
             <div className="accordion">
                 {projects.map((project, index) => (
-                    <SettingsProjectComponent
+                    <ProjectItemComponent
                         key={`project-${getProjectLabel(project)}`}
                         onEnablingChange={updateProjectList}
                         project={project}

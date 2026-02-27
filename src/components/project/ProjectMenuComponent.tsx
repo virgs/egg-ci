@@ -16,7 +16,7 @@ type Props = {
     onExclude: () => void
 }
 
-export const SettingsProjectMenuComponent = (props: Props): ReactElement => {
+export const ProjectMenuComponent = (props: Props): ReactElement => {
     if (props.syncing) {
         return (
             <div className="spinner-grow spinner-grow-sm text-secondary" role="status">

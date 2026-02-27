@@ -2,7 +2,7 @@ import { Config, defaultConfig } from '../config'
 import { LocalStorageRepository } from '../db/LocalStorageRepository'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 
-export type DashboardView = 'grid' | 'list'
+export type WorkflowView = 'grid' | 'list'
 
 export class SettingsRepository extends LocalStorageRepository {
     public setApiToken(token: string) {
@@ -29,12 +29,12 @@ export class SettingsRepository extends LocalStorageRepository {
         return this.persist('configuration', configuration)
     }
 
-    public getDashboardView(): DashboardView {
-        return super.load('dashboardView') ?? 'grid'
+    public getWorkflowView(): WorkflowView {
+        return super.load('workflowView') ?? 'grid'
     }
 
-    public setDashboardView(view: DashboardView) {
-        return this.persist('dashboardView', view)
+    public setWorkflowView(view: WorkflowView) {
+        return this.persist('workflowView', view)
     }
 
     public clearApiToken() {

@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 import { ProjectData } from '../../domain-models/models'
 import { faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { UniqueJob, collectUniqueJobs } from './settingsProjectUtils'
+import { UniqueJob, collectUniqueJobs } from './projectUtils'
 
 type Props = {
     projectId: string
@@ -11,7 +11,7 @@ type Props = {
     onToggleJobVisibility: (jobName: string) => void
 }
 
-export const SettingsProjectJobListComponent = (props: Props): ReactElement => {
+export const ProjectJobListComponent = (props: Props): ReactElement => {
     if (!props.projectData) {
         return (
             <p className="text-muted fst-italic mb-0">

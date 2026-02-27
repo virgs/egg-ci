@@ -1,6 +1,6 @@
 import { NavBarComponent } from './components/NavBarComponent'
 import { initializeCircleCiClient } from './gateway/CircleCiClient'
-import { DashboardsPage } from './pages/DashboardsPage'
+import { WorkflowsPage } from './pages/WorkflowsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ProjectsPage } from './pages/ProjectsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
@@ -56,7 +56,7 @@ const router = createHashRouter([
     },
     {
         path: '/workflows',
-        element: <AppShell><DashboardsPage /></AppShell>,
+        element: <AppShell><WorkflowsPage /></AppShell>,
         errorElement: <RouteErrorElement />,
     },
     {

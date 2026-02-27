@@ -4,7 +4,7 @@ import { ProjectData, TrackedProjectData } from '../domain-models/models'
 const TRACKED_PROJECTS_KEY = 'trackedProjects'
 const PROJECT_PREFIX_KEY = 'project'
 
-export class DashboardRepository extends LocalStorageRepository {
+export class ProjectRepository extends LocalStorageRepository {
     public trackProject(project: TrackedProjectData) {
         const id = `${project.vcsType}/${project.username}/${project.reponame}`
         const currentProjects = this.loadTrackedProjects() ?? []

@@ -1,6 +1,6 @@
 import { ReactElement, useContext, useMemo } from 'react'
 import { JobData } from '../../domain-models/models'
-import { ConfigContext } from '../../contexts/DashboardContext'
+import { ConfigContext } from '../../contexts/ConfigContext'
 import './JobCardFooterComponent.scss'
 import { jobExecutionProps } from './jobExecutionProps'
 

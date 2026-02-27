@@ -8,10 +8,10 @@ import { VersionControlComponent } from '../VersionControlComponent'
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
-import './SettingsProjectComponent.scss'
-import { SettingsProjectMenuComponent } from './SettingsProjectMenuComponent'
-import { SettingsProjectJobListComponent } from './SettingsProjectJobListComponent'
-import { collectUniqueJobs } from './settingsProjectUtils'
+import './ProjectItemComponent.scss'
+import { ProjectMenuComponent } from './ProjectMenuComponent'
+import { ProjectJobListComponent } from './ProjectJobListComponent'
+import { collectUniqueJobs } from './projectUtils'
 
 const getProjectLabel = (project: TrackedProjectData): string =>
     `${project.vcsType}/${project.username}/${project.reponame}`
@@ -29,7 +29,7 @@ type Props = {
 
 const projectService: ProjectService = new ProjectService()
 
-export const SettingsProjectComponent = (props: Props): ReactElement => {
+export const ProjectItemComponent = (props: Props): ReactElement => {
     const initialData = projectService.loadProject(props.project)
     const [syncing, setSyncing] = useState<boolean>(props.project.enabled && !initialData)
     const [hiddenJobs, setHiddenJobs] = useState<string[]>(props.project.hiddenJobs ?? [])
@@ -152,7 +152,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                     <span>{props.project.username}/{props.project.reponame}</span>
                 </label>
                 <div onClick={(e) => e.stopPropagation()}>
-                    <SettingsProjectMenuComponent
+                    <ProjectMenuComponent
                         project={props.project}
                         syncing={syncing}
                         relativeTime={relativeTime}
@@ -169,7 +169,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
             <div className={`collapsible-grid${isExpanded ? '' : ' collapsible-grid--collapsed'}`}>
                 <div className="collapsible-grid__inner">
                     <div className="py-2 ps-5">
-                        <SettingsProjectJobListComponent
+                        <ProjectJobListComponent
                             projectId={id}
                             projectData={projectData}
                             hiddenJobs={hiddenJobs}

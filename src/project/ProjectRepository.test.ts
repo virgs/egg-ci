@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { DashboardRepository } from './DashboardRepository'
+import { ProjectRepository } from './ProjectRepository'
 import type { TrackedProjectData } from '../domain-models/models'
 
 function makeProject(reponame: string, overrides?: Partial<TrackedProjectData>): TrackedProjectData {
@@ -14,12 +14,12 @@ function makeProject(reponame: string, overrides?: Partial<TrackedProjectData>):
     }
 }
 
-describe('DashboardRepository', () => {
-    let repo: DashboardRepository
+describe('ProjectRepository', () => {
+    let repo: ProjectRepository
 
     beforeEach(() => {
         localStorage.clear()
-        repo = new DashboardRepository()
+        repo = new ProjectRepository()
     })
 
     describe('trackProject', () => {
