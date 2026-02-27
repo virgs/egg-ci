@@ -129,7 +129,7 @@ export const DashboardsPage = (): ReactElement => {
             const versionControlIcon = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
             return (
                 <div key={projectKey}>
-                    <div className="section-divider"></div>
+                    <hr className="border border-primary border-1 opacity-25" />
                     <div className="project-header-toggle" onClick={() => handleToggleCollapsed(tracked)}>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb">
@@ -152,9 +152,7 @@ export const DashboardsPage = (): ReactElement => {
                         </nav>
                     </div>
                     <div className={`collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
-                        <div className="collapsible-grid__inner">
-                            {renderProjectContent(tracked, data)}
-                        </div>
+                        <div className="collapsible-grid__inner">{renderProjectContent(tracked, data)}</div>
                     </div>
                 </div>
             )
