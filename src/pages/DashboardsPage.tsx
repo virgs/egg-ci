@@ -19,7 +19,7 @@ type ProjectPair = { tracked: TrackedProjectData; data: ProjectData }
 
 const computeProjectPairs = (filterText: string): ProjectPair[] =>
     (projectService.loadTrackedProjects() || [])
-        .filter((t) => t.enabled)
+        .filter((t) => t.enabled && !t.excluded)
         .map((t) => ({ tracked: t, data: projectService.loadProject(t) }))
         .filter(({ data }) => data !== undefined)
         .map(({ tracked, data }) => ({ tracked, data: data as ProjectData }))

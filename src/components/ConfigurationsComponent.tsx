@@ -4,6 +4,7 @@ import { Config } from '../config'
 type Props = {
     config: Config
     onChange: (config: Config) => void
+    onUnexcludeAll?: () => void
 }
 
 export const ConfigurationComponent = (props: Props): ReactElement => {
@@ -83,6 +84,13 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
                     Jobs Max History: {jobExecutionsMaxHistory}
                 </label>
             </div>
+            {props.onUnexcludeAll && (
+                <div className="col-12 pb-2">
+                    <button className="btn btn-sm btn-outline-secondary" type="button" onClick={props.onUnexcludeAll}>
+                        Unexclude all projects
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

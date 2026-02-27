@@ -5,7 +5,7 @@ import { emitNewNotification, useProjectSynchedListener } from '../events/Events
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
-import { faBars, faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faArrowDown, faArrowUp, faBars, faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
 import './SettingsProjectComponent.scss'
@@ -31,6 +31,11 @@ const collectUniqueJobs = (projectData: ProjectData): UniqueJob[] => {
 type Props = {
     project: TrackedProjectData
     onEnablingChange: (enabled: boolean) => void
+    index: number
+    total: number
+    onMoveUp: () => void
+    onMoveDown: () => void
+    onExclude: () => void
 }
 
 const projectService: ProjectService = new ProjectService()
@@ -156,16 +161,10 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
         }
 
         const lastSyncedLabel = relativeTime
-        const isDisabled = !props.project.enabled
 
         return (
             <div className="dropdown">
-                <FontAwesomeIcon
-                    icon={faBars}
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    className={isDisabled ? 'project-item__action--disabled' : undefined}
-                />
+                <FontAwesomeIcon icon={faBars} data-bs-toggle="dropdown" aria-expanded="false" />
                 <ul className="dropdown-menu dropdown-menu-end">
                     {lastSyncedLabel && (
                         <li>
@@ -174,11 +173,13 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                             </span>
                         </li>
                     )}
-                    <li>
-                        <button className="dropdown-item" type="button" onClick={updateProject}>
-                            Refresh
-                        </button>
-                    </li>
+                    {props.project.enabled && (
+                        <li>
+                            <button className="dropdown-item" type="button" onClick={updateProject}>
+                                Refresh
+                            </button>
+                        </li>
+                    )}
                     <li>
                         <hr className="dropdown-divider" />
                     </li>
@@ -202,6 +203,22 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                             Select approval jobs
                         </button>
                     </li>
+                    {!props.project.enabled && (
+                        <>
+                            <li>
+                                <hr className="dropdown-divider" />
+                            </li>
+                            <li>
+                                <button
+                                    className="dropdown-item text-danger"
+                                    type="button"
+                                    onClick={props.onExclude}
+                                >
+                                    Exclude project
+                                </button>
+                            </li>
+                        </>
+                    )}
                 </ul>
             </div>
         )
@@ -261,7 +278,27 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                         </span>
                     </label>
                 </div>
-                <div onClick={(e) => e.stopPropagation()}>
+                <div className="d-flex align-items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="d-flex gap-1">
+                        <button
+                            className="btn btn-sm btn-outline-secondary py-0 px-1"
+                            type="button"
+                            disabled={props.index === 0}
+                            onClick={props.onMoveUp}
+                            title="Move up"
+                        >
+                            <FontAwesomeIcon icon={faArrowUp} />
+                        </button>
+                        <button
+                            className="btn btn-sm btn-outline-secondary py-0 px-1"
+                            type="button"
+                            disabled={props.index === props.total - 1}
+                            onClick={props.onMoveDown}
+                            title="Move down"
+                        >
+                            <FontAwesomeIcon icon={faArrowDown} />
+                        </button>
+                    </div>
                     {renderMenu()}
                 </div>
             </div>

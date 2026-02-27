@@ -52,6 +52,18 @@ export class ProjectService {
         return this.dashboardRepository.loadProject(project)
     }
 
+    public reorderProjects(orderedNonExcluded: TrackedProjectData[]): void {
+        return this.dashboardRepository.reorderProjects(orderedNonExcluded)
+    }
+
+    public excludeProject(project: TrackedProjectData): void {
+        return this.dashboardRepository.excludeProject(project)
+    }
+
+    public unexcludeAllProjects(): void {
+        return this.dashboardRepository.unexcludeAllProjects()
+    }
+
     public async syncProject(project: TrackedProjectData | ProjectData): Promise<ProjectData> {
         const existingData = this.dashboardRepository.loadProject(project)
         const result: ProjectData = {

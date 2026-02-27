@@ -94,6 +94,33 @@ export class DashboardRepository extends LocalStorageRepository {
         return this.load(key)
     }
 
+    public reorderProjects(orderedNonExcluded: TrackedProjectData[]): void {
+        const currentProjects = this.loadTrackedProjects() ?? []
+        const excluded = currentProjects.filter((p) => p.excluded)
+        this.persist(TRACKED_PROJECTS_KEY, [...orderedNonExcluded, ...excluded])
+    }
+
+    public excludeProject(project: TrackedProjectData | ProjectData): void {
+        const id = `${this.projectIdentifier(project)}`
+        let currentProjects = this.loadTrackedProjects() ?? []
+        currentProjects = currentProjects.map((trackedProject) => {
+            if (this.projectIdentifier(trackedProject) === id) {
+                trackedProject.excluded = true
+            }
+            return trackedProject
+        })
+        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+    }
+
+    public unexcludeAllProjects(): void {
+        let currentProjects = this.loadTrackedProjects() ?? []
+        currentProjects = currentProjects.map((trackedProject) => {
+            trackedProject.excluded = undefined
+            return trackedProject
+        })
+        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+    }
+
     private projectIdentifier(project: TrackedProjectData | ProjectData): string {
         return `${project.vcsType}/${project.username}/${project.reponame}`
     }

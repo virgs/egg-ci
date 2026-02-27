@@ -8,6 +8,7 @@ export interface TrackedProjectData {
     includeBuildJobs?: boolean
     hiddenJobs?: string[]
     collapsed?: boolean
+    excluded?: boolean
 }
 
 export interface ProjectData {

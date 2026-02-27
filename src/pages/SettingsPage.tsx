@@ -26,7 +26,7 @@ export const SettingsPage = (): ReactElement => {
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
     const [, setUserInformation] = useState<UserInformationResponse | undefined>()
     const [projects, setProjects] = useState<TrackedProjectData[]>(
-        () => projectService.loadTrackedProjects()?.sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b))) ?? []
+        () => projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
     )
 
     useLoggedOutListener(() => {
@@ -45,9 +45,7 @@ export const SettingsPage = (): ReactElement => {
             setUserInformation(newUserInformation)
         }
         if (projectService.loadTrackedProjects()) {
-            const loadedProjects = projectService
-                .loadTrackedProjects()
-                .sort((a, b) => getProjectLabel(a).localeCompare(getProjectLabel(b)))
+            const loadedProjects = projectService.loadTrackedProjects().filter((p) => !p.excluded)
             setProjects(loadedProjects)
         }
     }
@@ -78,14 +76,43 @@ export const SettingsPage = (): ReactElement => {
         settingsRepository.setConfiguration(configuration)
     }
 
+    const handleMoveUp = (index: number) => {
+        const updated = [...projects]
+        ;[updated[index - 1], updated[index]] = [updated[index], updated[index - 1]]
+        projectService.reorderProjects(updated)
+        setProjects(updated)
+    }
+
+    const handleMoveDown = (index: number) => {
+        const updated = [...projects]
+        ;[updated[index], updated[index + 1]] = [updated[index + 1], updated[index]]
+        projectService.reorderProjects(updated)
+        setProjects(updated)
+    }
+
+    const handleExclude = (project: TrackedProjectData) => {
+        projectService.excludeProject(project)
+        setProjects((prev) => prev.filter((p) => p !== project))
+    }
+
+    const handleUnexcludeAll = () => {
+        projectService.unexcludeAllProjects()
+        setProjects(projectService.loadTrackedProjects() ?? [])
+    }
+
     const renderProjects = () => {
         return (
             <div className="accordion">
                 {(projects || []).map((project, index) => (
                     <SettingsProjectComponent
-                        key={`settings-project-${index}-${project.reponame}`}
+                        key={`settings-project-${getProjectLabel(project)}`}
                         onEnablingChange={updateComponentStates}
                         project={project}
+                        index={index}
+                        total={projects.length}
+                        onMoveUp={() => handleMoveUp(index)}
+                        onMoveDown={() => handleMoveDown(index)}
+                        onExclude={() => handleExclude(project)}
                     ></SettingsProjectComponent>
                 ))}
             </div>
@@ -138,6 +165,7 @@ export const SettingsPage = (): ReactElement => {
                     <ConfigurationComponent
                         onChange={onConfigurationsChange}
                         config={settingsRepository.getConfiguration()}
+                        onUnexcludeAll={handleUnexcludeAll}
                     />
                 </div>
             </div>
