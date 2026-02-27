@@ -40,14 +40,16 @@ export const SettingsPage = (): ReactElement => {
             new Tooltip(tokenInfoRef.current, {
                 html: true,
                 customClass: 'tooltip-wide',
+                placement: 'right',
                 title: [
-                    '<h4><strong>CircleCI Personal API Token</strong></h4><',
+                    '<h5 class="card-title my-1">CircleCI Personal API Token</h5>',
                     '<ol class="mb-1 ps-3">',
                     '<li>Click this icon to open CircleCI token settings</li>',
                     '<li>Click <em>Create New Token</em></li>',
                     '<li>Copy and paste the token here</li>',
+                    '<li>Make sure the projects are being followed in CircleCI (Projects > Follow)</li>',
                     '</ol>',
-                    '<small class="text-muted text-info-emphasis">Stored locally in your browser only — never shared.</small>',
+                    '<small class="text-info-emphasis">Stored locally in your browser only — never shared.</small>',
                 ].join(''),
                 delay: { show: 300, hide: 150 },
             })
