@@ -15,3 +15,17 @@
     opacity: 0.35;
     pointer-events: none;
 }
+
+.drag-handle {
+    cursor: grab;
+    padding: 0 4px;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.project-item--drag-over {
+    outline: 2px dashed var(--bs-primary);
+    outline-offset: -2px;
+}

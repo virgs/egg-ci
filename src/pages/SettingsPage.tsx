@@ -1,6 +1,6 @@
 import { faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged, useLoggedOutListener } from '../events/Events'
@@ -76,18 +76,41 @@ export const SettingsPage = (): ReactElement => {
         settingsRepository.setConfiguration(configuration)
     }
 
-    const handleMoveUp = (index: number) => {
-        const updated = [...projects]
-        ;[updated[index - 1], updated[index]] = [updated[index], updated[index - 1]]
-        projectService.reorderProjects(updated)
-        setProjects(updated)
+    const [dragIndex, setDragIndex] = useState<number | null>(null)
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+    const handleDragStart = (index: number) => (e: React.DragEvent) => {
+        setDragIndex(index)
+        e.dataTransfer.effectAllowed = 'move'
     }
 
-    const handleMoveDown = (index: number) => {
+    const handleDragOver = (index: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+        if (dragOverIndex !== index) {
+            setDragOverIndex(index)
+        }
+    }
+
+    const handleDrop = (dropIndex: number) => (e: React.DragEvent) => {
+        e.preventDefault()
+        if (dragIndex === null || dragIndex === dropIndex) {
+            setDragIndex(null)
+            setDragOverIndex(null)
+            return
+        }
         const updated = [...projects]
-        ;[updated[index], updated[index + 1]] = [updated[index + 1], updated[index]]
+        const [removed] = updated.splice(dragIndex, 1)
+        updated.splice(dropIndex, 0, removed)
         projectService.reorderProjects(updated)
         setProjects(updated)
+        setDragIndex(null)
+        setDragOverIndex(null)
+    }
+
+    const handleDragEnd = () => {
+        setDragIndex(null)
+        setDragOverIndex(null)
     }
 
     const handleExclude = (project: TrackedProjectData) => {
@@ -108,12 +131,13 @@ export const SettingsPage = (): ReactElement => {
                         key={`settings-project-${getProjectLabel(project)}`}
                         onEnablingChange={updateComponentStates}
                         project={project}
-                        index={index}
-                        total={projects.length}
-                        onMoveUp={() => handleMoveUp(index)}
-                        onMoveDown={() => handleMoveDown(index)}
                         onExclude={() => handleExclude(project)}
-                    ></SettingsProjectComponent>
+                        isDragOver={dragOverIndex === index && dragIndex !== index}
+                        onDragStart={handleDragStart(index)}
+                        onDragOver={handleDragOver(index)}
+                        onDrop={handleDrop(index)}
+                        onDragEnd={handleDragEnd}
+                    />
                 ))}
             </div>
         )

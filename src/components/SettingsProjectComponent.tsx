@@ -1,11 +1,11 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useRelativeTime } from '../time/UseRelativeTime'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../events/Events'
 import { ProjectService } from '../project/ProjectService'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { VersionControlComponent } from './VersionControlComponent'
-import { faArrowDown, faArrowUp, faBars, faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faGripVertical, faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
 import './SettingsProjectComponent.scss'
@@ -31,11 +31,12 @@ const collectUniqueJobs = (projectData: ProjectData): UniqueJob[] => {
 type Props = {
     project: TrackedProjectData
     onEnablingChange: (enabled: boolean) => void
-    index: number
-    total: number
-    onMoveUp: () => void
-    onMoveDown: () => void
     onExclude: () => void
+    isDragOver: boolean
+    onDragStart: (e: React.DragEvent) => void
+    onDragOver: (e: React.DragEvent) => void
+    onDrop: (e: React.DragEvent) => void
+    onDragEnd: () => void
 }
 
 const projectService: ProjectService = new ProjectService()
@@ -258,12 +259,22 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
     }
 
     return (
-        <div className="accordion-item">
+        <div
+            className={`accordion-item${props.isDragOver ? ' project-item--drag-over' : ''}`}
+            draggable
+            onDragStart={props.onDragStart}
+            onDragOver={props.onDragOver}
+            onDrop={props.onDrop}
+            onDragEnd={props.onDragEnd}
+        >
             <div
-                className={`px-4 py-2 d-flex align-items-center justify-content-between gap-2${props.project.enabled ? ' project-item--enabled project-header-clickable' : ''}`}
+                className={`px-4 py-2 d-flex align-items-center gap-2${props.project.enabled ? ' project-item--enabled project-header-clickable' : ''}`}
                 onClick={handleHeaderClick}
             >
-                <div className="form-check form-switch mb-0" onClick={(e) => e.stopPropagation()}>
+                <div className="drag-handle flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <FontAwesomeIcon icon={faGripVertical} className="text-muted" />
+                </div>
+                <div className="form-check form-switch mb-0 flex-grow-1" onClick={(e) => e.stopPropagation()}>
                     <input
                         className="form-check-input"
                         type="checkbox"
@@ -278,27 +289,7 @@ export const SettingsProjectComponent = (props: Props): ReactElement => {
                         </span>
                     </label>
                 </div>
-                <div className="d-flex align-items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <div className="d-flex gap-1">
-                        <button
-                            className="btn btn-sm btn-outline-secondary py-0 px-1"
-                            type="button"
-                            disabled={props.index === 0}
-                            onClick={props.onMoveUp}
-                            title="Move up"
-                        >
-                            <FontAwesomeIcon icon={faArrowUp} />
-                        </button>
-                        <button
-                            className="btn btn-sm btn-outline-secondary py-0 px-1"
-                            type="button"
-                            disabled={props.index === props.total - 1}
-                            onClick={props.onMoveDown}
-                            title="Move down"
-                        >
-                            <FontAwesomeIcon icon={faArrowDown} />
-                        </button>
-                    </div>
+                <div onClick={(e) => e.stopPropagation()}>
                     {renderMenu()}
                 </div>
             </div>
