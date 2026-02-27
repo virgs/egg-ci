@@ -108,7 +108,7 @@ export const ProjectsPage = (): ReactElement => {
                     onClick={handleUnexcludeAll}
                 >
                     Restore excluded projects
-                    <span className="badge bg-info ms-2 fs-6">{excludedCount}</span>
+                    {excludedCount > 0 && <span className="badge bg-info ms-2 fs-6">{excludedCount}</span>}
                 </button>
             </div>
             <div className="accordion">

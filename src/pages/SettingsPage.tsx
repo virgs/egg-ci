@@ -93,10 +93,13 @@ export const SettingsPage = (): ReactElement => {
                         onChange={(e) => setToken(e.target.value)}
                         className="form-control py-2"
                         id="circleci-api-token"
+                        readOnly={hasSavedToken}
                     />
-                    <button disabled={!token} onClick={connect} type="button" className="btn btn-primary py-2">
-                        <FontAwesomeIcon icon={faRightToBracket} />
-                    </button>
+                    {!hasSavedToken && (
+                        <button disabled={!token} onClick={connect} type="button" className="btn btn-primary py-2">
+                            <FontAwesomeIcon icon={faRightToBracket} />
+                        </button>
+                    )}
                 </div>
             </div>
             <div className="d-grid gap-2">

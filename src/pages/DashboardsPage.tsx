@@ -165,8 +165,28 @@ export const DashboardsPage = (): ReactElement => {
         <>
             <ConfigContext.Provider value={configuration}>
                 <div className="d-flex align-items-center justify-content-between mb-2">
-                    <h3 className="mb-0">Workflows ({projectPairs.reduce((acc, { data }) => Object.keys(data.workflows).length + acc, 0)})</h3>
-                    <div className="d-flex gap-2">
+                    <h3 className="mb-0">
+                        Workflows ({projectPairs.reduce((acc, { data }) => Object.keys(data.workflows).length + acc, 0)}
+                        )
+                    </h3>
+                </div>
+                <div className="row g-2 align-items-center mb-3">
+                    <div className="col-12 col-xl">
+                        <div className="input-group input-group-sm">
+                            <span className="input-group-text">
+                                <FontAwesomeIcon icon={faSearch} />
+                            </span>
+                            <input
+                                type="text"
+                                value={filterText}
+                                onChange={(event) => handleFilterChange(event.target.value)}
+                                className="form-control"
+                                placeholder="Search by name..."
+                                id="wokflowSearchLabel"
+                            />
+                        </div>
+                    </div>
+                    <div className="col-12 col-xl-auto d-flex justify-content-end gap-2">
                         <div className="btn-group btn-group-sm">
                             <input
                                 type="radio"
@@ -176,7 +196,11 @@ export const DashboardsPage = (): ReactElement => {
                                 checked={dashboardView === 'grid'}
                                 onChange={() => handleViewChange('grid')}
                             />
-                            <label className="btn btn-outline-secondary" htmlFor="dashboard-view-grid" title="Grid view">
+                            <label
+                                className="btn btn-outline-secondary"
+                                htmlFor="dashboard-view-grid"
+                                title="Grid view"
+                            >
                                 <FontAwesomeIcon icon={faTableCellsLarge} />
                             </label>
                             <input
@@ -187,7 +211,11 @@ export const DashboardsPage = (): ReactElement => {
                                 checked={dashboardView === 'list'}
                                 onChange={() => handleViewChange('list')}
                             />
-                            <label className="btn btn-outline-secondary" htmlFor="dashboard-view-list" title="List view">
+                            <label
+                                className="btn btn-outline-secondary"
+                                htmlFor="dashboard-view-list"
+                                title="List view"
+                            >
                                 <FontAwesomeIcon icon={faList} />
                             </label>
                         </div>
@@ -198,24 +226,6 @@ export const DashboardsPage = (): ReactElement => {
                         >
                             <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
                         </button>
-                    </div>
-                </div>
-                <div className="mb-3">
-                    <div className="input-group w-100 d-flex align-items-center">
-                        <label htmlFor="wokflowSearchLabel" className="form-label mb-0 me-3">
-                            Filter
-                        </label>
-                        <input
-                            type="text"
-                            value={filterText}
-                            onChange={(event) => handleFilterChange(event.target.value)}
-                            className="form-control py-0 me-3"
-                            id="wokflowSearchLabel"
-                        />
-                        <span className="input-group-text">
-                            {' '}
-                            <FontAwesomeIcon flip="horizontal" icon={faSearch} />
-                        </span>
                     </div>
                 </div>
                 {renderWorkflows()}

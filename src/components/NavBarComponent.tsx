@@ -27,13 +27,13 @@ export const NavBarComponent = (): ReactElement => {
                     <NavLink to="/workflows" className={navLinkClass}>Workflows</NavLink>
                 </div>
                 <a
-                    className="nav-link ms-auto"
+                    className="nav-link ms-auto github-link"
                     href="https://github.com/virgs/egg-ci"
                     target="_blank"
                     rel="noopener noreferrer"
                     title="View on GitHub"
                 >
-                    <FontAwesomeIcon icon={faGithub} />
+                    <FontAwesomeIcon icon={faGithub} size="xl" />
                 </a>
             </div>
         </nav>

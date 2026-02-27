@@ -29,7 +29,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 <ol className="breadcrumb mb-0">
                     {showProjectHeader && (
                         <li className="breadcrumb-item d-flex align-items-center fs-4">
-                            <a href={props.project.vcsUrl}>
+                            <a className="text-decoration-none" href={props.project.vcsUrl}>
                                 {versionControlComponent}
                                 <span className="ms-2">{props.project.reponame}</span>
                             </a>
@@ -48,7 +48,9 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                     )}
                 </ol>
             </nav>
-            <div className={`row m-0 gx-2 gy-2 ${props.listView ? 'row-cols-1' : 'row-cols-3 row-cols-lg-4 row-cols-xxl-5'}`}>
+            <div
+                className={`row m-0 gx-2 gy-2 ${props.listView ? 'row-cols-1' : 'row-cols-3 row-cols-lg-4 row-cols-xxl-5'}`}
+            >
                 <ProjectContext.Provider value={props.project}>
                     {props.workflow.jobs.map((job, index) => {
                         if ((props.hiddenJobs ?? []).includes(job.name)) return null
