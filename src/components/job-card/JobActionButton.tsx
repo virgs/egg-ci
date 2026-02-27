@@ -1,6 +1,6 @@
 import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { JobData, ProjectData } from '../../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../../events/Events'
 import { circleCiClient } from '../../gateway/CircleCiClient'
@@ -8,6 +8,7 @@ import { ProjectService } from '../../project/ProjectService'
 import { sleep } from '../../time/Time'
 import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
+import { ConfirmationModalComponent } from '../ConfirmationModalComponent'
 
 type ActionButtonProps = {
     tooltip: string
@@ -53,6 +54,17 @@ type Props = {
 export const JobActionButton = (props: Props): ReactElement => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
+    const [showConfirm, setShowConfirm] = useState(false)
+
+    const handleConfirm = async () => {
+        setShowConfirm(false)
+        actionProps.onClick()
+        emitNewNotification({ message: actionProps.message })
+        await sleep(3 * 1000)
+        const projectService = new ProjectService()
+        const synced = await projectService.syncProject(project)
+        emitProjectSynched({ project: synced })
+    }
 
     useEffect(() => {
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
@@ -68,33 +80,32 @@ export const JobActionButton = (props: Props): ReactElement => {
     }, [])
 
     return (
-        <div
-            // type="button"
-            // disabled={actionProps.disabled}
-            className="p-1"
-            onPointerDown={async () => {
-                if (actionProps.disabled) {
-                    return
-                }
-                actionProps.onClick()
-                emitNewNotification({ message: actionProps.message })
-                await sleep(3 * 1000)
-                const projectService = new ProjectService()
-                const synced = await projectService.syncProject(project)
-                emitProjectSynched({ project: synced })
-            }}
-            style={{
-                fontSize: '12px',
-                cursor: actionProps.disabled ? 'not-allowed' : 'pointer',
-                color: actionProps.disabled ? 'var(--bs-secondary)' : 'var(--bs-primary)',
-            }}
-        >
-            <FontAwesomeIcon
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                data-bs-title={actionProps.tooltip}
-                icon={actionProps.icon}
-            ></FontAwesomeIcon>
-        </div>
+        <>
+            {showConfirm && (
+                <ConfirmationModalComponent
+                    message={`Are you sure you want to ${actionProps.tooltip.toLowerCase()} '${props.job.name}'?`}
+                    onConfirm={handleConfirm}
+                    onCancel={() => setShowConfirm(false)}
+                />
+            )}
+            <div
+                className="p-1"
+                onPointerDown={() => {
+                    if (!actionProps.disabled) setShowConfirm(true)
+                }}
+                style={{
+                    fontSize: '12px',
+                    cursor: actionProps.disabled ? 'not-allowed' : 'pointer',
+                    color: actionProps.disabled ? 'var(--bs-secondary)' : 'var(--bs-primary)',
+                }}
+            >
+                <FontAwesomeIcon
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title={actionProps.tooltip}
+                    icon={actionProps.icon}
+                />
+            </div>
+        </>
     )
 }
