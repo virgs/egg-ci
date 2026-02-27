@@ -4,6 +4,7 @@ import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './job-card/JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
 import { ProjectContext } from '../contexts/ProjectContext'
+import './WorkflowComponent.scss'
 
 type Props = {
     workflow: WorkflowData
@@ -29,7 +30,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 <ol className="breadcrumb mb-0">
                     {showProjectHeader && (
                         <li className="breadcrumb-item d-flex align-items-center fs-4">
-                            <a className="text-decoration-none" href={props.project.vcsUrl}>
+                            <a className="vcs-link" href={props.project.vcsUrl}>
                                 {versionControlComponent}
                                 <span className="ms-2">{props.project.reponame}</span>
                             </a>

@@ -17,7 +17,7 @@ export const NavBarComponent = (): ReactElement => {
                         alt="Logo"
                         width="30"
                         height="auto"
-                        className="d-inline-block align-text-top me-2"
+                        className="d-inline-block align-text-top me-3"
                     />
                     Egg CI
                 </span>
@@ -33,7 +33,7 @@ export const NavBarComponent = (): ReactElement => {
                     rel="noopener noreferrer"
                     title="View on GitHub"
                 >
-                    <FontAwesomeIcon icon={faGithub} size="xl" />
+                    <FontAwesomeIcon icon={faGithub} size="2xl" />
                 </a>
             </div>
         </nav>
