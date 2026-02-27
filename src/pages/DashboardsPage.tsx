@@ -95,21 +95,17 @@ export const DashboardsPage = (): ReactElement => {
         }
         return workflowKeys.map((workflowName, index) => {
             const workflow = data.workflows[workflowName]
-            const hiddenJobs = tracked.hiddenJobs ?? []
-            const visibleWorkflow = {
-                ...workflow,
-                jobs: workflow.jobs.filter((j) => !hiddenJobs.includes(j.name)),
-            }
             const id = `workflow-${workflowName}-${index}-${workflow.latestId}`
             return (
                 <div key={id} id={id} className="py-1">
                     <WorkflowComponent
                         project={data}
                         key={`workflow-child-${index}`}
-                        workflow={visibleWorkflow}
+                        workflow={workflow}
+                        hiddenJobs={tracked.hiddenJobs ?? []}
                         onHideJob={(jobName) => handleHideJob(tracked, jobName)}
                         showProjectHeader={false}
-                    ></WorkflowComponent>
+                    />
                 </div>
             )
         })

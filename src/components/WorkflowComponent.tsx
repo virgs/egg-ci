@@ -10,6 +10,7 @@ type Props = {
     project: ProjectData
     onHideJob: (jobName: string) => void
     showProjectHeader?: boolean
+    hiddenJobs?: string[]
 }
 
 export const WorkflowComponent = (props: Props): ReactElement => {
@@ -48,15 +49,18 @@ export const WorkflowComponent = (props: Props): ReactElement => {
             </nav>
             <div className="row m-0 row-cols-3 row-cols-lg-4 row-cols-xxl-5 gx-2 gy-2">
                 <ProjectContext.Provider value={props.project}>
-                    {props.workflow.jobs.map((job, index) => (
-                        <JobCardComponent
-                            key={`${props.workflow.latestId}.${index}`}
-                            job={job}
-                            jobOrder={index}
-                            projectUrl={projectUrl}
-                            onHideJob={props.onHideJob}
-                        ></JobCardComponent>
-                    ))}
+                    {props.workflow.jobs.map((job, index) => {
+                        if ((props.hiddenJobs ?? []).includes(job.name)) return null
+                        return (
+                            <JobCardComponent
+                                key={`${props.workflow.latestId}.${index}`}
+                                job={job}
+                                jobOrder={index}
+                                projectUrl={projectUrl}
+                                onHideJob={props.onHideJob}
+                            />
+                        )
+                    })}
                 </ProjectContext.Provider>
             </div>
         </>

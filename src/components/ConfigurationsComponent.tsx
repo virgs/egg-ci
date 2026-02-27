@@ -5,6 +5,7 @@ type Props = {
     config: Config
     onChange: (config: Config) => void
     onUnexcludeAll?: () => void
+    excludedProjectsCount?: number
 }
 
 export const ConfigurationComponent = (props: Props): ReactElement => {
@@ -87,7 +88,10 @@ export const ConfigurationComponent = (props: Props): ReactElement => {
             {props.onUnexcludeAll && (
                 <div className="col-12 pb-2">
                     <button className="btn btn-sm btn-outline-secondary" type="button" onClick={props.onUnexcludeAll}>
-                        Unexclude all projects
+                        Restore excluded projects
+                        {!!props.excludedProjectsCount && (
+                            <span className="badge bg-secondary ms-2">{props.excludedProjectsCount}</span>
+                        )}
                     </button>
                 </div>
             )}

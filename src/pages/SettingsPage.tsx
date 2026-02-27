@@ -1,6 +1,7 @@
+import { Tooltip } from 'bootstrap'
 import { faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { SettingsProjectComponent } from '../components/SettingsProjectComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged, useLoggedOutListener } from '../events/Events'
@@ -22,12 +23,26 @@ const getProjectLabel = (project: TrackedProjectData): string => {
 
 const AUTO_SYNC_TRACKED_PROJECTS_PERIOD_IN_MS = 30 * 1000 // 30 seconds
 
+const computeExcludedCount = () =>
+    projectService.loadTrackedProjects()?.filter((p) => p.excluded).length ?? 0
+
 export const SettingsPage = (): ReactElement => {
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
     const [, setUserInformation] = useState<UserInformationResponse | undefined>()
     const [projects, setProjects] = useState<TrackedProjectData[]>(
         () => projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
     )
+    const [excludedCount, setExcludedCount] = useState<number>(computeExcludedCount)
+    const tokenInfoRef = useRef<HTMLAnchorElement>(null)
+
+    useEffect(() => {
+        if (tokenInfoRef.current) {
+            new Tooltip(tokenInfoRef.current, {
+                title: 'Visit circleci.com/settings/user/tokens to generate a personal API token. Your token is stored locally in your browser only and is never shared with anyone.',
+                delay: { show: 300, hide: 100 },
+            })
+        }
+    }, [])
 
     useLoggedOutListener(() => {
         setToken('')
@@ -47,6 +62,7 @@ export const SettingsPage = (): ReactElement => {
         if (projectService.loadTrackedProjects()) {
             const loadedProjects = projectService.loadTrackedProjects().filter((p) => !p.excluded)
             setProjects(loadedProjects)
+            setExcludedCount(computeExcludedCount())
         }
     }
 
@@ -116,11 +132,13 @@ export const SettingsPage = (): ReactElement => {
     const handleExclude = (project: TrackedProjectData) => {
         projectService.excludeProject(project)
         setProjects((prev) => prev.filter((p) => p !== project))
+        setExcludedCount((prev) => prev + 1)
     }
 
     const handleUnexcludeAll = () => {
         projectService.unexcludeAllProjects()
         setProjects(projectService.loadTrackedProjects() ?? [])
+        setExcludedCount(0)
     }
 
     const renderProjects = () => {
@@ -153,6 +171,7 @@ export const SettingsPage = (): ReactElement => {
                             <label htmlFor="circleci-api-token" className="form-label mb-0">
                                 <span>API Token</span>
                                 <a
+                                    ref={tokenInfoRef}
                                     className="ps-1 pe-3"
                                     href="https://app.circleci.com/settings/user/tokens"
                                     target="_blank"
@@ -190,6 +209,7 @@ export const SettingsPage = (): ReactElement => {
                         onChange={onConfigurationsChange}
                         config={settingsRepository.getConfiguration()}
                         onUnexcludeAll={handleUnexcludeAll}
+                        excludedProjectsCount={excludedCount}
                     />
                 </div>
             </div>
