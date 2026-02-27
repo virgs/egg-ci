@@ -1,12 +1,12 @@
 import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useContext, useEffect } from 'react'
-import { JobData, ProjectData } from '../domain-models/models'
-import { emitNewNotification, emitProjectSynched } from '../events/Events'
-import { circleCiClient } from '../gateway/CircleCiClient'
-import { ProjectService } from '../project/ProjectService'
-import { sleep } from '../time/Time'
-import { ProjectContext } from '../contexts/ProjectContext'
+import { JobData, ProjectData } from '../../domain-models/models'
+import { emitNewNotification, emitProjectSynched } from '../../events/Events'
+import { circleCiClient } from '../../gateway/CircleCiClient'
+import { ProjectService } from '../../project/ProjectService'
+import { sleep } from '../../time/Time'
+import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
 
 type ActionButtonProps = {

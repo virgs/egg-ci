@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react'
-import { JobContextData } from '../domain-models/models'
+import { JobContextData } from '../../domain-models/models'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
 import './JobCardComponent.scss'
 import { JobCardFooterComponent } from './JobCardFooterComponent'

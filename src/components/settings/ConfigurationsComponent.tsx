@@ -1,5 +1,5 @@
 import { ReactElement, useState } from 'react'
-import { Config } from '../config'
+import { Config } from '../../config'
 
 type Props = {
     config: Config

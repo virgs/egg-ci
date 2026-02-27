@@ -72,18 +72,14 @@ export class CircleCiClient {
         try {
             await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
             return true
-        } catch (error) {
-            console.log(error)
+        } catch {
             return false
         }
     }
 
     public async rerunJob(workflowId: string, jobId: string): Promise<boolean> {
         const url = `${apiV2}/workflow/${workflowId}/rerun`
-        const body = JSON.stringify({
-            jobs: [jobId],
-        })
-        console.log(url, jobId, body)
+        const body = JSON.stringify({ jobs: [jobId] })
         try {
             await fetch(url, {
                 method: 'POST',
@@ -92,8 +88,7 @@ export class CircleCiClient {
                 headers: this.authHeaders(),
             })
             return true
-        } catch (error) {
-            console.log(error)
+        } catch {
             return false
         }
     }
@@ -103,8 +98,7 @@ export class CircleCiClient {
         try {
             await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
             return true
-        } catch (error) {
-            console.log(error)
+        } catch {
             return false
         }
     }
@@ -113,7 +107,6 @@ export class CircleCiClient {
     //https://circleci.com/docs/api/v1/index.html#recent-jobs-for-a-single-project
     public async listProjectJobs(project: TrackedProjectData | ProjectData, branch: string): Promise<ListProjectJobs> {
         const url = `${apiV1}/project/${getProjectSlug(project)}/tree/${branch}?limit=100&circle-token=${this.apiToken}`
-        console.log(url)
         const response = await fetch(url)
         if (!response.ok) throw new Error(`CircleCI API error ${response.status}: ${url}`)
         return response.json()

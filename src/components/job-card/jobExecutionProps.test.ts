@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { jobExecutionProps } from './jobExecutionProps'
-import type { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
+import type { WorkflowJob } from '../../gateway/models/ListWorkflowJobsResponse'
 
 function makeJob(status: WorkflowJob['status']): WorkflowJob {
     return {

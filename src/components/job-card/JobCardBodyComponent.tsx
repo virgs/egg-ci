@@ -1,9 +1,9 @@
 import { ReactElement } from 'react'
 import {  faCodePullRequest } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { formatDuration } from '../time/Time'
+import { formatDuration } from '../../time/Time'
 import './JobCardBodyComponent.scss'
-import { JobData } from '../domain-models/models'
+import { JobData } from '../../domain-models/models'
 
 type Props = {
     job: JobData

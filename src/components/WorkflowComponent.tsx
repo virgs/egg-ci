@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import { ProjectData, WorkflowData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
-import { JobCardComponent } from './JobCardComponent'
+import { JobCardComponent } from './job-card/JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
 import { ProjectContext } from '../contexts/ProjectContext'
 

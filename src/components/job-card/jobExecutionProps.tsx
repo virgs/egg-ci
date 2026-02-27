@@ -1,5 +1,5 @@
 import { IconDefinition, faCheck, faPause, faRotate, faStop, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { WorkflowJob } from '../gateway/models/ListWorkflowJobsResponse'
+import { WorkflowJob } from '../../gateway/models/ListWorkflowJobsResponse'
 
 type Result = {
     color: string
