@@ -1,4 +1,3 @@
-import './App.css'
 import { NavBarComponent } from './components/NavBarComponent'
 import { initializeCircleCiClient } from './gateway/CircleCiClient'
 import { DashboardsPage } from './pages/DashboardsPage'

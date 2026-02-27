@@ -9,7 +9,6 @@ import 'bootswatch/dist/lux/bootstrap.min.css'
 // import 'bootswatch/dist/minty/bootstrap.min.css'
 // import 'bootswatch/dist/zephyr/bootstrap.min.css'
 // import 'bootswatch/dist/materia/bootstrap.min.css'
-import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

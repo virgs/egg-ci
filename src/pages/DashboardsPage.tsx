@@ -1,4 +1,4 @@
-import './DashboardsPage.css'
+import './DashboardsPage.scss'
 import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useTransition, useState } from 'react'

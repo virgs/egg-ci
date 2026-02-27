@@ -9,7 +9,7 @@ import { UserInformationResponse } from '../gateway/models/UserInformationRespon
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { useInterval } from '../time/UseInterval'
-import './SettingsPage.css'
+import './SettingsPage.scss'
 import { ConfigurationComponent } from '../components/ConfigurationsComponent'
 import { Config } from '../config'
 

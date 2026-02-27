@@ -8,7 +8,7 @@ import { VersionControlComponent } from './VersionControlComponent'
 import { faBars, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Tooltip } from 'bootstrap'
-import './SettingsProjectComponent.css'
+import './SettingsProjectComponent.scss'
 
 const getProjectLabel = (project: TrackedProjectData): string => {
     return `${project.vcsType}/${project.username}/${project.reponame}`
