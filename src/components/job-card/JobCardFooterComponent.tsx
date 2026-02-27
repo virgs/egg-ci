@@ -8,6 +8,7 @@ type Props = {
     executions: JobData[]
     onHighlightedExecutionIndexChanged: (index: number) => void
     highlightedExecutionIndex: number
+    listView?: boolean
 }
 
 export const JobCardFooterComponent = (props: Props): ReactElement => {
@@ -16,6 +17,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
     const executions = useMemo(() => [...props.executions].reverse(), [props.executions])
 
     const gap = '3px'
+    const barHeight = props.listView ? '5px' : '10px'
     return (
         <div className="card-footer p-1 pb-2 px-3 card-details">
             <strong className="text-body-secondary">
@@ -33,7 +35,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
                         style={{
                             cursor: 'pointer',
                             width: `calc((100% / ${configuration.jobHistoryColumnsPerLine}) - ${gap})`,
-                            height: '10px',
+                            height: barHeight,
                             display: 'inline-flex',
                             marginRight: gap,
                             borderRadius: '3px',

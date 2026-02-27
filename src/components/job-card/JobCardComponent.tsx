@@ -39,6 +39,7 @@ export const JobCardComponent = (props: Props): ReactElement => {
                     executions={props.job.history}
                     highlightedExecutionIndex={safeIndex}
                     onHighlightedExecutionIndexChanged={(index) => setHighlightedExecutionIndex(index)}
+                    listView={props.listView}
                 />
             </div>
         </div>

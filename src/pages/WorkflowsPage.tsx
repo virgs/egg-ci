@@ -1,5 +1,5 @@
 import './WorkflowsPage.scss'
-import { faAnglesDown, faAnglesUp, faChevronDown, faChevronRight, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
+import { faAnglesDown, faAnglesUp, faChevronRight, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useEffect, useTransition, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -135,8 +135,8 @@ export const WorkflowsPage = (): ReactElement => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item d-flex align-items-center">
                                     <FontAwesomeIcon
-                                        icon={isCollapsed ? faChevronRight : faChevronDown}
-                                        className="text-secondary chevron-icon"
+                                        icon={faChevronRight}
+                                        className={`text-secondary chevron-icon${isCollapsed ? '' : ' chevron-icon--open'}`}
                                     />
                                 </li>
                                 <li className="breadcrumb-item d-flex align-items-center fs-4">
