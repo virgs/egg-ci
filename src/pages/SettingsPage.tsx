@@ -7,17 +7,19 @@ import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiCli
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
-import ConfirmationModalComponent from '../components/ConfirmationModalComponent'
 import './SettingsPage.scss'
+import { useConfirmationModal } from '../components/useConfirmationModal.tsx'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
 
 export const SettingsPage = (): ReactElement => {
+    const confirmationModal = useConfirmationModal()
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
     const [hasSavedToken, setHasSavedToken] = useState<boolean>(() => !!settingsRepository.getApiToken())
-    const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(() => settingsRepository.getUserInformation())
-    const [pendingAction, setPendingAction] = useState<{ message: string; onConfirm: () => void } | null>(null)
+    const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(() =>
+        settingsRepository.getUserInformation()
+    )
     const tokenInfoRef = useRef<HTMLAnchorElement>(null)
 
     useEffect(() => {
@@ -118,19 +120,20 @@ export const SettingsPage = (): ReactElement => {
                     </span>
                 </div>
             )}
-            {pendingAction && (
-                <ConfirmationModalComponent
-                    message={pendingAction.message}
-                    onConfirm={() => { pendingAction.onConfirm(); setPendingAction(null) }}
-                    onCancel={() => setPendingAction(null)}
-                />
-            )}
             <div className="d-grid gap-2">
                 <button
                     className="btn btn-outline-danger"
                     type="button"
                     disabled={!hasSavedToken}
-                    onClick={() => setPendingAction({ message: 'Are you sure you want to clear the API key? You will need to re-enter it to use the app.', onConfirm: clearApiToken })}
+                    onClick={async () => {
+                        const approved = await confirmationModal({
+                            message:
+                                'Are you sure you want to clear the API key? You will need to re-enter it to use the app.',
+                        })
+                        if (approved) {
+                            clearApiToken()
+                        }
+                    }}
                 >
                     Clear API key
                 </button>
@@ -138,7 +141,14 @@ export const SettingsPage = (): ReactElement => {
                     className="btn btn-danger"
                     type="button"
                     disabled={!hasSavedToken}
-                    onClick={() => setPendingAction({ message: 'Are you sure you want to clear all data? This action cannot be undone.', onConfirm: clearAllData })}
+                    onClick={async () => {
+                        const approved = await confirmationModal({
+                            message: 'Are you sure you want to clear all data? This action cannot be undone',
+                        })
+                        if (approved) {
+                            clearAllData()
+                        }
+                    }}
                 >
                     Clear all data
                 </button>

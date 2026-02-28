@@ -1,13 +1,14 @@
 import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect } from 'react'
 import { JobData, ProjectData } from '../../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../../events/Events'
 import { circleCiClient } from '../../gateway/CircleCiClient'
 import { ProjectService } from '../../project/ProjectService'
 import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
-import ConfirmationModalComponent from '../ConfirmationModalComponent'
+
+import { useConfirmationModal } from '../useConfirmationModal.tsx'
 
 type ActionButtonProps = {
     tooltip: string
@@ -53,7 +54,7 @@ type Props = {
 export const JobActionButton = (props: Props): ReactElement => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
-    const [showConfirm, setShowConfirm] = useState(false)
+    const confirmationModal = useConfirmationModal()
 
     const handleConfirm = async () => {
         actionProps.onClick()
@@ -61,7 +62,6 @@ export const JobActionButton = (props: Props): ReactElement => {
         const projectService = new ProjectService()
         const synced = await projectService.syncProject(project)
         emitProjectSynched({ project: synced })
-        setShowConfirm(false)
     }
 
     useEffect(() => {
@@ -82,17 +82,19 @@ export const JobActionButton = (props: Props): ReactElement => {
         `(#${props.job.workflow.pipeline_number}) in <strong>${project.username}/${project.reponame}</strong>?`
     return (
         <>
-            {showConfirm && (
-                <ConfirmationModalComponent
-                    message={jobActionConfirmationMessage}
-                    onConfirm={handleConfirm}
-                    onCancel={() => setShowConfirm(false)}
-                />
-            )}
             <div
                 className="p-1"
-                onPointerDown={() => {
-                    if (!actionProps.disabled) setShowConfirm(true)
+                onPointerDown={async () => {
+                    if (!actionProps.disabled) {
+                        const approved = await confirmationModal({
+                            message: jobActionConfirmationMessage,
+                        })
+                        if (!approved) {
+                            console.log(`User cancelled ${actionProps.tooltip.toLowerCase()} action for job ${props.job.name}`)
+                            return
+                        }
+                        await handleConfirm()
+                    }
                 }}
                 style={{
                     fontSize: '12px',

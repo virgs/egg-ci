@@ -10,6 +10,7 @@ import { Navigate, RouterProvider, createHashRouter, useRouteError } from 'react
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
 import { useInterval } from './time/UseInterval'
+import { ConfirmationModalProvider } from './components/ConfirmationModalProvider.tsx'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 if (settingsRepository.getApiToken()) {
@@ -19,11 +20,13 @@ if (settingsRepository.getApiToken()) {
 const AppShell = ({ children }: { children: ReactElement }): ReactElement => {
     return (
         <>
-            <NavBarComponent />
-            <div className="app-scroll-container">
-                <ToastsComponent></ToastsComponent>
-                <div className="container py-2">{children}</div>
-            </div>
+            <ConfirmationModalProvider>
+                <NavBarComponent />
+                <div className="app-scroll-container">
+                    <ToastsComponent></ToastsComponent>
+                    <div className="container py-2">{children}</div>
+                </div>
+            </ConfirmationModalProvider>
         </>
     )
 }
@@ -46,17 +49,29 @@ const RouteErrorElement = (): ReactElement => {
 const router = createHashRouter([
     {
         path: '/settings',
-        element: <AppShell><SettingsPage /></AppShell>,
+        element: (
+            <AppShell>
+                <SettingsPage />
+            </AppShell>
+        ),
         errorElement: <RouteErrorElement />,
     },
     {
         path: '/projects',
-        element: <AppShell><ProjectsPage /></AppShell>,
+        element: (
+            <AppShell>
+                <ProjectsPage />
+            </AppShell>
+        ),
         errorElement: <RouteErrorElement />,
     },
     {
         path: '/workflows',
-        element: <AppShell><WorkflowsPage /></AppShell>,
+        element: (
+            <AppShell>
+                <WorkflowsPage />
+            </AppShell>
+        ),
         errorElement: <RouteErrorElement />,
     },
     {
