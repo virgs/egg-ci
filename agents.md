@@ -163,7 +163,9 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [ ] Split the workflowPage component into smaller components. The current file is too large and hard to maintain. Consider creating separate components for the workflow list, workflow details, and workflow history.
-2. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
+1. [ ] Clicking in rerun/approve build is not triggering the action. This is a critical bug that needs to be fixed as soon as possible. It may be related to the fact that the API calls are not being made correctly or that the state is not being updated properly after the action is triggered.
+2. [ ] Create something like a workflowpage configuration provider to manage the state of the workflow page, such as the current view mode (list or grid) and any filters applied. This will help to keep the state management organized and make it easier to pass down props to child components without prop drilling. Such as history and the card job details. This will also make it easier to add new features in the future, such as saving user preferences or implementing a dark mode.
+3. [ ] Split the workflowPage component into smaller components. The current file is too large and hard to maintain. Consider creating separate components for the workflow list, workflow details, and workflow history.
+4. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
    ' in the index.tsx file to make sure the styles are applied.'' because I didn't do anything yet.
-3. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of it's current width so it can fit all 10 of them without the need of two lines.
+5. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of it's current width so it can fit all 10 of them without the need of two lines.

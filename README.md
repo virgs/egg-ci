@@ -4,6 +4,7 @@
 
 **[Try it →](https://virgs.github.io/egg-ci)**
 
+![EggCi](./logo.png)
 ---
 
 ## The Problem

@@ -92,9 +92,9 @@ describe('jobExecutionProps', () => {
         expect(result.animated).toBe(false)
     })
 
-    it('not_run → color: danger, animated: false', () => {
+    it('not_run → color: dark, animated: false', () => {
         const result = jobExecutionProps(makeJob('not_run'))
-        expect(result.color).toBe('danger')
+        expect(result.color).toBe('dark')
         expect(result.animated).toBe(false)
     })
 })
