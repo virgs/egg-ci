@@ -3,10 +3,10 @@
 }
 
 .github-link {
-  color: var(--bs-secondary) !important;
+  color: var(--bs-white) !important;
   transition: color 0.2s ease;
 
   &:hover {
-    color: var(--bs-info) !important;
+    color: var(--bs-secondary) !important;
   }
 }

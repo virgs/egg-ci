@@ -1,6 +1,6 @@
 # 🥚 egg-ci
 
-> A better dashboard for CircleCI. Because apparently "better" was not on CircleCI's roadmap.
+> A dashboard monitor for CircleCI workflows.
 
 **[Try it →](https://virgs.github.io/egg-ci)**
 
