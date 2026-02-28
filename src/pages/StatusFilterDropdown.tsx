@@ -10,7 +10,7 @@ import './StatusFilterDropdown.scss'
 export const StatusFilterDropdown = (): ReactElement => {
     const { statusFilters, handleStatusFiltersChange } = useWorkflowsPage()
 
-    const excludedCount = ALL_JOB_STATUSES.length - statusFilters.length
+    const selectedCount = statusFilters.length
 
     const toggleStatus = (status: WorkflowJobStatus): void => {
         if (statusFilters.includes(status)) {
@@ -25,19 +25,30 @@ export const StatusFilterDropdown = (): ReactElement => {
             <Dropdown.Toggle size="sm" variant="outline-secondary" id="status-filter-toggle">
                 <FontAwesomeIcon icon={faFilter} />
                 <Badge bg="primary" pill className="ms-1">
-                    {excludedCount}
+                    {selectedCount}
                 </Badge>
             </Dropdown.Toggle>
             <Dropdown.Menu className="status-filter-menu p-2">
-                <Button
-                    size="sm"
-                    variant="link"
-                    className="p-0 mb-1 text-decoration-none"
-                    disabled={statusFilters.length === 0}
-                    onClick={() => handleStatusFiltersChange([])}
-                >
-                    Clear all
-                </Button>
+                <div className="d-flex justify-content-between gap-2 m-1">
+                    <Button
+                        size="sm"
+                        variant="link"
+                        className="p-0 text-decoration-none"
+                        disabled={statusFilters.length === ALL_JOB_STATUSES.length}
+                        onClick={() => handleStatusFiltersChange([...ALL_JOB_STATUSES])}
+                    >
+                        Select all
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="link"
+                        className="p-0 text-decoration-none"
+                        disabled={statusFilters.length === 0}
+                        onClick={() => handleStatusFiltersChange([])}
+                    >
+                        Clear all
+                    </Button>
+                </div>
                 <Dropdown.Divider />
                 {ALL_JOB_STATUSES.map((status) => (
                     <Form.Check

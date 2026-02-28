@@ -1,21 +1,6 @@
-import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
+import { ALL_WORKFLOW_JOB_STATUSES, WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 
-export const ALL_JOB_STATUSES: WorkflowJobStatus[] = [
-    'success',
-    'running',
-    'not_run',
-    'failed',
-    'retried',
-    'queued',
-    'not_running',
-    'infrastructure_fail',
-    'timedout',
-    'on_hold',
-    'terminated-unknown',
-    'blocked',
-    'canceled',
-    'unauthorized',
-]
+export const ALL_JOB_STATUSES: ReadonlyArray<WorkflowJobStatus> = ALL_WORKFLOW_JOB_STATUSES
 
 export const parseStatusFilters = (param: string | null): WorkflowJobStatus[] =>
     param === null ? [...ALL_JOB_STATUSES] : (param.split(',').filter(Boolean) as WorkflowJobStatus[])
