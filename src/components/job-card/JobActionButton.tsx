@@ -5,10 +5,9 @@ import { JobData, ProjectData } from '../../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../../events/Events'
 import { circleCiClient } from '../../gateway/CircleCiClient'
 import { ProjectService } from '../../project/ProjectService'
-import { sleep } from '../../time/Time'
 import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
-import { ConfirmationModalComponent } from '../ConfirmationModalComponent'
+import ConfirmationModalComponent from '../ConfirmationModalComponent'
 
 type ActionButtonProps = {
     tooltip: string
@@ -57,13 +56,12 @@ export const JobActionButton = (props: Props): ReactElement => {
     const [showConfirm, setShowConfirm] = useState(false)
 
     const handleConfirm = async () => {
-        setShowConfirm(false)
         actionProps.onClick()
         emitNewNotification({ message: actionProps.message })
-        await sleep(3 * 1000)
         const projectService = new ProjectService()
         const synced = await projectService.syncProject(project)
         emitProjectSynched({ project: synced })
+        setShowConfirm(false)
     }
 
     useEffect(() => {
@@ -79,11 +77,14 @@ export const JobActionButton = (props: Props): ReactElement => {
         )
     }, [])
 
+    const jobActionConfirmationMessage =
+        `Are you sure you want to <strong>${actionProps.tooltip.toLowerCase()}</strong> <strong>'${props.job.name}'</strong> ` +
+        `(#${props.job.workflow.pipeline_number}) in <strong>${project.username}/${project.reponame}</strong>?`
     return (
         <>
             {showConfirm && (
                 <ConfirmationModalComponent
-                    message={`Are you sure you want to ${actionProps.tooltip.toLowerCase()} '${props.job.name}'?`}
+                    message={jobActionConfirmationMessage}
                     onConfirm={handleConfirm}
                     onCancel={() => setShowConfirm(false)}
                 />

@@ -7,7 +7,7 @@ import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiCli
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
-import { ConfirmationModalComponent } from '../components/ConfirmationModalComponent'
+import ConfirmationModalComponent from '../components/ConfirmationModalComponent'
 import './SettingsPage.scss'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()

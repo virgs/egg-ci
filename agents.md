@@ -109,12 +109,6 @@ Each unit should have one clear responsibility.
 
 Maintain these files:
 
-### `TODO.md`
-
-* Track completed and pending tasks.
-* Update after every step.
-* Add new tasks discovered during implementation.
-
 ### `memento.md`
 
 Store:
@@ -139,13 +133,12 @@ Update when:
 
 Always:
 
-1. Update `TODO.md`
-2. Update `memento.md` with decisions/context
-3. Update `README.md` if behavior changed
-4. Update/add tests
-5. Review code quality
-6. Refactor if needed
-7. Ensure size constraints are respected
+1. Create/Update `memento.md` with decisions/context
+2. Update `README.md` if behavior changed
+3. Update/add tests once any code is written
+4. Review code quality
+5. Refactor if needed
+6. Ensure size constraints are respected
 
 ---
 
@@ -161,7 +154,7 @@ Always:
 # Summary Philosophy
 
 Think long-term.
-Keep everything small.
+Keep everything small and the tests in sync.
 Write predictable, testable, modular code.
 Prioritize clarity over cleverness.
 Update documentation continuously.
@@ -169,18 +162,7 @@ Build incrementally and safely.
 
 
 # TODO list
-1. [x] Navbar to have three sections: Settings, Projects, Workflows (and a GitHub icon linking to the project repo in the far right end). No Menu anymore. The sections should be on the left side of the navbar, next to each other.
-   - Each section should link to a page whose title is the same as the section.
-   - The settings page will have the API key input, the clear API key button and the clear all data (pretty much the top of the current settings page). Both block buttons. The buttons should only be enabled if there's a valid API key. If there's no valid API key, only the input should be enabled. The clear API key button should clear the API key and disable itself and the clear all data button. The clear all data button should clear all data and disable itself and the clear API key button. This page should be the default page when the user opens the app for the first time or when there's no valid API key.
-   - The projects page will have the list of project and the "Restore deleted projects" button (pretty much the current settings page except for the API Key part). The button should be enabled only if there's at least one deleted project. Remove the others configurations options. They should only be changed via code, not via UI. 
-     - The dashboard page is the default page when the user opens the app and there's a valid API key (the current dashboard page). It will have the list of projects and the workflow page will have the list of workflows.
-2. [x] Minor changes to the pages
-    - In the settings page, the API Token input text should be not editable when there's a valid API key. It should only be editable when there's no valid API key. When the user clicks the "Clear API Key" button, it should clear the API key and make the input text editable again. When the user clicks the "Clear All Data" button, it should clear all data and make the input text editable again.
-    - In the projects page, the badge that counts the number of deleted projects should not be displayed if there are no deleted projects. When the user clicks the "Restore deleted projects" button, it should restore all deleted projects and hide the badge.
-    - Improve workflow page top menu:
-      - Make all the icons (search, grid, list and expand/collapse) have the same size and aligned to the right side of the page. The search input should be aligned with the icons and have a placeholder "Search by name...".
-      - When the screen is wider than the xl breakpoint, the search input should be visible and the icons should be on the right side of the search input. When the screen is smaller than the xl breakpoint, the last three buttons (grid/list/expand/collapse) should be below the filter area but still in the far right..
-    - Make the github icon in the navbar larger and add a hover effect (e.g., change color) to indicate it's clickable.
-3. [x] If there's a valid api key, the settings page should display the current username somewhere. This can be done by making a request to the API to get the user information and displaying the username in the settings page. This will provide feedback to the user that they are logged in and which account they are using. This was being done previously before the recent major navbar change
-4. [x] Create a confirmation modal to be reused by several components. It should receive a string as a message and two callbacks, one for confirming and another for canceling (the latter defaulting to an empty function). This modal should be used for confirming the clearing of all data, api key, and also when the JobActionButton is clicked (run, approve or others).
-5. [x] In the workflows page, accordion chevrons should rotate 45 degrees on hovering and 90 degrees when the accordion is open. The rotation should be animated. Also, when the workflow view is in list mode, the history bars can be smaller. Half of it's current size so it can fit all 10 of them without two lines.
+
+1. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
+   ' in the index.tsx file to make sure the styles are applied.'' because I didn't do anything yet.
+5. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of it's current width so it can fit all 10 of them without the need of two lines.

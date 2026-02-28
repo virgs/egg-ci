@@ -54,7 +54,11 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
             </>
         )
         if (props.job.type === 'build') {
-            return <a href={jobUrl}>{content}</a>
+            return (
+                <a className="text-decoration-none" href={jobUrl}>
+                    {content}
+                </a>
+            )
         }
         return content
     }

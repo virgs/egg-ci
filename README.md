@@ -40,9 +40,9 @@ egg-ci brings that same at-a-glance visibility to CircleCI: one card per job, co
 
 - **Multi-project dashboard** — track as many CircleCI projects as you like in one view
 - **Per-job execution history** — see the last N runs of each job, colour-coded by status
-- **Auto-sync** — the dashboard refreshes automatically at a configurable interval, so you can leave it open on a second monitor and feel productive
+- **Auto-sync** — the dashboard refreshes automatically, so you can leave it open on a second monitor and feel productive
 - **Job actions** — approve hold jobs, rerun, or cancel directly from the dashboard
-- **Configurable** — adjust sync interval, history depth, number of pipelines to scan, and whether to show build jobs alongside approval gates
+- **Configurable** — adjust the projects, number of pipelines to scan, and whether to show build jobs alongside approval gates
 - **No backend** — runs entirely in the browser; your CircleCI API token stays local
 
 ---

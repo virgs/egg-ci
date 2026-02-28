@@ -1,35 +1,57 @@
-import { ReactElement } from 'react'
-import { createPortal } from 'react-dom'
+import Modal from 'react-bootstrap/Modal'
+import { ReactElement, useState } from 'react'
+import DOMPurify from 'dompurify'
 import './ConfirmationModalComponent.scss'
+import { Button } from 'react-bootstrap'
 
 type Props = {
     message: string
-    onConfirm: () => void
-    onCancel?: () => void
+    onConfirm: () => void | Promise<void>
+    onCancel?: () => void | Promise<void>
 }
 
-export const ConfirmationModalComponent = ({ message, onConfirm, onCancel = () => {} }: Props): ReactElement => {
-    return createPortal(
-        <>
-            <div className="modal-backdrop fade show" onClick={onCancel} />
-            <div className="modal d-block confirmation-modal" tabIndex={-1}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content text-center">
-                        <div className="modal-body py-4">
-                            <p className="mb-0 fs-3">{message}</p>
-                        </div>
-                        <div className="modal-footer">
-                            <button className="btn btn-secondary" onClick={onCancel}>
-                                Cancel
-                            </button>
-                            <button className="btn btn-primary" onClick={onConfirm}>
-                                Confirm
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>,
-        document.body
+const ConfirmationModalComponent = ({ message, onConfirm, onCancel = () => {} }: Props): ReactElement => {
+    const [show, setShow] = useState(true)
+
+    const sanitizedHTML = DOMPurify.sanitize(message)
+
+    const createMarkup = () => {
+        return { __html: sanitizedHTML }
+    }
+
+    const onCancelButton = () => {
+        setShow(false)
+        onCancel()
+    }
+
+    const onConfirmButton = () => {
+        setShow(false)
+        onConfirm()
+    }
+    return (
+        <Modal
+            backdrop={'static'}
+            keyboard={true}
+            onExit={onCancelButton}
+            onEscapeKeyDown={onCancelButton}
+            show={show}
+            onHide={onCancelButton}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title>Confirm operation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p dangerouslySetInnerHTML={createMarkup()}></p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={onCancelButton} variant="outline-secondary">
+                    Cancel
+                </Button>
+                <Button onClick={onConfirmButton} variant="primary">
+                    Confirm
+                </Button>
+            </Modal.Footer>
+        </Modal>
     )
 }
+export default ConfirmationModalComponent
