@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
 import { Button, Form, InputGroup, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
 import { WorkflowView } from '../settings/SettingsRepository'
+import { StatusFilterDropdown } from './StatusFilterDropdown'
 import { useWorkflowsPage } from './WorkflowsPageContext'
 import './WorkflowsToolbarComponent.scss'
 
@@ -36,6 +37,7 @@ export const WorkflowsToolbarComponent = ({ workflowCount, allCollapsed, onToggl
                     </InputGroup>
                 </div>
                 <div className="col-12 col-xl-auto d-flex justify-content-end gap-2">
+                    <StatusFilterDropdown />
                     <ToggleButtonGroup
                         type="radio"
                         name="dashboard-view"

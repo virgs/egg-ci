@@ -381,7 +381,7 @@ describe('WorkflowFetcher', () => {
                 build: {
                     name: 'build',
                     latestBuildNumber: pipelineNumber,
-                    latestId: 'wf-existing',
+                    latestId: 'wf-1',
                     jobs: [
                         {
                             name: 'deploy',
@@ -394,7 +394,7 @@ describe('WorkflowFetcher', () => {
                                     type: 'approval' as const,
                                     dependencies: [],
                                     started_at: FIXED_DATE,
-                                    workflow: { id: 'wf-existing', pipeline_id: 'p1', pipeline_number: pipelineNumber },
+                                    workflow: { id: 'wf-1', pipeline_id: 'p1', pipeline_number: pipelineNumber },
                                     pipeline: {
                                         updated_at: updatedAt,
                                         trigger: { actor: { login: 'actor', avatar_url: '' } },
@@ -414,12 +414,13 @@ describe('WorkflowFetcher', () => {
             const job = makeWorkflowJob('j1', 'deploy', 'approval')
 
             mockClient.listProjectPipelines.mockResolvedValue({ items: [pipeline], next_page_token: '' })
+            // listPipelineWorkflows called twice: once from listCurrentJobs, once from main loop skip check
             mockClient.listPipelineWorkflows.mockResolvedValue({ items: [wf], next_page_token: '' })
             mockClient.listWorkflowJobs.mockResolvedValue({ items: [job], next_page_token: '' })
 
             const result = await new WorkflowFetcher(testProject, existingWorkflows).getProjectWorkflows()
 
-            // Only called once (from listCurrentJobs), not again in the main loop
+            // listWorkflowJobs only called once (from listCurrentJobs) — main loop skips
             expect(mockClient.listWorkflowJobs).toHaveBeenCalledTimes(1)
             // Existing data preserved
             expect(result['build'].jobs[0].history[0].id).toBe('job-existing')
@@ -447,7 +448,7 @@ describe('WorkflowFetcher', () => {
                 build: {
                     name: 'build',
                     latestBuildNumber: 1,
-                    latestId: 'wf-existing',
+                    latestId: 'wf-1',
                     jobs: [
                         {
                             name: 'deploy',
@@ -460,7 +461,7 @@ describe('WorkflowFetcher', () => {
                                     type: 'approval' as const,
                                     dependencies: [],
                                     started_at: FIXED_DATE,
-                                    workflow: { id: 'wf-existing', pipeline_id: 'p1', pipeline_number: 1 },
+                                    workflow: { id: 'wf-1', pipeline_id: 'p1', pipeline_number: 1 },
                                     pipeline: { updated_at: FIXED_DATE, trigger: { actor: { login: 'actor', avatar_url: '' } } },
                                 },
                             ],
@@ -483,6 +484,63 @@ describe('WorkflowFetcher', () => {
             expect(result['build'].jobs[0].history[0].status).toBe('success')
         })
 
+        it('unchanged pipeline with a new rerun workflow is re-fetched', async () => {
+            // Existing data: one completed run in wf-original, all terminal
+            const existingWorkflows = {
+                build: {
+                    name: 'build',
+                    latestBuildNumber: 1,
+                    latestId: 'wf-original',
+                    jobs: [
+                        {
+                            name: 'deploy',
+                            history: [
+                                {
+                                    id: 'job-completed',
+                                    name: 'deploy',
+                                    project_slug: 'github/org/repo',
+                                    status: 'success' as const,
+                                    type: 'approval' as const,
+                                    dependencies: [],
+                                    started_at: '2024-01-01T00:00:00Z',
+                                    workflow: { id: 'wf-original', pipeline_id: 'p1', pipeline_number: 1 },
+                                    pipeline: { updated_at: FIXED_DATE, trigger: { actor: { login: 'actor', avatar_url: '' } } },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            }
+            // pipeline.updated_at is unchanged — simulates CircleCI not bumping the timestamp on rerun
+            const pipeline = { ...makePipeline('pipe-1', 1), updated_at: FIXED_DATE }
+            const originalWorkflow = makePipelineWorkflow('wf-original', 'build', 1)
+            const rerunWorkflow = makePipelineWorkflow('wf-rerun', 'build', 1)
+            const completedJob = makeWorkflowJob('job-completed', 'deploy', 'approval', '2024-01-01T00:00:00Z')
+            const rerunJob = makeWorkflowJob('job-rerun', 'deploy', 'approval', '2024-01-02T00:00:00Z')
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipeline], next_page_token: '' })
+            // Both listCurrentJobs and main loop see wf-original + wf-rerun
+            mockClient.listPipelineWorkflows.mockResolvedValue({
+                items: [originalWorkflow, rerunWorkflow],
+                next_page_token: '',
+            })
+            // listCurrentJobs calls listWorkflowJobs for both workflows (parallel), then main loop does the same
+            mockClient.listWorkflowJobs
+                .mockResolvedValueOnce({ items: [completedJob], next_page_token: '' }) // listCurrentJobs wf-original
+                .mockResolvedValueOnce({ items: [rerunJob], next_page_token: '' })     // listCurrentJobs wf-rerun
+                .mockResolvedValueOnce({ items: [completedJob], next_page_token: '' }) // main loop wf-original
+                .mockResolvedValueOnce({ items: [rerunJob], next_page_token: '' })     // main loop wf-rerun
+
+            const result = await new WorkflowFetcher(testProject, existingWorkflows).getProjectWorkflows()
+
+            // Both runs must appear in history
+            const history = result['build'].jobs[0].history
+            expect(history).toHaveLength(2)
+            // Sorted newest-first: rerun job (2024-01-02) comes before completed job (2024-01-01)
+            expect(history[0].id).toBe('job-rerun')
+            expect(history[1].id).toBe('job-completed')
+        })
+
         it('unchanged pipeline with only terminal jobs is skipped', async () => {
             const existingWorkflows = makeExistingWorkflows(1, FIXED_DATE) // status: 'success'
             const pipeline = { ...makePipeline('pipe-1', 1), updated_at: FIXED_DATE }
@@ -503,14 +561,16 @@ describe('WorkflowFetcher', () => {
             const existingWorkflows = makeExistingWorkflows(1, FIXED_DATE)
             const pipe2 = makePipeline('pipe-2', 2) // new pipeline
             const pipe1 = { ...makePipeline('pipe-1', 1), updated_at: FIXED_DATE } // existing, unchanged
+            const wf1 = makePipelineWorkflow('wf-1', 'build', 1)
             const wf2 = makePipelineWorkflow('wf-2', 'build', 2)
             const newJob = makeWorkflowJob('job-new', 'deploy', 'approval', UPDATED_DATE)
 
             mockClient.listProjectPipelines.mockResolvedValue({ items: [pipe2, pipe1], next_page_token: '' })
-            // listCurrentJobs uses pipelines[0] = pipe2; main loop fetches pipe2 (new), skips pipe1 (unchanged)
+            // listCurrentJobs uses pipelines[0] = pipe2; main loop fetches pipe2 (new), checks then skips pipe1
             mockClient.listPipelineWorkflows
                 .mockResolvedValueOnce({ items: [wf2], next_page_token: '' }) // listCurrentJobs
                 .mockResolvedValueOnce({ items: [wf2], next_page_token: '' }) // main loop pipe2
+                .mockResolvedValueOnce({ items: [wf1], next_page_token: '' }) // main loop pipe1 (skip check)
             mockClient.listWorkflowJobs
                 .mockResolvedValueOnce({ items: [newJob], next_page_token: '' }) // listCurrentJobs
                 .mockResolvedValueOnce({ items: [newJob], next_page_token: '' }) // main loop pipe2

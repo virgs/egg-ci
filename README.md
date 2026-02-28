@@ -29,16 +29,14 @@ CircleCI's UI is an amazing tool for triggering pipelines and getting email noti
 
 Inspired by [GoCD](https://www.gocd.org/)'s pipeline dashboard and nevergreen, EggCi reunites the "what's going on with my CI?" use case with the "what a pipeline dashboard should look like" design, which has been sadly missing from CircleCI for years.
 
-![GoCD pipeline dashboard — the gold standard](./goal.png)
-
-EggCi brings that same at-a-glance visibility to CircleCI: one card per job, coloured history dots for the last N runs, and no archaeological expedition required to find out when something broke.
+EggCi brings that same at-a-glance visibility to CircleCI: one card per job, colored history dots for the last runs, and no archaeological expedition required to find out when something broke.
 
 ---
 
 ## Features
 
 - **Multi-project dashboard** — track as many CircleCI projects as you like in one view
-- **Per-job execution history** — see the last N runs of each job, colour-coded by status
+- **Per-job execution history** — see the last N runs of each job, color-coded by status
 - **Auto-sync** — the dashboard refreshes automatically, so you can leave it open on a second monitor and feel productive
 - **Job actions** — approve hold jobs, rerun, or cancel directly from the dashboard
 - **Configurable** — adjust the projects, number of pipelines to scan, and whether to show build jobs alongside approval gates
@@ -58,18 +56,6 @@ That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
 ---
 
-## Configuration
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Pipelines to scan | 10 | How many recent pipelines to fetch per project |
-| Job history depth | 10 | Max past executions shown per job |
-| History columns | 5 | How many history dots fit per row |
-| Auto-sync interval | 20s | How often to refresh in the background |
-| Include build jobs | off | Show `build`-type jobs alongside approval gates |
-
----
-
 ## Tech Stack
 
 - [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
@@ -82,8 +68,8 @@ That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
 ## Why "egg"?
 
-It's almost a Circle plus a "something" (get it? Circle + something = egg? No? Just me?).
-And it's a bit of a joke about how long it took to build this thing, which was supposed to be a weekend project but turned into a months-long labour of love. Plus, you know, eggs are delicious.
+It's a circle plus "something" (get it? Circle + something = egg? No? Just me?).
+And it's a bit of a joke about how long it took to build this thing, which was supposed to be a weekend project but turned into a months-long labor of love. Plus, you know, eggs are delicious.
 
 ---
 

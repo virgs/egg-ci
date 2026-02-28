@@ -4,6 +4,7 @@ import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './job-card/JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
 import { ProjectContext } from '../contexts/ProjectContext'
+import { matchesStatusFilter } from '../pages/statusFilterUtils'
 import './WorkflowComponent.scss'
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
     showProjectHeader?: boolean
     hiddenJobs?: string[]
     listView?: boolean
+    statusFilters?: string[]
 }
 
 export const WorkflowComponent = (props: Props): ReactElement => {
@@ -55,6 +57,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 <ProjectContext.Provider value={props.project}>
                     {props.workflow.jobs.map((job, index) => {
                         if ((props.hiddenJobs ?? []).includes(job.name)) return null
+                        if (!matchesStatusFilter(job.history[0]?.status, props.statusFilters ?? [])) return null
                         return (
                             <JobCardComponent
                                 key={`${props.workflow.latestId}.${index}`}

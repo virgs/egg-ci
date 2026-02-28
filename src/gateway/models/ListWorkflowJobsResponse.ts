@@ -3,6 +3,22 @@ export type ListWorkflowJobsResponse = {
     next_page_token: string
 }
 
+type WorkflowJobStatus =
+    | 'success'
+    | 'running'
+    | 'not_run'
+    | 'failed'
+    | 'retried'
+    | 'queued'
+    | 'not_running'
+    | 'infrastructure_fail'
+    | 'timedout'
+    | 'on_hold'
+    | 'terminated-unknown'
+    | 'blocked'
+    | 'canceled'
+    | 'unauthorized'
+
 export type WorkflowJob = {
     canceled_by?: string
     dependencies: string[]
@@ -12,21 +28,7 @@ export type WorkflowJob = {
     name: string
     approved_by?: string
     project_slug: string
-    status:
-        | 'success'
-        | 'running'
-        | 'not_run'
-        | 'failed'
-        | 'retried'
-        | 'queued'
-        | 'not_running'
-        | 'infrastructure_fail'
-        | 'timedout'
-        | 'on_hold'
-        | 'terminated-unknown'
-        | 'blocked'
-        | 'canceled'
-        | 'unauthorized'
+    status: WorkflowJobStatus
     type: 'build' | 'approval'
     stopped_at?: string
     approval_request_id?: string

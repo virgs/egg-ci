@@ -42,6 +42,7 @@ export class WorkflowFetcher {
     private readonly config: Config
     private readonly projectWorkflows: ProjectWorkflows
     private readonly existingPipelineUpdatedAt: Map<number, string>
+    private readonly existingWorkflowIds: Map<number, Set<string>>
     private static readonly ACTIVE_JOB_STATUSES: ReadonlySet<string> = new Set(['running', 'on_hold', 'blocked', 'queued'])
 
     public constructor(project: TrackedProjectData | ProjectData, existingWorkflows?: ProjectWorkflows) {
@@ -49,6 +50,7 @@ export class WorkflowFetcher {
         this.config = new SettingsRepository().getConfiguration()
         this.projectWorkflows = existingWorkflows ? JSON.parse(JSON.stringify(existingWorkflows)) : {}
         this.existingPipelineUpdatedAt = this.buildExistingPipelineUpdatedAt()
+        this.existingWorkflowIds = this.buildExistingWorkflowIds()
     }
 
     private buildExistingPipelineUpdatedAt(): Map<number, string> {
@@ -58,6 +60,20 @@ export class WorkflowFetcher {
                 job.history.forEach((entry) => {
                     const num = entry.workflow.pipeline_number
                     if (!map.has(num)) map.set(num, entry.pipeline.updated_at)
+                })
+            })
+        })
+        return map
+    }
+
+    private buildExistingWorkflowIds(): Map<number, Set<string>> {
+        const map = new Map<number, Set<string>>()
+        Object.values(this.projectWorkflows).forEach((workflow) => {
+            workflow.jobs.forEach((job) => {
+                job.history.forEach((entry) => {
+                    const num = entry.workflow.pipeline_number
+                    if (!map.has(num)) map.set(num, new Set())
+                    map.get(num)!.add(entry.workflow.id)
                 })
             })
         })
@@ -138,13 +154,19 @@ export class WorkflowFetcher {
         for (const pipeline of pipelines) {
             const storedUpdatedAt = this.existingPipelineUpdatedAt.get(pipeline.number)
             const unchangedTimestamp = storedUpdatedAt !== undefined && storedUpdatedAt === pipeline.updated_at
-            if (unchangedTimestamp && !this.hasActiveJobs(pipeline.number)) continue
-            if (storedUpdatedAt !== undefined) this.removeJobsForPipeline(pipeline.number)
 
             const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)
-            for (const pipelineWorkflow of pipelineWorkflows.items.filter(
+            const relevantWorkflows = pipelineWorkflows.items.filter(
                 (w) => w.name !== SETUP_WORKFLOW && w?.id?.length > 0
-            )) {
+            )
+
+            const existingIds = this.existingWorkflowIds.get(pipeline.number) ?? new Set<string>()
+            const hasNewWorkflows = relevantWorkflows.some((w) => !existingIds.has(w.id))
+
+            if (unchangedTimestamp && !this.hasActiveJobs(pipeline.number) && !hasNewWorkflows) continue
+            if (storedUpdatedAt !== undefined) this.removeJobsForPipeline(pipeline.number)
+
+            for (const pipelineWorkflow of relevantWorkflows) {
                 await sleep(this.config.pipelineWorkflowFetchSleepInMs)
                 const workflowJobs = await circleCiClient.listWorkflowJobs(pipelineWorkflow.id)
                 workflowJobs.items

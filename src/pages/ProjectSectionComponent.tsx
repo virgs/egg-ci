@@ -19,7 +19,8 @@ const renderProjectContent = (
     tracked: TrackedProjectData,
     data: ProjectData,
     listView: boolean,
-    onHideJob: (jobName: string) => void
+    onHideJob: (jobName: string) => void,
+    statusFilters: string[]
 ): ReactElement => {
     const workflowKeys = Object.keys(data.workflows)
     if (workflowKeys.length === 0) {
@@ -47,6 +48,7 @@ const renderProjectContent = (
                             onHideJob={onHideJob}
                             showProjectHeader={false}
                             listView={listView}
+                            statusFilters={statusFilters}
                         />
                     </div>
                 )
@@ -56,7 +58,7 @@ const renderProjectContent = (
 }
 
 export const ProjectSectionComponent = ({ tracked, data, onHideJob, onToggleCollapsed }: Props): ReactElement => {
-    const { workflowView } = useWorkflowsPage()
+    const { workflowView, statusFilters } = useWorkflowsPage()
     const isCollapsed = tracked.collapsed ?? false
     const projectKey = `${data.vcsType}/${data.username}/${data.reponame}`
     const versionControl = mapVersionControlFromString(data.vcsType)
@@ -91,7 +93,7 @@ export const ProjectSectionComponent = ({ tracked, data, onHideJob, onToggleColl
             </div>
             <div className={`px-4 collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
                 <div className="collapsible-grid__inner">
-                    {renderProjectContent(tracked, data, workflowView === 'list', onHideJob)}
+                    {renderProjectContent(tracked, data, workflowView === 'list', onHideJob, statusFilters)}
                 </div>
             </div>
             <hr className="border border-primary border-1 opacity-25" />
