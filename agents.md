@@ -163,7 +163,6 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [ ] Split the workflowPage component into smaller components. The current file is too large and hard to maintain. Consider creating separate components for the workflow list, workflow details, and workflow history. Also Create something like a workflowpage configuration provider to manage the state of the workflow page, such as the current view mode (list or grid) and any filters applied. This will help to keep the state management organized and make it easier to pass down props to child components without prop drilling. Such as history and the card job details. This will also make it easier to add new features in the future, such as saving user preferences or implementing a dark mode.
+1. [ ] Using the WorkflowsPageContext/Provider, based on the current view mode (list or grid), set the max number of history bars to 5 when in grid view and to 10 when in list view.
 2. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
    ' in the index.tsx file to make sure the styles are applied.'' because I didn't do anything yet.
-3. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of its current width so it can fit all 10 of them without the need of two lines.
