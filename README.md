@@ -1,4 +1,4 @@
-# 🥚 egg-ci
+# 🥚 EggCi
 
 > A dashboard monitor for CircleCI workflows.
 
@@ -24,15 +24,13 @@ CircleCI's UI is an amazing tool for triggering pipelines and getting email noti
 
 ## The Solution
 
-**egg-ci** gives you a single-page dashboard showing all your tracked CircleCI projects, their workflows, each job within them, and a colour-coded execution history — at a glance, all at once, without clicking through multiple levels of navigation.
+**EggCi** gives you a single-page dashboard showing all your tracked CircleCI projects, their workflows, each job within them, and a color-coded execution history — at a glance, all at once, without clicking through multiple levels of navigation.
 
-Inspired by [GoCD](https://www.gocd.org/)'s pipeline dashboard (pictured below), which has been solving this exact problem since 2010 while the rest of the industry was busy reinventing it badly.
+Inspired by [GoCD](https://www.gocd.org/)'s pipeline dashboard and nevergreen, EggCi reunites the "what's going on with my CI?" use case with the "what a pipeline dashboard should look like" design, which has been sadly missing from CircleCI for years.
 
 ![GoCD pipeline dashboard — the gold standard](./goal.png)
 
-[//]: # (*GoCD knows what a pipeline dashboard should look like. We're just doing our best.*)
-
-egg-ci brings that same at-a-glance visibility to CircleCI: one card per job, coloured history dots for the last N runs, and no archaeological expedition required to find out when something broke.
+EggCi brings that same at-a-glance visibility to CircleCI: one card per job, coloured history dots for the last N runs, and no archaeological expedition required to find out when something broke.
 
 ---
 
@@ -49,7 +47,7 @@ egg-ci brings that same at-a-glance visibility to CircleCI: one card per job, co
 
 ## Setup
 
-1. Open **[egg-ci](https://virgs.github.io/egg-ci)**
+1. Open **[EggCi](https://virgs.github.io/egg-ci)**
 2. Go to **Settings** (top-right)
 3. Paste your [CircleCI personal API token](https://app.circleci.com/settings/user/tokens)
 4. Add the projects you want to track

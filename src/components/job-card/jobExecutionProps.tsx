@@ -23,13 +23,13 @@ export const jobExecutionProps = (job: WorkflowJob): Result => {
         case 'terminated-unknown':
         case 'canceled':
         case 'unauthorized':
+        case 'not_run':
             return { color: 'dark', animated: false, actionIcon: faStop }
 
         case 'failed':
         case 'not_running':
         case 'infrastructure_fail':
         case 'timedout':
-        case 'not_run':
             return { color: 'danger', animated: false, actionIcon: faXmark }
     }
 }

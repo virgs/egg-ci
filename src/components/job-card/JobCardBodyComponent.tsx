@@ -28,7 +28,7 @@ export const JobCardBodyComponent = (props: Props): ReactElement => {
     }
 
     return (
-        <div className={`card-body row justify-content-between g-0 p-2 px-3${props.listView ? ' card-body--list' : ''}`}>
+        <div className={`card-body row justify-content-between p-2 px-3${props.listView ? ' card-body--list' : ''}`}>
             <p className="col-12 card-text">
                 <a
                     href={props.job.pipeline.vcs?.origin_repository_url

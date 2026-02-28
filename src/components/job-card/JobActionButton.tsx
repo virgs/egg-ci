@@ -1,4 +1,4 @@
-import { IconDefinition, faArrowRotateRight, faPause, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition, faArrowRotateRight, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useContext, useEffect } from 'react'
 import { JobData, ProjectData } from '../../domain-models/models'
@@ -23,7 +23,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
         case 'approval':
             return {
                 tooltip: 'Approve job',
-                icon: faThumbsUp,
+                icon: faPlay,
                 onClick: () => circleCiClient.approveJob(job.workflow.id, job.id),
                 message: `Approving '${job.name}' job`,
                 disabled: job.status === 'success',

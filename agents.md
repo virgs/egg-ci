@@ -163,6 +163,7 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
+1. [ ] Split the workflowPage component into smaller components. The current file is too large and hard to maintain. Consider creating separate components for the workflow list, workflow details, and workflow history.
+2. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
    ' in the index.tsx file to make sure the styles are applied.'' because I didn't do anything yet.
-5. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of it's current width so it can fit all 10 of them without the need of two lines.
+3. [ ] In the workflows page, when the workflow view is in list mode, the history bars should be smaller. Half of it's current width so it can fit all 10 of them without the need of two lines.

@@ -19,7 +19,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
     const gap = '3px'
     const barHeight = props.listView ? '5px' : '10px'
     return (
-        <div className="card-footer p-1 pb-2 px-3 card-details">
+        <div className="card-footer p-1 pb-2 px-3">
             <strong className="text-body-secondary">
                 <div>History</div>
             </strong>
