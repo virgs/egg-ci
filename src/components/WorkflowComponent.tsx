@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 import { ProjectData, WorkflowData } from '../domain-models/models'
+import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
 import { JobCardComponent } from './job-card/JobCardComponent'
 import { VersionControlComponent } from './VersionControlComponent'
@@ -14,7 +15,7 @@ type Props = {
     showProjectHeader?: boolean
     hiddenJobs?: string[]
     listView?: boolean
-    statusFilters?: string[]
+    statusFilters?: WorkflowJobStatus[]
 }
 
 export const WorkflowComponent = (props: Props): ReactElement => {

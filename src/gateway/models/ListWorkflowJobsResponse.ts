@@ -3,7 +3,7 @@ export type ListWorkflowJobsResponse = {
     next_page_token: string
 }
 
-type WorkflowJobStatus =
+export type WorkflowJobStatus =
     | 'success'
     | 'running'
     | 'not_run'

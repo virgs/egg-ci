@@ -1,8 +1,9 @@
 import { ReactElement, ReactNode, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { WorkflowView, SettingsRepository } from '../settings/SettingsRepository'
 import { WorkflowsPageContext } from './WorkflowsPageContext'
-import { parseStatusFilters, serializeStatusFilters } from './statusFilterUtils'
+import { ALL_JOB_STATUSES, parseStatusFilters, serializeStatusFilters } from './statusFilterUtils'
 
 const settingsRepository = new SettingsRepository()
 const STATUS_PARAM = 'statuses'
@@ -21,11 +22,11 @@ export const WorkflowsPageProvider = ({ children }: { children: ReactNode }): Re
 
     const handleFilterChange = (text: string): void => setFilterText(text)
 
-    const handleStatusFiltersChange = (statuses: string[]): void => {
+    const handleStatusFiltersChange = (statuses: WorkflowJobStatus[]): void => {
         setSearchParams(
             (prev) => {
                 const next = new URLSearchParams(prev)
-                if (statuses.length === 0) {
+                if (statuses.length === ALL_JOB_STATUSES.length) {
                     next.delete(STATUS_PARAM)
                 } else {
                     next.set(STATUS_PARAM, serializeStatusFilters(statuses))
