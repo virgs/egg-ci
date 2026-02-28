@@ -42,6 +42,7 @@ export class WorkflowFetcher {
     private readonly config: Config
     private readonly projectWorkflows: ProjectWorkflows
     private readonly existingPipelineUpdatedAt: Map<number, string>
+    private static readonly ACTIVE_JOB_STATUSES: ReadonlySet<string> = new Set(['running', 'on_hold', 'blocked', 'queued'])
 
     public constructor(project: TrackedProjectData | ProjectData, existingWorkflows?: ProjectWorkflows) {
         this.project = project
@@ -61,6 +62,18 @@ export class WorkflowFetcher {
             })
         })
         return map
+    }
+
+    private hasActiveJobs(pipelineNumber: number): boolean {
+        return Object.values(this.projectWorkflows).some((workflow) =>
+            workflow.jobs.some((job) =>
+                job.history.some(
+                    (entry) =>
+                        entry.workflow.pipeline_number === pipelineNumber &&
+                        WorkflowFetcher.ACTIVE_JOB_STATUSES.has(entry.status)
+                )
+            )
+        )
     }
 
     private removeJobsForPipeline(pipelineNumber: number) {
@@ -124,7 +137,8 @@ export class WorkflowFetcher {
 
         for (const pipeline of pipelines) {
             const storedUpdatedAt = this.existingPipelineUpdatedAt.get(pipeline.number)
-            if (storedUpdatedAt !== undefined && storedUpdatedAt === pipeline.updated_at) continue
+            const unchangedTimestamp = storedUpdatedAt !== undefined && storedUpdatedAt === pipeline.updated_at
+            if (unchangedTimestamp && !this.hasActiveJobs(pipeline.number)) continue
             if (storedUpdatedAt !== undefined) this.removeJobsForPipeline(pipeline.number)
 
             const pipelineWorkflows = await circleCiClient.listPipelineWorkflows(pipeline.id)

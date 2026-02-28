@@ -442,6 +442,63 @@ describe('WorkflowFetcher', () => {
             expect(history[0].id).toBe('job-fresh')
         })
 
+        it('unchanged pipeline with an active job is re-fetched so its status can update', async () => {
+            const existingWorkflows = {
+                build: {
+                    name: 'build',
+                    latestBuildNumber: 1,
+                    latestId: 'wf-existing',
+                    jobs: [
+                        {
+                            name: 'deploy',
+                            history: [
+                                {
+                                    id: 'job-running',
+                                    name: 'deploy',
+                                    project_slug: 'github/org/repo',
+                                    status: 'running' as const, // active — must re-fetch
+                                    type: 'approval' as const,
+                                    dependencies: [],
+                                    started_at: FIXED_DATE,
+                                    workflow: { id: 'wf-existing', pipeline_id: 'p1', pipeline_number: 1 },
+                                    pipeline: { updated_at: FIXED_DATE, trigger: { actor: { login: 'actor', avatar_url: '' } } },
+                                },
+                            ],
+                        },
+                    ],
+                },
+            }
+            const pipeline = { ...makePipeline('pipe-1', 1), updated_at: FIXED_DATE } // same timestamp!
+            const wf = makePipelineWorkflow('wf-1', 'build', 1)
+            const finishedJob = { ...makeWorkflowJob('job-running', 'deploy', 'approval'), status: 'success' as const }
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipeline], next_page_token: '' })
+            mockClient.listPipelineWorkflows.mockResolvedValue({ items: [wf], next_page_token: '' })
+            mockClient.listWorkflowJobs.mockResolvedValue({ items: [finishedJob], next_page_token: '' })
+
+            const result = await new WorkflowFetcher(testProject, existingWorkflows).getProjectWorkflows()
+
+            // Main loop must have re-fetched (2 calls total: listCurrentJobs + main loop)
+            expect(mockClient.listWorkflowJobs).toHaveBeenCalledTimes(2)
+            expect(result['build'].jobs[0].history[0].status).toBe('success')
+        })
+
+        it('unchanged pipeline with only terminal jobs is skipped', async () => {
+            const existingWorkflows = makeExistingWorkflows(1, FIXED_DATE) // status: 'success'
+            const pipeline = { ...makePipeline('pipe-1', 1), updated_at: FIXED_DATE }
+            const wf = makePipelineWorkflow('wf-1', 'build', 1)
+            const job = makeWorkflowJob('j1', 'deploy', 'approval')
+
+            mockClient.listProjectPipelines.mockResolvedValue({ items: [pipeline], next_page_token: '' })
+            mockClient.listPipelineWorkflows.mockResolvedValue({ items: [wf], next_page_token: '' })
+            mockClient.listWorkflowJobs.mockResolvedValue({ items: [job], next_page_token: '' })
+
+            await new WorkflowFetcher(testProject, existingWorkflows).getProjectWorkflows()
+
+            // Only called once (from listCurrentJobs), pipeline is correctly skipped
+            expect(mockClient.listWorkflowJobs).toHaveBeenCalledTimes(1)
+        })
+
         it('new pipeline added while unchanged existing pipeline data is preserved', async () => {
             const existingWorkflows = makeExistingWorkflows(1, FIXED_DATE)
             const pipe2 = makePipeline('pipe-2', 2) // new pipeline

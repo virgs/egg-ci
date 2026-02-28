@@ -163,6 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [ ] Using the WorkflowsPageContext/Provider, based on the current view mode (list or grid), set the max number of history bars to 5 when in grid view and to 10 when in list view.
-2. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
+1. [ ] Replace everything possible from bootstrap with its equivalent in react-bootstrap. You may have to add 'import 'bootstrap/dist/css/bootstrap.min.css';
    ' in the index.tsx file to make sure the styles are applied.'' because I didn't do anything yet.
