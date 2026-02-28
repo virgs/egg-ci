@@ -1,7 +1,7 @@
-import { Tooltip } from 'bootstrap'
 import { faCircleCheck, faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { ReactElement, useState } from 'react'
+import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { emitLoggedOut, emitNewNotification, emitUserInformationChanged } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
@@ -13,6 +13,19 @@ import { useConfirmationModal } from '../components/useConfirmationModal.tsx'
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
 
+const tokenTooltipOverlay = (
+    <Tooltip className="tooltip-wide">
+        <h5 className="card-title my-1">CircleCI Personal API Token</h5>
+        <ol className="mb-1 ps-3 text-start">
+            <li>Click the icon to open CircleCI token settings</li>
+            <li>Click <em>Create New Token</em></li>
+            <li>Copy and paste the token here</li>
+            <li>Make sure the projects are being followed in CircleCI (Projects &gt; Follow)</li>
+        </ol>
+        <em className="text-warning">Stored locally in your browser only — never shared.</em>
+    </Tooltip>
+)
+
 export const SettingsPage = (): ReactElement => {
     const confirmationModal = useConfirmationModal()
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
@@ -20,28 +33,6 @@ export const SettingsPage = (): ReactElement => {
     const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(() =>
         settingsRepository.getUserInformation()
     )
-    const tokenInfoRef = useRef<HTMLAnchorElement>(null)
-
-    useEffect(() => {
-        if (tokenInfoRef.current) {
-            new Tooltip(tokenInfoRef.current, {
-                html: true,
-                customClass: 'tooltip-wide',
-                placement: 'right',
-                title: [
-                    '<h5 class="card-title my-1">CircleCI Personal API Token</h5>',
-                    '<ol class="mb-1 ps-3">',
-                    '<li>Click the icon to open CircleCI token settings</li>',
-                    '<li>Click <em>"Create New Token"</em></li>',
-                    '<li>Copy and paste the token here</li>',
-                    '<li>Make sure the projects are being followed in CircleCI (Projects > Follow)</li>',
-                    '</ol>',
-                    '<em class="text-warning">Stored locally in your browser only — never shared.</em>',
-                ].join(''),
-                delay: { show: 150, hide: 150 },
-            })
-        }
-    }, [])
 
     const connect = async () => {
         if (!token) return
@@ -83,33 +74,38 @@ export const SettingsPage = (): ReactElement => {
         <div className="px-3">
             <h3>Settings</h3>
             <div className="mb-4">
-                <div className="input-group w-100 d-flex align-items-center mb-2">
+                <InputGroup className="w-100 d-flex align-items-center mb-2">
                     <label htmlFor="circleci-api-token" className="form-label mb-0">
                         <span>API Token</span>
-                        <a
-                            ref={tokenInfoRef}
-                            className="ps-1 pe-3"
-                            href="https://app.circleci.com/settings/user/tokens"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 150, hide: 150 }}
+                            overlay={tokenTooltipOverlay}
                         >
-                            <FontAwesomeIcon className="align-baseline text-info-emphasis" icon={faInfoCircle} />
-                        </a>
+                            <a
+                                className="ps-1 pe-3"
+                                href="https://app.circleci.com/settings/user/tokens"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FontAwesomeIcon className="align-baseline text-info-emphasis" icon={faInfoCircle} />
+                            </a>
+                        </OverlayTrigger>
                     </label>
-                    <input
+                    <Form.Control
                         type="password"
                         value={token}
                         onChange={(e) => setToken(e.target.value)}
-                        className="form-control py-2"
+                        className="py-2"
                         id="circleci-api-token"
                         readOnly={hasSavedToken}
                     />
                     {!hasSavedToken && (
-                        <button disabled={!token} onClick={connect} type="button" className="btn btn-primary py-2">
+                        <Button disabled={!token} onClick={connect} variant="primary" className="py-2">
                             <FontAwesomeIcon icon={faRightToBracket} />
-                        </button>
+                        </Button>
                     )}
-                </div>
+                </InputGroup>
             </div>
             {hasSavedToken && userInfo && (
                 <div className="d-flex align-items-center gap-2 text-success mb-4">
@@ -121,9 +117,8 @@ export const SettingsPage = (): ReactElement => {
                 </div>
             )}
             <div className="d-grid gap-2">
-                <button
-                    className="btn btn-outline-danger"
-                    type="button"
+                <Button
+                    variant="outline-danger"
                     disabled={!hasSavedToken}
                     onClick={async () => {
                         const approved = await confirmationModal({
@@ -136,10 +131,9 @@ export const SettingsPage = (): ReactElement => {
                     }}
                 >
                     Clear API key
-                </button>
-                <button
-                    className="btn btn-danger"
-                    type="button"
+                </Button>
+                <Button
+                    variant="danger"
                     disabled={!hasSavedToken}
                     onClick={async () => {
                         const approved = await confirmationModal({
@@ -151,7 +145,7 @@ export const SettingsPage = (): ReactElement => {
                     }}
                 >
                     Clear all data
-                </button>
+                </Button>
             </div>
         </div>
     )

@@ -6,6 +6,7 @@ import { ProjectsPage } from './pages/ProjectsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
 import { ReactElement } from 'react'
+import { Button } from 'react-bootstrap'
 import { Navigate, RouterProvider, createHashRouter, useRouteError } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
@@ -38,9 +39,9 @@ const RouteErrorElement = (): ReactElement => {
             <div className="text-center py-5">
                 <h4 className="mb-2">Something went wrong</h4>
                 {error?.message && <p className="text-muted mb-4">{error.message}</p>}
-                <button className="btn btn-primary" onClick={() => window.location.reload()}>
+                <Button variant="primary" onClick={() => window.location.reload()}>
                     Reload
-                </button>
+                </Button>
             </div>
         </AppShell>
     )

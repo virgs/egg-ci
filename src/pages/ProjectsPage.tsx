@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react'
+import { Badge, Button } from 'react-bootstrap'
 import { ProjectItemComponent } from '../components/project/ProjectItemComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
@@ -101,15 +102,15 @@ export const ProjectsPage = (): ReactElement => {
         <div>
             <div className="d-flex align-items-center justify-content-between mb-2">
                 <h3 className="mb-0">Projects ({projects.length})</h3>
-                <button
-                    className="btn btn-sm btn-outline-secondary"
-                    type="button"
+                <Button
+                    size="sm"
+                    variant="outline-secondary"
                     disabled={excludedCount === 0}
                     onClick={handleUnexcludeAll}
                 >
                     Restore excluded projects
-                    {excludedCount > 0 && <span className="badge bg-info ms-2 fs-6">{excludedCount}</span>}
-                </button>
+                    {excludedCount > 0 && <Badge bg="info" className="ms-2 fs-6">{excludedCount}</Badge>}
+                </Button>
             </div>
             <div className="accordion">
                 {projects.map((project, index) => (

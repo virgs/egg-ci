@@ -1,14 +1,13 @@
 import { IconDefinition, faArrowRotateRight, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement, useContext } from 'react'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { JobData, ProjectData } from '../../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../../events/Events'
 import { circleCiClient } from '../../gateway/CircleCiClient'
 import { ProjectService } from '../../project/ProjectService'
 import { sleep } from '../../time/Time'
 import { ProjectContext } from '../../contexts/ProjectContext'
-import { Tooltip } from 'bootstrap'
-
 import { useConfirmationModal } from '../useConfirmationModal.tsx'
 import './JobActionButton.scss'
 
@@ -53,6 +52,7 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
 type Props = {
     job: JobData
 }
+
 export const JobActionButton = (props: Props): ReactElement => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
@@ -67,22 +67,10 @@ export const JobActionButton = (props: Props): ReactElement => {
         emitProjectSynched({ project: synced })
     }
 
-    useEffect(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        Array.from(tooltipTriggerList).map(
-            (tooltipTriggerEl) =>
-                new Tooltip(tooltipTriggerEl, {
-                    delay: {
-                        show: 750,
-                        hide: 100,
-                    },
-                })
-        )
-    }, [])
-
     const jobActionConfirmationMessage =
         `Are you sure you want to <strong>${actionProps.tooltip.toLowerCase()}</strong> <strong>'${props.job.name}'</strong> ` +
         `(#${props.job.workflow.pipeline_number}) in <strong>${project.username}/${project.reponame}</strong>?`
+
     return (
         <>
             <div
@@ -102,12 +90,13 @@ export const JobActionButton = (props: Props): ReactElement => {
                     }
                 }}
             >
-                <FontAwesomeIcon
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    data-bs-title={actionProps.tooltip}
-                    icon={actionProps.icon}
-                />
+                <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 750, hide: 100 }}
+                    overlay={<Tooltip>{actionProps.tooltip}</Tooltip>}
+                >
+                    <FontAwesomeIcon icon={actionProps.icon} />
+                </OverlayTrigger>
             </div>
         </>
     )

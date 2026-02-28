@@ -1,70 +1,36 @@
-import * as bootstrap from 'bootstrap'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
+import { Toast, ToastContainer } from 'react-bootstrap'
 import { useNewNotificationListener } from './Events'
 
 type ToastData = {
-    shown: boolean
-    makkedToRemoval: boolean
-    element: ReactElement
+    id: number
+    message: string
 }
+
 let toastsCounter = 0
 
 export const ToastsComponent = (): ReactElement => {
     const [toasts, setToasts] = useState<ToastData[]>([])
 
     useNewNotificationListener((payload) => {
-        const key = `toast-id-${toastsCounter++}`
-        const newToast = (
-            <div className="toast" key={key} id={key} role="alert" aria-live="assertive" aria-atomic="true">
-                <div className="toast-header">
-                    <strong className="me-auto">Message</strong>
-                    <small className="text-body-secondary">just now</small>
-                    <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div className="toast-body">{payload.message}</div>
-            </div>
-        )
-
-        setToasts(toasts.concat({ shown: false, element: newToast, makkedToRemoval: false }))
+        setToasts((prev) => [...prev, { id: toastsCounter++, message: payload.message }])
     })
 
-    const removeToast = (toast: ToastData) => {
-        setToasts((toasts) =>
-            toasts.map((item) => {
-                if (item.element.key === toast.element.key) {
-                    item.makkedToRemoval = true
-                }
-                return item
-            })
-        )
+    const handleClose = (id: number) => {
+        setToasts((prev) => prev.filter((t) => t.id !== id))
     }
 
-    useEffect(() => {
-        const newToasts = toasts
-            .filter((toast) => !toast.makkedToRemoval)
-            .map((toast) => {
-                if (!toast.shown) {
-                    const toastElement = document.getElementById(toast.element.key!)!
-                    bootstrap.Toast.getOrCreateInstance(toastElement).show()
-                    toastElement.addEventListener('hidden.bs.toast', () => {
-                        removeToast(toast)
-                    })
-                }
-                toast.shown = true
-                return toast
-            })
-        if (newToasts.length !== toasts.length) {
-            setToasts(newToasts)
-        }
-    }, [toasts])
-
     return (
-        <div aria-live="polite" aria-atomic="true" className="position-relative">
-            {/* <!-- Position it: -->
-        <!-- - `.toast-container` for spacing between toasts -->
-        <!-- - `top-0` & `end-0` to position the toasts in the upper right corner -->
-        <!-- - `.p-3` to prevent the toasts from sticking to the edge of the container  --> */}
-            <div className="toast-container top-0 end-0 p-2">{toasts.map((toast) => toast.element)}</div>
-        </div>
+        <ToastContainer position="top-end" className="p-2">
+            {toasts.map((toast) => (
+                <Toast key={toast.id} autohide delay={3000} onClose={() => handleClose(toast.id)}>
+                    <Toast.Header>
+                        <strong className="me-auto">Message</strong>
+                        <small className="text-body-secondary">just now</small>
+                    </Toast.Header>
+                    <Toast.Body>{toast.message}</Toast.Body>
+                </Toast>
+            ))}
+        </ToastContainer>
     )
 }

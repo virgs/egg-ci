@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useRef } from 'react'
-import { Tooltip } from 'bootstrap'
+import { ReactElement } from 'react'
+import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { faBars, faCode, faCodeCompare, faEyeSlash, faMicroscope } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../../domain-models/models'
@@ -19,6 +19,7 @@ type Props = {
 const getStatusDisplay = (status: string): string => {
     return status.replace('_', ' ').replace('-', ' ')
 }
+
 const getBadge = (job: WorkflowJob): ReactElement => {
     const classes = jobExecutionProps(job)
     return (
@@ -30,7 +31,6 @@ const getBadge = (job: WorkflowJob): ReactElement => {
 }
 
 export const JobCardHeaderComponent = (props: Props): ReactElement => {
-    const titleRef = useRef<HTMLHeadingElement>(null)
     const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
     const vcs = props.job.pipeline.vcs
     const browseUrl = vcs ? `${vcs.origin_repository_url}/tree/${vcs.revision}` : undefined
@@ -39,12 +39,6 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
         vcs && prevVcs
             ? `${vcs.origin_repository_url}/compare/${prevVcs.revision}...${vcs.revision}`
             : undefined
-
-    useEffect(() => {
-        if (titleRef.current) {
-            new Tooltip(titleRef.current, { delay: { show: 500, hide: 100 } })
-        }
-    }, [])
 
     const renderTitle = () => {
         const content = (
@@ -62,71 +56,54 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
         return content
     }
 
-    const renderInfoButton = () => {
-        return (
-            <div>
-                <FontAwesomeIcon
-                    data-bs-toggle="dropdown"
-                    data-bs-auto-close="true"
-                    aria-expanded="false"
-                    className="job-menu-trigger"
-                    icon={faBars}
-                />
-                <ul className="dropdown-menu">
-                    <li>
-                        <button className="dropdown-item" type="button" onClick={() => props.onHideJob(props.job.name)}>
-                            <FontAwesomeIcon className="me-2" icon={faEyeSlash} />
-                            Hide job
-                        </button>
-                    </li>
-                    <li>
-                        <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                        <a className="dropdown-item disabled" href="#">
-                            <FontAwesomeIcon className="me-2" icon={faMicroscope} />
-                            Details
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            className={`dropdown-item${browseUrl ? '' : ' disabled'}`}
-                            href={browseUrl ?? '#'}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <FontAwesomeIcon className="me-2" icon={faCodeCompare} />
-                            Browse repo at this point
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            className={`dropdown-item${compareUrl ? '' : ' disabled'}`}
-                            href={compareUrl ?? '#'}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <FontAwesomeIcon className="me-2" icon={faCode} />
-                            Compare against previous execution
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        )
-    }
+    const renderInfoButton = () => (
+        <Dropdown>
+            <Dropdown.Toggle as="span" bsPrefix="job-menu">
+                <FontAwesomeIcon className="job-menu-trigger" icon={faBars} />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+                <Dropdown.Item onClick={() => props.onHideJob(props.job.name)}>
+                    <FontAwesomeIcon className="me-2" icon={faEyeSlash} />
+                    Hide job
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item disabled>
+                    <FontAwesomeIcon className="me-2" icon={faMicroscope} />
+                    Details
+                </Dropdown.Item>
+                <Dropdown.Item
+                    disabled={!browseUrl}
+                    href={browseUrl ?? '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    <FontAwesomeIcon className="me-2" icon={faCodeCompare} />
+                    Browse repo at this point
+                </Dropdown.Item>
+                <Dropdown.Item
+                    disabled={!compareUrl}
+                    href={compareUrl ?? '#'}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    <FontAwesomeIcon className="me-2" icon={faCode} />
+                    Compare against previous execution
+                </Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
+    )
 
     return (
         <div className="card-header p-1 pt-2 px-3">
             <div className="row h-100 align-items-center g-0">
                 <div className="col-10">
-                    <h6
-                        ref={titleRef}
-                        className="card-title m-0"
-                        data-bs-toggle="tooltip"
-                        data-bs-title={props.job.name}
+                    <OverlayTrigger
+                        placement="top"
+                        delay={{ show: 500, hide: 100 }}
+                        overlay={<Tooltip>{props.job.name}</Tooltip>}
                     >
-                        {renderTitle()}
-                    </h6>
+                        <h6 className="card-title m-0">{renderTitle()}</h6>
+                    </OverlayTrigger>
                 </div>
                 <div className="col-2">{renderInfoButton()}</div>
                 <div className="w-100 mb-2"></div>

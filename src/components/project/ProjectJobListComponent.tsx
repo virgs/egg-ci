@@ -1,4 +1,5 @@
 import { ReactElement } from 'react'
+import { Form } from 'react-bootstrap'
 import { ProjectData } from '../../domain-models/models'
 import { faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -28,17 +29,14 @@ export const ProjectJobListComponent = (props: Props): ReactElement => {
     return (
         <>
             {allJobs.map(({ name, type }: UniqueJob, index: number) => (
-                <div key={name} className="form-check d-flex align-items-center gap-2">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
+                <div key={name} className="d-flex align-items-center gap-2">
+                    <Form.Check
                         id={`job-vis-${props.projectId}-${name}`}
                         checked={!props.hiddenJobs.includes(name)}
                         onChange={() => props.onToggleJobVisibility(name)}
+                        label={`${index}. ${name}`}
+                        className="flex-grow-1"
                     />
-                    <label className="form-check-label flex-grow-1" htmlFor={`job-vis-${props.projectId}-${name}`}>
-                        {index}. {name}
-                    </label>
                     {type === 'build' ? (
                         <FontAwesomeIcon className="me-2 text-primary" icon={faScrewdriverWrench} />
                     ) : (

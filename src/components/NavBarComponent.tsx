@@ -1,17 +1,16 @@
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
+import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import eggIcon from '/egg-icon.png'
 import './NavBarComponent.scss'
 
-const navLinkClass = ({ isActive }: { isActive: boolean }) => `nav-link${isActive ? ' active' : ''}`
-
 export const NavBarComponent = (): ReactElement => {
     return (
-        <nav className="navbar navbar-expand sticky-top border-bottom bg-primary" data-bs-theme="dark">
-            <div className="container-fluid px-5">
-                <span className="navbar-brand">
+        <Navbar expand bg="primary" sticky="top" className="border-bottom" data-bs-theme="dark">
+            <Container fluid className="px-5">
+                <Navbar.Brand>
                     <img
                         src={eggIcon}
                         alt="Logo"
@@ -20,12 +19,12 @@ export const NavBarComponent = (): ReactElement => {
                         className="d-inline-block align-text-top me-3"
                     />
                     Egg CI
-                </span>
-                <div className="navbar-nav me-auto">
-                    <NavLink to="/settings" className={navLinkClass}>Settings</NavLink>
-                    <NavLink to="/projects" className={navLinkClass}>Projects</NavLink>
-                    <NavLink to="/workflows" className={navLinkClass}>Workflows</NavLink>
-                </div>
+                </Navbar.Brand>
+                <Nav className="me-auto">
+                    <Nav.Link as={NavLink} to="/settings">Settings</Nav.Link>
+                    <Nav.Link as={NavLink} to="/projects">Projects</Nav.Link>
+                    <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
+                </Nav>
                 <a
                     className="nav-link ms-auto github-link"
                     href="https://github.com/virgs/egg-ci"
@@ -35,7 +34,7 @@ export const NavBarComponent = (): ReactElement => {
                 >
                     <FontAwesomeIcon icon={faGithub} size="2xl" />
                 </a>
-            </div>
-        </nav>
+            </Container>
+        </Navbar>
     )
 }

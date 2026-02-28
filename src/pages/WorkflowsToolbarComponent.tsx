@@ -1,6 +1,8 @@
 import { faAnglesDown, faAnglesUp, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
+import { Button, Form, InputGroup, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
+import { WorkflowView } from '../settings/SettingsRepository'
 import { useWorkflowsPage } from './WorkflowsPageContext'
 import './WorkflowsToolbarComponent.scss'
 
@@ -20,52 +22,52 @@ export const WorkflowsToolbarComponent = ({ workflowCount, allCollapsed, onToggl
             </div>
             <div className="row g-2 align-items-center mb-3">
                 <div className="col-12 col-xl">
-                    <div className="input-group input-group-sm">
-                        <span className="input-group-text">
+                    <InputGroup size="sm">
+                        <InputGroup.Text>
                             <FontAwesomeIcon icon={faSearch} />
-                        </span>
-                        <input
+                        </InputGroup.Text>
+                        <Form.Control
                             type="text"
                             value={filterText}
                             onChange={(e) => handleFilterChange(e.target.value)}
-                            className="form-control"
                             placeholder="Search by name..."
                             id="workflowSearchLabel"
                         />
-                    </div>
+                    </InputGroup>
                 </div>
                 <div className="col-12 col-xl-auto d-flex justify-content-end gap-2">
-                    <div className="btn-group btn-group-sm">
-                        <input
-                            type="radio"
-                            className="btn-check"
-                            name="dashboard-view"
+                    <ToggleButtonGroup
+                        type="radio"
+                        name="dashboard-view"
+                        value={workflowView}
+                        onChange={(v) => handleViewChange(v as WorkflowView)}
+                        size="sm"
+                    >
+                        <ToggleButton
                             id="dashboard-view-grid"
-                            checked={workflowView === 'grid'}
-                            onChange={() => handleViewChange('grid')}
-                        />
-                        <label className="btn btn-outline-secondary" htmlFor="dashboard-view-grid" title="Grid view">
+                            value="grid"
+                            variant="outline-secondary"
+                            title="Grid view"
+                        >
                             <FontAwesomeIcon icon={faTableCellsLarge} />
-                        </label>
-                        <input
-                            type="radio"
-                            className="btn-check"
-                            name="dashboard-view"
+                        </ToggleButton>
+                        <ToggleButton
                             id="dashboard-view-list"
-                            checked={workflowView === 'list'}
-                            onChange={() => handleViewChange('list')}
-                        />
-                        <label className="btn btn-outline-secondary" htmlFor="dashboard-view-list" title="List view">
+                            value="list"
+                            variant="outline-secondary"
+                            title="List view"
+                        >
                             <FontAwesomeIcon icon={faList} />
-                        </label>
-                    </div>
-                    <button
-                        className="btn btn-sm btn-outline-secondary"
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                    <Button
+                        size="sm"
+                        variant="outline-secondary"
                         title={allCollapsed ? 'Expand all' : 'Collapse all'}
                         onClick={onToggleAll}
                     >
                         <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </>

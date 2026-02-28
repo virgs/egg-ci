@@ -1,4 +1,5 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react'
+import React, { ReactElement, useCallback, useState } from 'react'
+import { Form } from 'react-bootstrap'
 import { useRelativeTime } from '../../time/UseRelativeTime'
 import { ProjectData, TrackedProjectData } from '../../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../../events/Events'
@@ -7,7 +8,6 @@ import { mapVersionControlFromString } from '../../version-control/VersionContro
 import { VersionControlComponent } from '../VersionControlComponent'
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Tooltip } from 'bootstrap'
 import './ProjectItemComponent.scss'
 import { ProjectMenuComponent } from './ProjectMenuComponent'
 import { ProjectJobListComponent } from './ProjectJobListComponent'
@@ -45,13 +45,6 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
         if (loaded?.lastSyncedAt) setLastSyncedAt(loaded.lastSyncedAt)
         if (loaded) setProjectData(loaded)
     }, [props.project])
-
-    useEffect(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-        Array.from(tooltipTriggerList).map(
-            (el) => new Tooltip(el, { delay: { show: 750, hide: 100 } })
-        )
-    }, [])
 
     useProjectSynchedListener(() => updateSyncing())
 
@@ -137,16 +130,13 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
                 >
                     <FontAwesomeIcon icon={faGripVertical} className="text-muted" />
                 </div>
-                <div className="form-check form-switch mb-0">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id={id}
-                        checked={props.project.enabled}
-                        onChange={() => onSwitchChange()}
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                </div>
+                <Form.Switch
+                    id={id}
+                    checked={props.project.enabled}
+                    onChange={() => onSwitchChange()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    className="mb-0"
+                />
                 <label className="form-check-label flex-grow-1">
                     <span className="mx-2">{renderVersionControlIcon()}</span>
                     <span>{props.project.username}/{props.project.reponame}</span>
