@@ -1,12 +1,12 @@
 .nav-item {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .github-link {
-    color: var(--bs-info);
-    transition: color 0.2s ease;
+  color: var(--bs-secondary) !important;
+  transition: color 0.2s ease;
 
-    &:hover {
-        color: var(--bs-white) !important;
-    }
+  &:hover {
+    color: var(--bs-info) !important;
+  }
 }

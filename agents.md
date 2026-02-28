@@ -6,7 +6,7 @@
 * Understand the problem, constraints, edge cases, and future impact.
 * Design with long-term maintainability in mind.
 * Plan how the feature integrates with the existing architecture.
-* Prefer extensible patterns over quick fixes.
+* Prefer extensible patterns to quick fixes.
 
 ---
 
@@ -25,7 +25,7 @@ All code must be:
 Prefer:
 
 * Strong typing (avoid `any`)
-* Explicit return types where helpful
+* Explicit return types always
 * Clear naming conventions
 * Predictable data flow
 

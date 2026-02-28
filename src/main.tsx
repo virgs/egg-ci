@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client'
 import { App } from './App.tsx'
 
 import './scss/styles.scss'
+import 'bootswatch/dist/sandstone/bootstrap.min.css'
+
 // import 'bootswatch/dist/cosmo/bootstrap.min.css'
 // import 'bootswatch/dist/darkly/bootstrap.min.css'
-import 'bootswatch/dist/lux/bootstrap.min.css'
+// import 'bootswatch/dist/lux/bootstrap.min.css'
 // import 'bootswatch/dist/minty/bootstrap.min.css'
 // import 'bootswatch/dist/zephyr/bootstrap.min.css'
+// import 'bootswatch/dist/slate/bootstrap.min.css'
 // import 'bootswatch/dist/materia/bootstrap.min.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -8,7 +8,7 @@ export type Config = {
 
 export const defaultConfig: Config = {
     jobExecutionsMaxHistory: 10,
-    jobHistoryColumnsPerLine: 5,
+    jobHistoryColumnsPerLine: 10,
     autoSyncInterval: 20 * 1000,
     minPipelineNumber: 10,
     pipelineWorkflowFetchSleepInMs: 200,

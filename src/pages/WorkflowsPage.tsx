@@ -129,10 +129,9 @@ export const WorkflowsPage = (): ReactElement => {
             const versionControlIcon = versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
             return (
                 <div key={projectKey}>
-                    <hr className="border border-primary border-1 opacity-25" />
                     <div className="project-header-toggle" onClick={() => handleToggleCollapsed(tracked)}>
                         <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb">
+                            <ol className="breadcrumb mb-0 border-0">
                                 <li className="breadcrumb-item d-flex align-items-center">
                                     <FontAwesomeIcon
                                         icon={faChevronRight}
@@ -155,9 +154,10 @@ export const WorkflowsPage = (): ReactElement => {
                             </ol>
                         </nav>
                     </div>
-                    <div className={`collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
+                    <div className={`px-4 collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
                         <div className="collapsible-grid__inner">{renderProjectContent(tracked, data)}</div>
                     </div>
+                    <hr className="border border-primary border-1 opacity-25" />
                 </div>
             )
         })

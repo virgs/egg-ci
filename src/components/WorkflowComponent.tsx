@@ -27,7 +27,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
         <>
             {showProjectHeader && <div className="section-divider"></div>}
             <nav aria-label="breadcrumb">
-                <ol className="breadcrumb mb-0">
+                <ol className="breadcrumb border-0 mb-0">
                     {showProjectHeader && (
                         <li className="breadcrumb-item d-flex align-items-center fs-4">
                             <a href={props.project.vcsUrl}>
