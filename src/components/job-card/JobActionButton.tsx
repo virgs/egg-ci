@@ -5,6 +5,7 @@ import { JobData, ProjectData } from '../../domain-models/models'
 import { emitNewNotification, emitProjectSynched } from '../../events/Events'
 import { circleCiClient } from '../../gateway/CircleCiClient'
 import { ProjectService } from '../../project/ProjectService'
+import { sleep } from '../../time/Time'
 import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
 
@@ -13,7 +14,7 @@ import { useConfirmationModal } from '../useConfirmationModal.tsx'
 type ActionButtonProps = {
     tooltip: string
     icon: IconDefinition
-    onClick: () => void
+    onClick: () => Promise<boolean>
     message: string
     disabled: boolean
 }
@@ -57,8 +58,9 @@ export const JobActionButton = (props: Props): ReactElement => {
     const confirmationModal = useConfirmationModal()
 
     const handleConfirm = async () => {
-        actionProps.onClick()
+        await actionProps.onClick()
         emitNewNotification({ message: actionProps.message })
+        await sleep(2000)
         const projectService = new ProjectService()
         const synced = await projectService.syncProject(project)
         emitProjectSynched({ project: synced })

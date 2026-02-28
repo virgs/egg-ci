@@ -70,8 +70,8 @@ export class CircleCiClient {
     public async cancelJob(project: TrackedProjectData | ProjectData, jobNumber: number): Promise<boolean> {
         const url = `${apiV2}/project/${getProjectSlug(project)}/job/${jobNumber}/cancel`
         try {
-            await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
-            return true
+            const response = await fetch(url, { method: 'POST', headers: this.authHeaders() })
+            return response.ok
         } catch {
             return false
         }
@@ -79,15 +79,13 @@ export class CircleCiClient {
 
     public async rerunJob(workflowId: string, jobId: string): Promise<boolean> {
         const url = `${apiV2}/workflow/${workflowId}/rerun`
-        const body = JSON.stringify({ jobs: [jobId] })
         try {
-            await fetch(url, {
+            const response = await fetch(url, {
                 method: 'POST',
-                body: body,
-                mode: 'no-cors',
-                headers: this.authHeaders(),
+                body: JSON.stringify({ jobs: [jobId] }),
+                headers: { ...this.authHeaders(), 'Content-Type': 'application/json' },
             })
-            return true
+            return response.ok
         } catch {
             return false
         }
@@ -96,8 +94,8 @@ export class CircleCiClient {
     public async approveJob(workflowId: string, jobId: string): Promise<boolean> {
         const url = `${apiV2}/workflow/${workflowId}/approve/${jobId}`
         try {
-            await fetch(url, { method: 'POST', mode: 'no-cors', headers: this.authHeaders() })
-            return true
+            const response = await fetch(url, { method: 'POST', headers: this.authHeaders() })
+            return response.ok
         } catch {
             return false
         }
