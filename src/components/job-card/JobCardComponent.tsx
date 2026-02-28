@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react'
+import { CSSProperties, ReactElement, useState } from 'react'
 import { JobContextData } from '../../domain-models/models'
 import { JobCardBodyComponent } from './JobCardBodyComponent'
 import './JobCardComponent.scss'
@@ -19,13 +19,12 @@ export const JobCardComponent = (props: Props): ReactElement => {
     const safeIndex = Math.min(highlightedExecutionIndex, props.job.history.length - 1)
     const execution = props.job.history[safeIndex]
 
+    const color = jobExecutionProps(execution).color
     return (
         <div className="col">
             <div
-                className={`card h-100 border-${jobExecutionProps(execution).color}${props.listView ? ' card--list' : ''}`}
-                style={{
-                    boxShadow: `0 0 1px 0.5px var(--bs-${jobExecutionProps(execution).color})`,
-                }}
+                className={`card h-100 border-${color}${props.listView ? ' card--list' : ''}`}
+                style={{ '--status-color': `var(--bs-${color})` } as CSSProperties}
             >
                 <JobCardHeaderComponent
                     projectUrl={props.projectUrl}

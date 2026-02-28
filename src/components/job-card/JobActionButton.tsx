@@ -10,6 +10,7 @@ import { ProjectContext } from '../../contexts/ProjectContext'
 import { Tooltip } from 'bootstrap'
 
 import { useConfirmationModal } from '../useConfirmationModal.tsx'
+import './JobActionButton.scss'
 
 type ActionButtonProps = {
     tooltip: string
@@ -85,23 +86,20 @@ export const JobActionButton = (props: Props): ReactElement => {
     return (
         <>
             <div
-                className="p-1"
+                className={`p-1 job-action-button${actionProps.disabled ? ' job-action-button--disabled' : ''}`}
                 onPointerDown={async () => {
                     if (!actionProps.disabled) {
                         const approved = await confirmationModal({
                             message: jobActionConfirmationMessage,
                         })
                         if (!approved) {
-                            console.log(`User cancelled ${actionProps.tooltip.toLowerCase()} action for job ${props.job.name}`)
+                            console.log(
+                                `User cancelled ${actionProps.tooltip.toLowerCase()} action for job ${props.job.name}`
+                            )
                             return
                         }
                         await handleConfirm()
                     }
-                }}
-                style={{
-                    fontSize: '12px',
-                    cursor: actionProps.disabled ? 'not-allowed' : 'pointer',
-                    color: actionProps.disabled ? 'var(--bs-secondary)' : 'var(--bs-primary)',
                 }}
             >
                 <FontAwesomeIcon

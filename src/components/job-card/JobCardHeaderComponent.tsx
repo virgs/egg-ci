@@ -23,8 +23,7 @@ const getBadge = (job: WorkflowJob): ReactElement => {
     const classes = jobExecutionProps(job)
     return (
         <FontAwesomeIcon
-            className={job.status === 'running' ? 'fa-spin' : ''}
-            style={{ color: `var(--bs-${classes.color})` }}
+            className={`${job.status === 'running' ? 'fa-spin ' : ''}text-${classes.color}`}
             icon={classes.actionIcon}
         />
     )

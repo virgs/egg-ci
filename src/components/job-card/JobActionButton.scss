@@ -1,0 +1,10 @@
+.job-action-button {
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--bs-primary);
+
+    &--disabled {
+        cursor: not-allowed;
+        color: var(--bs-secondary);
+    }
+}

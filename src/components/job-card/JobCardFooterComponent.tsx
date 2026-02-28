@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useMemo } from 'react'
+import { CSSProperties, ReactElement, useContext, useMemo } from 'react'
 import { JobData } from '../../domain-models/models'
 import { ConfigContext } from '../../contexts/ConfigContext'
 import './JobCardFooterComponent.scss'
@@ -16,8 +16,6 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
 
     const executions = useMemo(() => [...props.executions].reverse(), [props.executions])
 
-    const gap = '3px'
-    const barHeight = props.listView ? '5px' : '10px'
     return (
         <div className="card-footer p-1 pb-2 px-3">
             <strong className="text-body-secondary">
@@ -25,25 +23,18 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
             </strong>
             {executions.map((execution, index) => {
                 const classes = jobExecutionProps(execution)
+                const isHighlighted = executions.length - index - 1 === props.highlightedExecutionIndex
                 return (
                     <div
                         key={`job-history-${execution.id}-${index}-${execution.started_at}`}
                         onPointerDown={() => props.onHighlightedExecutionIndexChanged(executions.length - index - 1)}
-                        className="progress border"
+                        className={`progress border job-history-bar${props.listView ? ' job-history-bar--compact' : ''}${isHighlighted ? ' job-history-bar--highlighted' : ''}`}
                         role="progressbar"
                         aria-label="Job status"
                         style={{
-                            cursor: 'pointer',
-                            width: `calc((100% / ${configuration.jobHistoryColumnsPerLine}) - ${gap})`,
-                            height: barHeight,
-                            display: 'inline-flex',
-                            marginRight: gap,
-                            borderRadius: '3px',
-                            boxShadow:
-                                executions.length - index - 1 !== props.highlightedExecutionIndex
-                                    ? 'unset'
-                                    : `0 0 3px 2px var(--bs-${classes.color})`,
-                        }}
+                            '--status-color': `var(--bs-${classes.color})`,
+                            '--cols': configuration.jobHistoryColumnsPerLine,
+                        } as CSSProperties}
                     >
                         <div
                             className={`progress-bar w-100 bg-${classes.color} ${classes.animated ? 'progress-bar-striped progress-bar-animated' : ''}`}

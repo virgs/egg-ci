@@ -2,3 +2,21 @@
     height: 60px;
     font-size: x-small;
 }
+
+.job-history-bar {
+    cursor: pointer;
+    width: calc(100% / var(--cols) - 3px);
+    height: 10px;
+    display: inline-flex !important;
+    margin-right: 3px;
+    border-radius: 3px;
+    box-shadow: unset;
+
+    &--compact {
+        height: 5px;
+    }
+
+    &--highlighted {
+        box-shadow: 0 0 3px 2px var(--status-color);
+    }
+}
