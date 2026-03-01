@@ -76,6 +76,25 @@ And it's a bit of a joke about how long it took to build this thing, which was s
 
 ---
 
+### FAQ
+
+Q: How often do the projects get synced? I recently pushed a new commit, I see the pipeline is running in CircleCI but I don't see its status reflected in the workflow page
+A: Sync frequency: autoSyncInterval × number of enabled projects — the default is 20 seconds × N. So with 3 projects you wait up to 60 seconds between syncs. Crucially, setInterval doesn't fire immediately on page load — the first tick only happens after the full delay has elapsed. Why the running pipeline isn't visible yet — there are two compounding reasons:
+
+    1. The sync interval hasn't fired yet since you loaded the page
+    2. Even when it does fire, WorkflowFetcher filters out jobs that have no started_at:
+
+    // src/project/WorkflowFetcher.ts:173
+    .filter((job) => job.started_at)
+    
+    A freshly-triggered pipeline has its downstream jobs in queued/blocked state with no started_at yet — they're invisible until they actually begin executing. So right after a
+    push you'd only see the first job (install) once it starts running, and the rest gradually appear as they pick up.
+    
+    In short: wait up to 20s × N for the next sync, and jobs will appear as they transition from queued to running. If you want an immediate refresh you can trigger a manual sync
+    via the Projects page sync button.
+
+---
+
 ## License
 
 Do whatever you want with it. If CircleCI somehow improves their dashboard to make this obsolete, that's a win too.

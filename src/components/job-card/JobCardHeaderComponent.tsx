@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { faBars, faCode, faCodeCompare, faEyeSlash, faMicroscope } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCode, faCodeCompare, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../../domain-models/models'
 import { WorkflowJob } from '../../gateway/models/ListWorkflowJobsResponse'
@@ -67,10 +67,6 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     Hide job
                 </Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item disabled>
-                    <FontAwesomeIcon className="me-2" icon={faMicroscope} />
-                    Details
-                </Dropdown.Item>
                 <Dropdown.Item
                     disabled={!browseUrl}
                     href={browseUrl ?? '#'}

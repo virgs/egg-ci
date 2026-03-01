@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   install:
     docker:
-      - image: cimg/node:20.18
+      - image: cimg/node:22.12
     steps:
       - checkout
       - restore_cache:
@@ -23,7 +23,7 @@ jobs:
 
   lint:
     docker:
-      - image: cimg/node:20.18
+      - image: cimg/node:22.12
     steps:
       - checkout
       - attach_workspace:
@@ -34,7 +34,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/node:20.18
+      - image: cimg/node:22.12
     steps:
       - checkout
       - attach_workspace:
@@ -47,7 +47,7 @@ jobs:
 
   coverage:
     docker:
-      - image: cimg/node:20.18
+      - image: cimg/node:22.12
     steps:
       - checkout
       - attach_workspace:
@@ -61,7 +61,7 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:20.18
+      - image: cimg/node:22.12
     steps:
       - checkout
       - attach_workspace:
