@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { faBars, faCode, faCodeCompare, faEyeSlash, faMicroscope } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare, faBars, faCode, faCodeCompare, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { JobData } from '../../domain-models/models'
 import { WorkflowJob } from '../../gateway/models/ListWorkflowJobsResponse'
@@ -31,7 +31,9 @@ const getBadge = (job: WorkflowJob): ReactElement => {
 }
 
 export const JobCardHeaderComponent = (props: Props): ReactElement => {
-    const jobUrl = `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
+    const jobUrl = props.job.job_number
+        ? `${props.projectUrl}/${props.job.workflow.pipeline_number}/workflows/${props.job.workflow.pipeline_id}/jobs/${props.job.job_number}`
+        : undefined
     const vcs = props.job.pipeline.vcs
     const browseUrl = vcs ? `${vcs.origin_repository_url}/tree/${vcs.revision}` : undefined
     const prevVcs = props.previousExecution?.pipeline.vcs
@@ -46,7 +48,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                 {props.jobOrder + 1}. {props.job.name}
             </>
         )
-        if (props.job.type === 'build') {
+        if (props.job.type === 'build' && jobUrl) {
             return (
                 <a className="text-decoration-none" href={jobUrl}>
                     {content}
@@ -67,9 +69,9 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     Hide job
                 </Dropdown.Item>
                 <Dropdown.Divider />
-                <Dropdown.Item disabled>
-                    <FontAwesomeIcon className="me-2" icon={faMicroscope} />
-                    Details
+                <Dropdown.Item disabled={!jobUrl} href={jobUrl ?? '#'} target="_blank" rel="noreferrer">
+                    <FontAwesomeIcon className="me-2" icon={faArrowUpRightFromSquare} />
+                    View job on CircleCI
                 </Dropdown.Item>
                 <Dropdown.Item disabled={!browseUrl} href={browseUrl ?? '#'} target="_blank" rel="noreferrer">
                     <FontAwesomeIcon className="me-2" icon={faCodeCompare} />

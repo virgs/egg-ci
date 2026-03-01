@@ -78,22 +78,22 @@ And it's a bit of a joke about how long it took to build this thing, which was s
 ## FAQ
 
 **My new pipeline isn't showing up. What gives?**
-Two things compound here: the sync interval fires every 20s × number of enabled projects (so 3 projects = up to 60s), and it doesn't fire immediately on page load. On top of that, freshly-queued jobs have no `started_at` yet and are filtered out until they actually start running. Give it a minute, or hit the sync button on the Projects page to force an immediate refresh.
+Two things compound here: the sync interval fires every 20s × number of enabled projects (so 3 projects = up to 60s), and it doesn't fire immediately on page load. On top of that, freshly-queued jobs have no **started_at** yet and are filtered out until they actually start running. Give it a minute, or hit the sync button on the Projects page to force an immediate refresh.
 
 **I reran a job but nothing changed on the dashboard.**
 EggCi detects reruns by comparing workflow IDs on each sync. If the rerun happened right after a sync, you'll see it on the next one. Again, the Projects page sync button is your friend for immediate results.
 
 **Is my API token safe?**
-Yes. It never leaves your browser — there's no backend, no server, no telemetry. It's stored in `localStorage` and only ever sent directly to CircleCI's API from your machine.
+Yes. It never leaves your browser — there's no backend, no server, no telemetry. It's stored in **localStorage** and only ever sent directly to CircleCI's API from your machine.
 
 **Can I track projects from different organisations?**
 Yes. The Projects page lets you add any CircleCI project your token has access to, regardless of which org owns it.
 
 **Why can't I approve/rerun/cancel some jobs?**
-Approval gates only work on `on_hold` jobs. Rerun is only available for jobs that have actually finished (success, failed, canceled, timed out, etc.). Running jobs show a cancel button instead. Jobs that are queued, blocked, or skipped don't have an action — there's nothing meaningful to do with them from here.
+Approval gates only work on **on_hold** jobs. Rerun is only available for jobs that have actually finished (**success**, **failed**, **canceled**, **timed out**, etc.). Running jobs show a cancel button instead. Jobs that are **queued**, **blocked**, or **skipped** don't have an action — there's nothing meaningful to do with them from here.
 
 **The dashboard feels slow with many projects.**
-Each enabled project adds ~20s to the sync cycle. Try reducing the number of enabled projects, or lower the pipeline scan depth in Settings to fetch fewer historical runs per sync.
+To avoid throttling and overloading CircleCI servers, each enabled project adds ~20s to the sync cycle. Try reducing the number of enabled projects, or lower the pipeline scan depth in Settings to fetch fewer historical runs per sync.
 
 ---
 
