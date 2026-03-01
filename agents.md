@@ -163,5 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-2. [ ] The job card should get wider in smaller screen
-1. [ ] Ideas for screenshot explanations.
+1. [x] The workflow page buttons on top (filter, list/grid view and expand/collapse) should have tooltips. Also, in the settings page, there should be a button to alternate the theme (light/dark) and it should have a tooltip as well. The light mode should be the default, and the dark mode should be optional for those who prefer it. The light theme should use (import 'bootswatch/dist/sandstone/bootstrap.min.css') and the dark should be (import 'bootswatch/dist/slate/bootstrap.min.css'). Make it easy for me to change them if I have to and tell me how to do it.
+2. [ ] Ideas for screenshot explanations.

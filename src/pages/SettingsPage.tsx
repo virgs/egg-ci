@@ -1,4 +1,4 @@
-import { faCircleCheck, faInfoCircle, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faInfoCircle, faMoon, faRightToBracket, faSun } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
 import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
@@ -7,6 +7,7 @@ import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiCli
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
+import { Theme, applyTheme } from '../theme/ThemeManager'
 import './SettingsPage.scss'
 import { useConfirmationModal } from '../components/useConfirmationModal.tsx'
 
@@ -28,6 +29,7 @@ const tokenTooltipOverlay = (
 
 export const SettingsPage = (): ReactElement => {
     const confirmationModal = useConfirmationModal()
+    const [theme, setTheme] = useState<Theme>(() => settingsRepository.getTheme())
     const [token, setToken] = useState<string>(() => settingsRepository.getApiToken() ?? '')
     const [hasSavedToken, setHasSavedToken] = useState<boolean>(() => !!settingsRepository.getApiToken())
     const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(() =>
@@ -60,6 +62,13 @@ export const SettingsPage = (): ReactElement => {
         setToken('')
         setUserInfo(undefined)
         setHasSavedToken(false)
+    }
+
+    const toggleTheme = () => {
+        const next: Theme = theme === 'light' ? 'dark' : 'light'
+        settingsRepository.setTheme(next)
+        applyTheme(next)
+        setTheme(next)
     }
 
     const clearAllData = () => {
@@ -116,6 +125,18 @@ export const SettingsPage = (): ReactElement => {
                     </span>
                 </div>
             )}
+            <div className="mb-4">
+                <h6 className="mb-2">Appearance</h6>
+                <OverlayTrigger
+                    placement="right"
+                    overlay={<Tooltip>Switch to {theme === 'light' ? 'dark' : 'light'} mode</Tooltip>}
+                >
+                    <Button variant="outline-secondary" size="sm" onClick={toggleTheme}>
+                        <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} className="me-2" />
+                        {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                    </Button>
+                </OverlayTrigger>
+            </div>
             <div className="d-grid gap-2">
                 <Button
                     variant="outline-danger"

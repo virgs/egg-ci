@@ -1,8 +1,7 @@
 import { faAnglesDown, faAnglesUp, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
-import { Button, Form, InputGroup, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
-import { WorkflowView } from '../settings/SettingsRepository'
+import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { StatusFilterDropdown } from './StatusFilterDropdown'
 import { useWorkflowsPage } from './WorkflowsPageContext'
 import './WorkflowsToolbarComponent.scss'
@@ -38,38 +37,32 @@ export const WorkflowsToolbarComponent = ({ workflowCount, allCollapsed, onToggl
                 </div>
                 <div className="col-12 col-xl-auto d-flex justify-content-end gap-2">
                     <StatusFilterDropdown />
-                    <ToggleButtonGroup
-                        type="radio"
-                        name="dashboard-view"
-                        value={workflowView}
-                        onChange={(v) => handleViewChange(v as WorkflowView)}
-                        size="sm"
+                    <div className="btn-group btn-group-sm">
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Grid view</Tooltip>}>
+                            <Button
+                                variant={workflowView === 'grid' ? 'secondary' : 'outline-secondary'}
+                                onClick={() => handleViewChange('grid')}
+                            >
+                                <FontAwesomeIcon icon={faTableCellsLarge} />
+                            </Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>List view</Tooltip>}>
+                            <Button
+                                variant={workflowView === 'list' ? 'secondary' : 'outline-secondary'}
+                                onClick={() => handleViewChange('list')}
+                            >
+                                <FontAwesomeIcon icon={faList} />
+                            </Button>
+                        </OverlayTrigger>
+                    </div>
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={<Tooltip>{allCollapsed ? 'Expand all' : 'Collapse all'}</Tooltip>}
                     >
-                        <ToggleButton
-                            id="dashboard-view-grid"
-                            value="grid"
-                            variant="outline-secondary"
-                            title="Grid view"
-                        >
-                            <FontAwesomeIcon icon={faTableCellsLarge} />
-                        </ToggleButton>
-                        <ToggleButton
-                            id="dashboard-view-list"
-                            value="list"
-                            variant="outline-secondary"
-                            title="List view"
-                        >
-                            <FontAwesomeIcon icon={faList} />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    <Button
-                        size="sm"
-                        variant="outline-secondary"
-                        title={allCollapsed ? 'Expand all' : 'Collapse all'}
-                        onClick={onToggleAll}
-                    >
-                        <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
-                    </Button>
+                        <Button size="sm" variant="outline-secondary" onClick={onToggleAll}>
+                            <FontAwesomeIcon icon={allCollapsed ? faAnglesDown : faAnglesUp} />
+                        </Button>
+                    </OverlayTrigger>
                 </div>
             </div>
         </>

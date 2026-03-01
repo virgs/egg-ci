@@ -32,6 +32,18 @@
 
 **New skip condition**: `unchangedTimestamp && !hasActiveJobs && !hasNewWorkflows`
 
+## Theme Switching (TODO #1)
+
+**Mechanism**: Vite `?url` imports (`bootswatch/dist/.../bootstrap.min.css?url`) give asset URLs at build time. `applyTheme(theme)` in `src/theme/ThemeManager.ts` inserts/updates a `<link id="app-theme">` tag at the top of `<head>`. Theme is persisted in `SettingsRepository` under key `'theme'`.
+
+**To change themes**: Edit the two import paths at the top of `src/theme/ThemeManager.ts`. Replace `sandstone` (light) or `slate` (dark) with any Bootswatch theme name (e.g. `cosmo`, `flatly`, `darkly`). Rebuild.
+
+**CSS structure**: `src/scss/styles.scss` contains only structural/layout CSS (no Bootstrap import). Bootswatch (which bundles Bootstrap) is loaded exclusively via the dynamic link tag.
+
+**Init**: `applyTheme` is called in `main.tsx` before `ReactDOM.createRoot` to minimise flash of unstyled content.
+
+**Toolbar tooltips**: `ToggleButtonGroup`/`ToggleButton` replaced with plain `btn-group` + individual `Button` components, each wrapped in `OverlayTrigger`. Filter tooltip lives inside `StatusFilterDropdown` on the `Dropdown.Toggle`.
+
 ## React-Bootstrap Migration
 
 All vanilla Bootstrap JS imports replaced with react-bootstrap components. Key patterns:
