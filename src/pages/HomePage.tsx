@@ -93,6 +93,7 @@ export const HomePage = (): ReactElement => {
                                     </Card.Title>
                                     <div className="screenshot-container" onClick={() => setLightbox({ url: screenshot, title })}>
                                         <Image
+                                            height={256}
                                             src={screenshot}
                                             alt={`${title} page preview`}
                                             className="screenshot-thumbnail"
