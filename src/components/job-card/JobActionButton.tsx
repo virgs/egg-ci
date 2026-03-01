@@ -9,6 +9,7 @@ import { ProjectService } from '../../project/ProjectService'
 import { sleep } from '../../time/Time'
 import { ProjectContext } from '../../contexts/ProjectContext'
 import { useConfirmationModal } from '../useConfirmationModal.tsx'
+import { RERUNABLE_STATUSES } from './jobActionUtils'
 import './JobActionButton.scss'
 
 type ActionButtonProps = {
@@ -19,7 +20,7 @@ type ActionButtonProps = {
     disabled: boolean
 }
 
-const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProps => {
+const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProps | null => {
     switch (job.type) {
         case 'approval':
             return {
@@ -39,6 +40,9 @@ const actionButtonProps = (project: ProjectData, job: JobData): ActionButtonProp
                     disabled: false,
                 }
             }
+            if (!RERUNABLE_STATUSES.has(job.status)) {
+                return null
+            }
     }
     return {
         message: `Rerunning '${job.name}' job`,
@@ -57,6 +61,8 @@ export const JobActionButton = (props: Props): ReactElement => {
     const project = useContext(ProjectContext)!
     const actionProps = actionButtonProps(project, props.job)
     const confirmationModal = useConfirmationModal()
+
+    if (!actionProps) return <></>
 
     const handleConfirm = async () => {
         await actionProps.onClick()
