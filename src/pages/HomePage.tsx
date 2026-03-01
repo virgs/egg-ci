@@ -118,7 +118,7 @@ export const HomePage = (): ReactElement => {
                 })}
             </div>
             <div className="readme-content" dangerouslySetInnerHTML={{ __html: afterHtml }} />
-            <Modal show={!!lightbox} onHide={() => setLightbox(null)} size="lg" centered>
+            <Modal show={!!lightbox} onHide={() => setLightbox(null)} size="xl" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>{lightbox?.title} page</Modal.Title>
                 </Modal.Header>
