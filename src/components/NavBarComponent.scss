@@ -10,3 +10,11 @@
     color: var(--bs-secondary) !important;
   }
 }
+
+.navbar-nav--wrap {
+  width: 100%;
+
+  @media (min-width: 576px) {
+    width: auto;
+  }
+}

@@ -163,4 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] Add more jobs to the CI pipeline. Right now we only have one job, which is a placeholder. We should add more jobs that reflect the actual steps in our CI process, such as linting, testing, building, coverage, etc. This will give us a more realistic pipeline to work with and test against.
+2. [ ] The job card should get wider in smaller screen
+1. [ ] Ideas for screenshot explanations.

@@ -18,7 +18,7 @@ export const NavBarComponent = (): ReactElement => {
 
     return (
         <Navbar expand bg="primary" sticky="top" className="border-bottom" data-bs-theme="dark">
-            <Container fluid className="px-5">
+            <Container fluid className="flex-wrap px-3 px-sm-5">
                 <Navbar.Brand as={NavLink} to="/home">
                     <img
                         src={eggIcon}
@@ -29,7 +29,7 @@ export const NavBarComponent = (): ReactElement => {
                     />
                     Egg CI
                 </Navbar.Brand>
-                <Nav className="me-auto">
+                <Nav className="order-3 order-sm-2 me-sm-auto navbar-nav--wrap">
                     <Nav.Link as={NavLink} to="/settings">Settings</Nav.Link>
                     {hasApiToken
                         ? <Nav.Link as={NavLink} to="/projects">Projects</Nav.Link>
@@ -39,7 +39,7 @@ export const NavBarComponent = (): ReactElement => {
                         : <Nav.Link disabled>Workflows</Nav.Link>}
                 </Nav>
                 <a
-                    className="nav-link ms-auto github-link"
+                    className="nav-link github-link order-2 order-sm-3 ms-auto ms-sm-0"
                     href="https://github.com/virgs/egg-ci"
                     target="_blank"
                     rel="noopener noreferrer"
