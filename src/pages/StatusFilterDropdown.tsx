@@ -1,7 +1,7 @@
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
-import { Badge, Button, Dropdown, Form } from 'react-bootstrap'
+import { Badge, Button, Dropdown, Form, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { useWorkflowsPage } from './WorkflowsPageContext'
 import { ALL_JOB_STATUSES } from './statusFilterUtils'
@@ -22,12 +22,14 @@ export const StatusFilterDropdown = (): ReactElement => {
 
     return (
         <Dropdown autoClose="outside">
-            <Dropdown.Toggle size="sm" variant="outline-secondary" id="status-filter-toggle">
-                <FontAwesomeIcon icon={faFilter} />
-                <Badge bg="primary" pill className="ms-1">
-                    {selectedCount}
-                </Badge>
-            </Dropdown.Toggle>
+            <OverlayTrigger placement="top" overlay={<Tooltip>Filter by status</Tooltip>}>
+                <Dropdown.Toggle size="sm" variant="outline-secondary" id="status-filter-toggle">
+                    <FontAwesomeIcon icon={faFilter} />
+                    <Badge bg="primary" pill className="ms-1">
+                        {selectedCount}
+                    </Badge>
+                </Dropdown.Toggle>
+            </OverlayTrigger>
             <Dropdown.Menu className="status-filter-menu p-2">
                 <div className="d-flex justify-content-between gap-2 m-1">
                     <Button

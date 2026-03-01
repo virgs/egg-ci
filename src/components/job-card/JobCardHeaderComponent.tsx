@@ -92,6 +92,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                     <OverlayTrigger
                         placement="top"
                         delay={{ show: 500, hide: 100 }}
+                        popperConfig={{ strategy: 'fixed' }}
                         overlay={<Tooltip>{props.job.name}</Tooltip>}
                     >
                         <h6 className="card-title m-0">{renderTitle()}</h6>

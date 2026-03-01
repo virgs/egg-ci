@@ -80,6 +80,7 @@ export const SettingsPage = (): ReactElement => {
                         <OverlayTrigger
                             placement="right"
                             delay={{ show: 150, hide: 150 }}
+                            popperConfig={{ strategy: 'fixed' }}
                             overlay={tokenTooltipOverlay}
                         >
                             <a

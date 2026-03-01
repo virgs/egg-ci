@@ -99,6 +99,7 @@ export const JobActionButton = (props: Props): ReactElement => {
                 <OverlayTrigger
                     placement="top"
                     delay={{ show: 750, hide: 100 }}
+                    popperConfig={{ strategy: 'fixed' }}
                     overlay={<Tooltip>{actionProps.tooltip}</Tooltip>}
                 >
                     <FontAwesomeIcon icon={actionProps.icon} />
