@@ -1,5 +1,6 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { Badge, Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 import { ProjectItemComponent } from '../components/project/ProjectItemComponent'
 import { TrackedProjectData } from '../domain-models/models'
 import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
@@ -19,6 +20,12 @@ const getProjectLabel = (project: TrackedProjectData): string =>
 const computeExcludedCount = () => projectService.loadTrackedProjects()?.filter((p) => p.excluded).length ?? 0
 
 export const ProjectsPage = (): ReactElement => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!settingsRepository.getApiToken()) navigate('/settings')
+    }, [navigate])
+
     const [projects, setProjects] = useState<TrackedProjectData[]>(
         () => projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
     )

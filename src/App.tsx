@@ -1,5 +1,6 @@
 import { NavBarComponent } from './components/NavBarComponent'
 import { initializeCircleCiClient } from './gateway/CircleCiClient'
+import { HomePage } from './pages/HomePage'
 import { WorkflowsPage } from './pages/WorkflowsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { ProjectsPage } from './pages/ProjectsPage'
@@ -49,6 +50,15 @@ const RouteErrorElement = (): ReactElement => {
 
 const router = createHashRouter([
     {
+        path: '/home',
+        element: (
+            <AppShell>
+                <HomePage />
+            </AppShell>
+        ),
+        errorElement: <RouteErrorElement />,
+    },
+    {
         path: '/settings',
         element: (
             <AppShell>
@@ -77,7 +87,7 @@ const router = createHashRouter([
     },
     {
         path: '/*',
-        element: <Navigate to={settingsRepository.getApiToken() ? '/workflows' : '/settings'} replace />,
+        element: <Navigate to="/home" replace />,
     },
 ])
 

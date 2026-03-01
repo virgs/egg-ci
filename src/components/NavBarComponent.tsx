@@ -1,16 +1,25 @@
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import eggIcon from '/egg-icon.png'
+import { useLoggedOutListener, useUserInformationChangedListener } from '../events/Events'
+import { SettingsRepository } from '../settings/SettingsRepository'
 import './NavBarComponent.scss'
 
+const settingsRepository = new SettingsRepository()
+
 export const NavBarComponent = (): ReactElement => {
+    const [hasApiToken, setHasApiToken] = useState(() => !!settingsRepository.getApiToken())
+
+    useUserInformationChangedListener(() => setHasApiToken(!!settingsRepository.getApiToken()))
+    useLoggedOutListener(() => setHasApiToken(false))
+
     return (
         <Navbar expand bg="primary" sticky="top" className="border-bottom" data-bs-theme="dark">
             <Container fluid className="px-5">
-                <Navbar.Brand>
+                <Navbar.Brand as={NavLink} to="/home">
                     <img
                         src={eggIcon}
                         alt="Logo"
@@ -22,8 +31,12 @@ export const NavBarComponent = (): ReactElement => {
                 </Navbar.Brand>
                 <Nav className="me-auto">
                     <Nav.Link as={NavLink} to="/settings">Settings</Nav.Link>
-                    <Nav.Link as={NavLink} to="/projects">Projects</Nav.Link>
-                    <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
+                    {hasApiToken
+                        ? <Nav.Link as={NavLink} to="/projects">Projects</Nav.Link>
+                        : <Nav.Link disabled>Projects</Nav.Link>}
+                    {hasApiToken
+                        ? <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
+                        : <Nav.Link disabled>Workflows</Nav.Link>}
                 </Nav>
                 <a
                     className="nav-link ms-auto github-link"

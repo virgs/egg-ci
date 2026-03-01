@@ -2,18 +2,20 @@
 
 > A dashboard monitor for CircleCI workflows.
 
-**[Try it →](https://virgs.github.io/egg-ci)**
-
-![EggCi](./logo.png)
+![EggCi](./public/logo.png)
 ---
+
+[//]: # (homepage placeholder)
 
 ## The Problem
 
 You're using [CircleCI](https://circleci.com). You have pipelines. You have workflows. You have jobs inside those workflows. And you want to answer a few completely reasonable questions:
 
-> 1. *"When was the last successful execution of each environment deploy job `deploy-production`*
-> 2. *"Which job is currently failing in the `deploy-staging` workflow?"*
+> 1. *"When was the last successful execution of each environment deploy job deploy-production*
+> 2. *"Which job is currently failing in the deploy-staging workflow?"*
 > 3. *"How do I promote the last job that reached pre-production approval to production?"*
+> 4. *"What's the last time any workflow run?*
+> 5. *Which jobs are currently failing across all my projects?"*
 
 So you open CircleCI, navigate to your project, pick a branch, scroll through a list of pipeline runs sorted by time, click into one, hope that's the right workflow, find the job, note the status, and realise you need to do this again for the previous run. And the one before that.
 
@@ -47,10 +49,11 @@ EggCi brings that same at-a-glance visibility to CircleCI: one card per job, col
 ## Setup
 
 1. Open **[EggCi](https://virgs.github.io/egg-ci)**
-2. Go to **Settings** (top-right)
+2. Go to **Settings**
 3. Paste your [CircleCI personal API token](https://app.circleci.com/settings/user/tokens)
-4. Add the projects you want to track
+4. Go to **Projects** and add the projects you want to track
 5. Enable them and wait for the first sync
+6. Go to **Workflows** and have fun watching your CI in real time!
 
 That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 

@@ -1,5 +1,14 @@
 # Memento — egg-ci Architectural Decisions
 
+## Homepage (TODO #1)
+
+**Route**: `/home` — always accessible, default for `/*` redirect.
+**Content**: Quick-link buttons (Settings always enabled; Projects/Workflows disabled when no API key) + README.md rendered via `marked` + `dompurify`.
+**README import**: `import readmeContent from '../../README.md?raw'` (Vite `?raw` import; type declared in `vite-env.d.ts`).
+**Reactive navbar**: `NavBarComponent` and `HomePage` both use `useState` + `useUserInformationChangedListener` + `useLoggedOutListener` to reactively enable/disable guarded links.
+**Redirect guard**: `/projects` and `/workflows` both redirect to `/settings` via `useNavigate` + `useEffect` when no API key is present.
+**NavBar brand**: `Navbar.Brand as={NavLink} to="/home"` — clicking the icon or name navigates home.
+
 ## Status Filter Feature (TODO #2)
 
 **Decision**: Status filters stored as URL query params (`?statuses=success,running`) via `useSearchParams` from react-router-dom, with `replace: true` to avoid polluting browser history.

@@ -163,5 +163,4 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] when a job is rerun/approved, I can see it's running in circleCi, but this new execution doesn't show up here in the workflow page. I guess the history is not sorting the jobs by execution time, but by workflow id instead. Fix this.
-2. [x] In the workflow page, create a new button (to the left side of the grid/list view) to filter jobs by last execution status. This button will open a small popup with a list of every job possible status and a check box to each of them. The filter will only take the status of the most recent execution of each job in consideration, regardless of the workflow. The selections should be persisted in the URL query params, so that the user can share the link with the filters applied. The filter should be applied on top of the workflow filter, so if a workflow is selected, only the jobs of that workflow will be filtered by status.
+1. [x] Add more jobs to the CI pipeline. Right now we only have one job, which is a placeholder. We should add more jobs that reflect the actual steps in our CI process, such as linting, testing, building, coverage, etc. This will give us a more realistic pipeline to work with and test against.

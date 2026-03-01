@@ -1,0 +1,47 @@
+.card {
+  transition: opacity 0.2s ease;
+}
+
+.readme-content {
+  //max-width: 860px;
+
+  img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  blockquote {
+    border-left: 4px solid var(--bs-secondary);
+    padding-left: 1rem;
+    color: var(--bs-secondary);
+    margin: 0.5rem 0;
+  }
+
+  code {
+    background: var(--bs-dark);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-size: 0.875em;
+  }
+
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+.page-card {
+  max-width: 100% !important;
+}
