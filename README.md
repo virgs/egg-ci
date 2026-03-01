@@ -1,4 +1,4 @@
-![EggCi](./public/logo.png)
+[![EggCi](./public/logo.png)](https://virgs.github.io/egg-ci)
 
 A dashboard monitor for CircleCI pipelines.
 
@@ -56,16 +56,6 @@ That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
 ---
 
-## Tech Stack
-
-- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- [Vite](https://vitejs.dev/) — build tool
-- [Bootstrap 5](https://getbootstrap.com/) / [Bootswatch](https://bootswatch.com/) — styling
-- [CircleCI API v2](https://circleci.com/docs/api/v2/) (and a pinch of [v1.1](https://circleci.com/docs/api/v1/) for the bits they haven't migrated yet)
-- Deployed on [GitHub Pages](https://pages.github.com/)
-
----
-
 ## Why "EggCI"?
 
 It's a circle plus "something" (get it? Circle + something = egg? No? Just me?).
@@ -93,6 +83,15 @@ Approval gates only work on **on_hold** jobs. Rerun is only available for jobs t
 **The dashboard feels slow with many projects.**
 To avoid throttling and overloading CircleCI servers, each enabled project adds ~20s to the sync cycle. Try reducing the number of enabled projects, or lower the pipeline scan depth in Settings to fetch fewer historical runs per sync.
 
+---
+
+## Tech Stack
+
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/) — build tool
+- [Bootstrap 5](https://getbootstrap.com/) / [Bootswatch](https://bootswatch.com/) — styling
+- [CircleCI API v2](https://circleci.com/docs/api/v2/) (and a pinch of [v1.1](https://circleci.com/docs/api/v1/) for the bits they haven't migrated yet)
+- Deployed on [GitHub Pages](https://pages.github.com/)
 ---
 
 ## License
