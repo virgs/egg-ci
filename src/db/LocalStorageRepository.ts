@@ -10,7 +10,7 @@ export abstract class LocalStorageRepository {
         } else {
             localStorage.setItem(key, JSON.stringify(data))
         }
-        this.listeners.forEach((listener) => listener(data))
+        this.listeners.forEach((listener) => listener(data as object))
     }
 
     public load(key: string): unknown {

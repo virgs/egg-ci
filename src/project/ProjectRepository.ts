@@ -55,7 +55,7 @@ export class ProjectRepository extends LocalStorageRepository {
     }
 
     public loadTrackedProjects(): TrackedProjectData[] {
-        return this.load(TRACKED_PROJECTS_KEY)
+        return this.load(TRACKED_PROJECTS_KEY) as TrackedProjectData[]
     }
 
     public persistProject(project: TrackedProjectData | ProjectData): void {
@@ -91,7 +91,7 @@ export class ProjectRepository extends LocalStorageRepository {
 
     public loadProject(project: TrackedProjectData | ProjectData): ProjectData | undefined {
         const key = `${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`
-        return this.load(key)
+        return this.load(key) as ProjectData | undefined
     }
 
     public reorderProjects(orderedNonExcluded: TrackedProjectData[]): void {

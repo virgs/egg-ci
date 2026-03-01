@@ -1,8 +1,7 @@
-# 🥚 EggCi
+![EggCi](./public/logo.png)
 
 > A dashboard monitor for CircleCI workflows.
 
-![EggCi](./public/logo.png)
 ---
 
 [//]: # (homepage placeholder)
@@ -76,22 +75,25 @@ And it's a bit of a joke about how long it took to build this thing, which was s
 
 ---
 
-### FAQ
+## FAQ
 
-Q: How often do the projects get synced? I recently pushed a new commit, I see the pipeline is running in CircleCI but I don't see its status reflected in the workflow page
-A: Sync frequency: autoSyncInterval × number of enabled projects — the default is 20 seconds × N. So with 3 projects you wait up to 60 seconds between syncs. Crucially, setInterval doesn't fire immediately on page load — the first tick only happens after the full delay has elapsed. Why the running pipeline isn't visible yet — there are two compounding reasons:
+**My new pipeline isn't showing up. What gives?**
+Two things compound here: the sync interval fires every 20s × number of enabled projects (so 3 projects = up to 60s), and it doesn't fire immediately on page load. On top of that, freshly-queued jobs have no `started_at` yet and are filtered out until they actually start running. Give it a minute, or hit the sync button on the Projects page to force an immediate refresh.
 
-    1. The sync interval hasn't fired yet since you loaded the page
-    2. Even when it does fire, WorkflowFetcher filters out jobs that have no started_at:
+**I reran a job but nothing changed on the dashboard.**
+EggCi detects reruns by comparing workflow IDs on each sync. If the rerun happened right after a sync, you'll see it on the next one. Again, the Projects page sync button is your friend for immediate results.
 
-    // src/project/WorkflowFetcher.ts:173
-    .filter((job) => job.started_at)
-    
-    A freshly-triggered pipeline has its downstream jobs in queued/blocked state with no started_at yet — they're invisible until they actually begin executing. So right after a
-    push you'd only see the first job (install) once it starts running, and the rest gradually appear as they pick up.
-    
-    In short: wait up to 20s × N for the next sync, and jobs will appear as they transition from queued to running. If you want an immediate refresh you can trigger a manual sync
-    via the Projects page sync button.
+**Is my API token safe?**
+Yes. It never leaves your browser — there's no backend, no server, no telemetry. It's stored in `localStorage` and only ever sent directly to CircleCI's API from your machine.
+
+**Can I track projects from different organisations?**
+Yes. The Projects page lets you add any CircleCI project your token has access to, regardless of which org owns it.
+
+**Why can't I approve/rerun/cancel some jobs?**
+Approval gates only work on `on_hold` jobs. Rerun is only available for jobs that have actually finished (success, failed, canceled, timed out, etc.). Running jobs show a cancel button instead. Jobs that are queued, blocked, or skipped don't have an action — there's nothing meaningful to do with them from here.
+
+**The dashboard feels slow with many projects.**
+Each enabled project adds ~20s to the sync cycle. Try reducing the number of enabled projects, or lower the pipeline scan depth in Settings to fetch fewer historical runs per sync.
 
 ---
 

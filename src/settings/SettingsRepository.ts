@@ -10,7 +10,7 @@ export class SettingsRepository extends LocalStorageRepository {
     }
 
     public getApiToken(): string | undefined {
-        return super.load('token')
+        return super.load('token') as string | undefined
     }
 
     public setUserInformation(userInformation: UserInformationResponse) {
@@ -18,11 +18,11 @@ export class SettingsRepository extends LocalStorageRepository {
     }
 
     public getUserInformation(): UserInformationResponse | undefined {
-        return super.load('userInformation')
+        return super.load('userInformation') as UserInformationResponse | undefined
     }
 
     public getConfiguration(): Config {
-        return super.load('configuration') ?? defaultConfig
+        return (super.load('configuration') as Config | undefined) ?? defaultConfig
     }
 
     public setConfiguration(configuration: Config) {
@@ -30,7 +30,7 @@ export class SettingsRepository extends LocalStorageRepository {
     }
 
     public getWorkflowView(): WorkflowView {
-        return super.load('workflowView') ?? 'grid'
+        return (super.load('workflowView') as WorkflowView | undefined) ?? 'grid'
     }
 
     public setWorkflowView(view: WorkflowView) {

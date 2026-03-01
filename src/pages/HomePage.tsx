@@ -57,7 +57,7 @@ export const HomePage = (): ReactElement => {
     useLoggedOutListener(() => setHasApiToken(false))
 
     return (
-        <div>
+        <div className="homepage-content">
             {!hasApiToken && (
                 <Alert variant="info" className="mb-3">
                     New here? Head to <Link to="/settings">Settings</Link> first to add your CircleCI API token.

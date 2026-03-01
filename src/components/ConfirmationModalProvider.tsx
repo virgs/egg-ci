@@ -11,7 +11,7 @@ export type ConfirmationContextType = (options: ConfirmOptions) => Promise<boole
 export const ConfirmationModalProvider = ({ children }: { children: ReactNode }) => {
     const [show, setShow] = useState(false)
     const [message, setMessage] = useState('')
-    const resolver = useRef<(value: boolean) => void>()
+    const resolver = useRef<((value: boolean) => void) | undefined>(undefined)
 
     const confirm = useCallback((options: ConfirmOptions): Promise<boolean> => {
         setMessage(options.message)

@@ -5,6 +5,7 @@ import { WorkflowComponent } from '../components/WorkflowComponent'
 import { VersionControlComponent } from '../components/VersionControlComponent'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 import { mapVersionControlFromString } from '../version-control/VersionControl'
+import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { useWorkflowsPage } from './WorkflowsPageContext'
 import './ProjectSectionComponent.scss'
 
@@ -20,7 +21,7 @@ const renderProjectContent = (
     data: ProjectData,
     listView: boolean,
     onHideJob: (jobName: string) => void,
-    statusFilters: string[]
+    statusFilters: WorkflowJobStatus[]
 ): ReactElement => {
     const workflowKeys = Object.keys(data.workflows)
     if (workflowKeys.length === 0) {
