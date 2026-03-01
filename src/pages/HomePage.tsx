@@ -64,7 +64,7 @@ export const HomePage = (): ReactElement => {
                     Everything else unlocks from there.
                 </Alert>
             )}
-            <div className="readme-content" dangerouslySetInnerHTML={{ __html: beforeHtml }} />
+            <div className="readme-content mt-3" dangerouslySetInnerHTML={{ __html: beforeHtml }} />
             <div className="row g-3 mb-4">
                 {homePageCards.map(({ icon, title, description, to, variant, requiresKey }) => {
                     const disabled = requiresKey && !hasApiToken

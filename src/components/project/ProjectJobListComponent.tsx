@@ -38,7 +38,7 @@ export const ProjectJobListComponent = (props: Props): ReactElement => {
                         className="flex-grow-1"
                     />
                     {type === 'build' ? (
-                        <FontAwesomeIcon className="me-2 text-primary" icon={faScrewdriverWrench} />
+                        <FontAwesomeIcon className="me-2 text-secondary" icon={faScrewdriverWrench} />
                     ) : (
                         <FontAwesomeIcon className="me-2 text-info" icon={faThumbsUp} />
                     )}

@@ -53,7 +53,7 @@ export const NavBarComponent = (): ReactElement => {
                     overlay={<Tooltip>{theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}</Tooltip>}
                 >
                     <button
-                        className="nav-link theme-toggle order-2 order-sm-3 ms-auto ms-sm-0"
+                        className={`nav-link theme-toggle order-2 order-sm-3 ms-auto ms-sm-0${theme === 'light' ? ' me-2 me-xl-5' : ''}`}
                         onClick={toggleTheme}
                         aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
                     >
