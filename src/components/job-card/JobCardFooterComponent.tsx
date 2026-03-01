@@ -19,7 +19,7 @@ export const JobCardFooterComponent = (props: Props): ReactElement => {
     const maxBars = workflowView === 'list' ? LIST_MAX_BARS : GRID_MAX_BARS
 
     const executions = useMemo(
-        () => [...props.executions].reverse().slice(0, maxBars),
+        () => props.executions.slice(0, maxBars).reverse(),
         [props.executions, maxBars]
     )
 

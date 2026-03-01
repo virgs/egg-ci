@@ -137,7 +137,7 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                     className="mb-0"
                 />
-                <label className="form-check-label flex-grow-1">
+                <label className="form-check-label flex-grow-1 text-primary">
                     <span className="mx-2">{renderVersionControlIcon()}</span>
                     <span>{props.project.username}/{props.project.reponame}</span>
                 </label>

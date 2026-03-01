@@ -2,7 +2,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
-import { Container, Nav, Navbar, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import logo from '/logo.png'
 import { useLoggedOutListener, useUserInformationChangedListener } from '../events/Events'
@@ -48,18 +48,13 @@ export const NavBarComponent = (): ReactElement => {
                         ? <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
                         : <Nav.Link disabled>Workflows</Nav.Link>}
                 </Nav>
-                <OverlayTrigger
-                    placement="bottom"
-                    overlay={<Tooltip>{theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}</Tooltip>}
+                <button
+                    className={`nav-link theme-toggle order-2 order-sm-3 ms-auto ms-sm-0${theme === 'light' ? ' me-2 me-xl-5' : ''}`}
+                    onClick={toggleTheme}
+                    aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
                 >
-                    <button
-                        className={`nav-link theme-toggle order-2 order-sm-3 ms-auto ms-sm-0${theme === 'light' ? ' me-2 me-xl-5' : ''}`}
-                        onClick={toggleTheme}
-                        aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-                    >
-                        <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} size="xl" />
-                    </button>
-                </OverlayTrigger>
+                    <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} size="xl" />
+                </button>
                 <a
                     className="nav-link github-link order-2 order-sm-4"
                     href="https://github.com/virgs/egg-ci"

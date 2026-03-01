@@ -66,7 +66,7 @@ That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
 ---
 
-## Why "egg"?
+## Why "EggCI"?
 
 It's a circle plus "something" (get it? Circle + something = egg? No? Just me?).
 And it's a bit of a joke about how long it took to build this thing, which was supposed to be a weekend project but turned into a months-long labor of love. Plus, you know, eggs are delicious.
