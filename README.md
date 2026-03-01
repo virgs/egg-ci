@@ -1,6 +1,6 @@
 ![EggCi](./public/logo.png)
 
-> A dashboard monitor for CircleCI workflows.
+A dashboard monitor for CircleCI workflows.
 
 ---
 
