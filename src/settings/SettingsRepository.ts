@@ -1,7 +1,6 @@
 import { Config, defaultConfig } from '../config'
 import { LocalStorageRepository } from '../db/LocalStorageRepository'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
-import { Theme } from '../theme/ThemeManager'
 
 export type WorkflowView = 'grid' | 'list'
 
@@ -36,14 +35,6 @@ export class SettingsRepository extends LocalStorageRepository {
 
     public setWorkflowView(view: WorkflowView) {
         return this.persist('workflowView', view)
-    }
-
-    public getTheme(): Theme {
-        return (super.load('theme') as Theme | undefined) ?? 'light'
-    }
-
-    public setTheme(theme: Theme) {
-        return this.persist('theme', theme)
     }
 
     public clearApiToken() {

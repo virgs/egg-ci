@@ -67,6 +67,8 @@ export const JobActionButton = (props: Props): ReactElement => {
     const handleConfirm = async () => {
         await actionProps.onClick()
         emitNewNotification({ message: actionProps.message })
+        // Some CircleCI actions (like canceling a job) can take a few seconds to reflect in the API,
+        // so we wait a bit before syncing to give CircleCI time to update the job status
         await sleep(2000)
         const projectService = new ProjectService()
         const synced = await projectService.syncProject(project)

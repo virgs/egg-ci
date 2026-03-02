@@ -2,13 +2,9 @@
   cursor: pointer;
 }
 
-.github-link,
-.theme-toggle {
+.github-link {
   color: var(--bs-white) !important;
   transition: color 0.2s ease;
-  background: none;
-  border: none;
-  padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
 
   &:hover {
     color: var(--bs-secondary) !important;
