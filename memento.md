@@ -107,3 +107,8 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **UI** (`StatusFilterDropdown.tsx`): Category quick-select buttons use `variant="link"` (matching Select all / Clear all style) and are arranged in the same two-column CSS grid as the status checkboxes. Buttons are disabled when all their statuses are already selected. Individual status checkboxes split into two columns via CSS grid (`status-filter-grid`). Dropdown `min-width` set to 320px.
 
+## useRelativeTime — Periodic Refresh Fix
+
+**Bug**: "Updated X ago" text in the project menu was stale — only computed once on mount/timestamp change via `setTimeout(0)`, never refreshed.
+
+**Fix**: `UseRelativeTime.ts` now uses `setInterval(10s)` alongside `setTimeout(0)` for the initial computation. The `computeRelativeTime` helper was extracted for reuse. The `useState` initializer also calls `computeRelativeTime` so the first render is immediate without a synchronous `setState` in the effect (which would violate `react-hooks/set-state-in-effect`).

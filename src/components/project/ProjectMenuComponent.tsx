@@ -41,6 +41,9 @@ export const ProjectMenuComponent = (props: Props): ReactElement => {
                 <Dropdown.Item disabled={isDisabled} onClick={props.onSetSyncFrequency}>
                     Set sync frequency
                 </Dropdown.Item>
+                <Dropdown.Item disabled={isDisabled} onClick={props.onSetSyncFrequency}>
+                    Set notifications
+                </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item disabled={isDisabled} onClick={props.onSelectAll}>
                     Select all jobs

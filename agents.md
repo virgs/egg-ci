@@ -163,4 +163,4 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] I don't like how the `status-filter-categories` buttons look. Let's maybe try to make them look like the SELECT ALL / CLEAR ALL buttons? And create two columns just like the status themselves are in two columns.
+1. [x] I noticed the message "Updated X seconds ago" in a project menu in the projects page is not updated every time the menu is open. It only updates when the page is loaded.
