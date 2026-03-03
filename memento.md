@@ -97,3 +97,13 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **Wiring**: `ProjectItemComponent.handleSyncFrequencyChange` persists the new frequency via `ProjectService.setSyncFrequency`, updates the in-memory project, and re-adds the project to the `SyncQueue` with the new frequency.
 
+## Sync Frequency Modal — Current Frequency Display
+
+**Change**: Modal now shows "Current: **1 minute**" (or whichever value) above the dropdown. Resolves the label by looking up `SYNC_FREQUENCY_OPTIONS` by value. Options/types extracted to `syncFrequencyOptions.ts` to satisfy `react-refresh/only-export-components` ESLint rule.
+
+## Status Filter Categories & Multi-Column Layout
+
+**Categories** (`statusFilterUtils.ts`): `STATUS_CATEGORIES` array of `{ label, statuses[] }`. Categories: Successful, In progress, Scheduled, Failed, Canceled, Retried. Categories may overlap. Utility functions `selectCategory` (additive — merges into current) and `isCategorySelected` (true when all category statuses are present).
+
+**UI** (`StatusFilterDropdown.tsx`): Category quick-select buttons rendered as small `Button` components above the divider. Individual status checkboxes split into two columns via CSS grid (`status-filter-grid`). Category buttons highlight (`variant="secondary"`) when fully selected. Dropdown `min-width` increased to 320px.
+

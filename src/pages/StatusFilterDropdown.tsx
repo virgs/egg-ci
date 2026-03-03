@@ -4,8 +4,12 @@ import { ReactElement } from 'react'
 import { Badge, Button, Dropdown, Form, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { useWorkflowsPage } from './WorkflowsPageContext'
-import { ALL_JOB_STATUSES } from './statusFilterUtils'
+import { ALL_JOB_STATUSES, STATUS_CATEGORIES, isCategorySelected, selectCategory } from './statusFilterUtils'
 import './StatusFilterDropdown.scss'
+
+const midpoint = Math.ceil(ALL_JOB_STATUSES.length / 2)
+const leftStatuses = ALL_JOB_STATUSES.slice(0, midpoint)
+const rightStatuses = ALL_JOB_STATUSES.slice(midpoint)
 
 export const StatusFilterDropdown = (): ReactElement => {
     const { statusFilters, handleStatusFiltersChange } = useWorkflowsPage()
@@ -19,6 +23,21 @@ export const StatusFilterDropdown = (): ReactElement => {
             handleStatusFiltersChange([...statusFilters, status])
         }
     }
+
+    const renderColumn = (statuses: ReadonlyArray<WorkflowJobStatus>): ReactElement => (
+        <div className="status-filter-column">
+            {statuses.map((status) => (
+                <Form.Check
+                    key={status}
+                    id={`status-filter-${status}`}
+                    checked={statusFilters.includes(status)}
+                    onChange={() => toggleStatus(status)}
+                    label={status.replace(/[_-]/g, ' ')}
+                    className="status-filter-item"
+                />
+            ))}
+        </div>
+    )
 
     return (
         <Dropdown autoClose="outside">
@@ -52,16 +71,24 @@ export const StatusFilterDropdown = (): ReactElement => {
                     </Button>
                 </div>
                 <Dropdown.Divider />
-                {ALL_JOB_STATUSES.map((status) => (
-                    <Form.Check
-                        key={status}
-                        id={`status-filter-${status}`}
-                        checked={statusFilters.includes(status)}
-                        onChange={() => toggleStatus(status)}
-                        label={status.replace(/[_-]/g, ' ')}
-                        className="status-filter-item"
-                    />
-                ))}
+                <div className="status-filter-categories">
+                    {STATUS_CATEGORIES.map((cat) => (
+                        <Button
+                            key={cat.label}
+                            size="sm"
+                            variant={isCategorySelected(statusFilters, cat) ? 'secondary' : 'outline-secondary'}
+                            className="status-filter-category-btn"
+                            onClick={() => handleStatusFiltersChange(selectCategory(statusFilters, cat))}
+                        >
+                            {cat.label}
+                        </Button>
+                    ))}
+                </div>
+                <Dropdown.Divider />
+                <div className="status-filter-grid">
+                    {renderColumn(leftStatuses)}
+                    {renderColumn(rightStatuses)}
+                </div>
             </Dropdown.Menu>
         </Dropdown>
     )

@@ -1,17 +1,8 @@
 import { ReactElement, useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap'
 import { DEFAULT_SYNC_FREQUENCY_MS } from '../../domain-models/models'
+import { SYNC_FREQUENCY_OPTIONS } from './syncFrequencyOptions'
 import './SyncFrequencyModalComponent.scss'
-
-export type SyncFrequencyOption = { label: string; value: number }
-
-export const SYNC_FREQUENCY_OPTIONS: SyncFrequencyOption[] = [
-    { label: '30 seconds', value: 30_000 },
-    { label: '1 minute', value: 60_000 },
-    { label: '2 minutes', value: 2 * 60_000 },
-    { label: '5 minutes', value: 5 * 60_000 },
-    { label: '10 minutes', value: 10 * 60_000 },
-]
 
 type Props = {
     show: boolean
@@ -24,6 +15,7 @@ type Props = {
 export const SyncFrequencyModalComponent = (props: Props): ReactElement => {
     const initial = props.currentFrequency ?? DEFAULT_SYNC_FREQUENCY_MS
     const [selected, setSelected] = useState<number>(initial)
+    const currentLabel = SYNC_FREQUENCY_OPTIONS.find((o) => o.value === props.currentFrequency)?.label ?? 'unknown'
 
     const handleSave = (): void => {
         props.onSave(selected)
@@ -35,8 +27,11 @@ export const SyncFrequencyModalComponent = (props: Props): ReactElement => {
                 <Modal.Title className="fs-6">Sync frequency</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p className="text-muted sync-frequency-modal__label mb-2">
+                <p className="text-muted sync-frequency-modal__label mb-1">
                     {props.projectLabel}
+                </p>
+                <p className="text-muted sync-frequency-modal__current mb-2">
+                    Current: <strong>{currentLabel}</strong>
                 </p>
                 <Form.Select
                     value={selected}

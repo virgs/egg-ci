@@ -1,8 +1,26 @@
 .status-filter-menu {
-    min-width: 180px;
+    min-width: 320px;
 }
 
 .status-filter-item {
     white-space: nowrap;
     padding-block: 0.1rem;
 }
+
+.status-filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+}
+
+.status-filter-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.status-filter-category-btn {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+}
+
