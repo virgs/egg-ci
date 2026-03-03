@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap'
 import { useRelativeTime } from '../../time/UseRelativeTime'
 import { useSyncCountdown } from '../../time/UseSyncCountdown'
 import { useSyncQueue } from '../../contexts/SyncQueueContext'
-import { ProjectData, TrackedProjectData } from '../../domain-models/models'
+import { DEFAULT_SYNC_FREQUENCY_MS, ProjectData, TrackedProjectData } from '../../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../../events/Events'
 import { ProjectService } from '../../project/ProjectService'
 import { mapVersionControlFromString } from '../../version-control/VersionControl'
@@ -13,7 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './ProjectItemComponent.scss'
 import { ProjectMenuComponent } from './ProjectMenuComponent'
 import { ProjectJobListComponent } from './ProjectJobListComponent'
-import { collectUniqueJobs } from './projectUtils'
+import { SyncFrequencyModalComponent } from './SyncFrequencyModalComponent'
+import { useJobVisibility } from './useJobVisibility'
 
 const getProjectLabel = (project: TrackedProjectData): string =>
     `${project.vcsType}/${project.username}/${project.reponame}`
@@ -34,14 +35,15 @@ const projectService: ProjectService = new ProjectService()
 export const ProjectItemComponent = (props: Props): ReactElement => {
     const initialData = projectService.loadProject(props.project)
     const [syncing, setSyncing] = useState<boolean>(props.project.enabled && !initialData)
-    const [hiddenJobs, setHiddenJobs] = useState<string[]>(props.project.hiddenJobs ?? [])
     const [lastSyncedAt, setLastSyncedAt] = useState<string | undefined>(initialData?.lastSyncedAt)
     const [projectData, setProjectData] = useState<ProjectData | undefined>(initialData)
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
+    const [showFrequencyModal, setShowFrequencyModal] = useState<boolean>(false)
     const relativeTime = useRelativeTime(lastSyncedAt)
     const syncQueue = useSyncQueue()
     const id = getProjectLabel(props.project)
     const countdown = useSyncCountdown(syncQueue, id)
+    const jobVis = useJobVisibility(props.project, projectData)
 
     const updateSyncing = useCallback(() => {
         const loaded = projectService.loadProject(props.project)
@@ -52,14 +54,14 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
 
     useProjectSynchedListener(() => updateSyncing())
 
-    const updateProject = async () => {
+    const updateProject = async (): Promise<void> => {
         setSyncing(true)
         props.onEnablingChange(true)
         await projectService.syncProject(props.project)
         emitNewNotification({ message: `Project ${id} synced successfully` })
     }
 
-    const onSwitchChange = async () => {
+    const onSwitchChange = async (): Promise<void> => {
         if (props.project.enabled) {
             projectService.disableProject(props.project)
             syncQueue?.removeProject(id)
@@ -71,50 +73,16 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
         }
     }
 
-    const onSelectAll = () => {
-        projectService.setProjectHiddenJobs(props.project, [])
-        setHiddenJobs([])
+    const handleSyncFrequencyChange = (frequency: number): void => {
+        projectService.setSyncFrequency(props.project, frequency)
+        props.project.syncFrequency = frequency
+        if (props.project.enabled) syncQueue?.addProject(props.project)
+        setShowFrequencyModal(false)
     }
 
-    const onUnselectAll = () => {
-        if (projectData) {
-            const allJobNames = collectUniqueJobs(projectData).map((j) => j.name)
-            projectService.setProjectHiddenJobs(props.project, allJobNames)
-            setHiddenJobs(allJobNames)
-        }
-    }
-
-    const onSelectBuildJobs = () => {
-        if (projectData) {
-            const approvalJobNames = collectUniqueJobs(projectData)
-                .filter((j) => j.type === 'approval')
-                .map((j) => j.name)
-            projectService.setProjectHiddenJobs(props.project, approvalJobNames)
-            setHiddenJobs(approvalJobNames)
-        }
-    }
-
-    const onSelectApprovalJobs = () => {
-        if (projectData) {
-            const buildJobNames = collectUniqueJobs(projectData)
-                .filter((j) => j.type === 'build')
-                .map((j) => j.name)
-            projectService.setProjectHiddenJobs(props.project, buildJobNames)
-            setHiddenJobs(buildJobNames)
-        }
-    }
-
-    const toggleJobVisibility = (jobName: string) => {
-        const newHidden = hiddenJobs.includes(jobName)
-            ? hiddenJobs.filter((name) => name !== jobName)
-            : [...hiddenJobs, jobName]
-        projectService.setProjectHiddenJobs(props.project, newHidden)
-        setHiddenJobs(newHidden)
-    }
-
-    const renderVersionControlIcon = () => {
-        const versionControl = mapVersionControlFromString(props.project.vcsType)
-        return versionControl ? new VersionControlComponent(versionControl).getIcon() : <></>
+    const renderVersionControlIcon = (): ReactElement => {
+        const vc = mapVersionControlFromString(props.project.vcsType)
+        return vc ? new VersionControlComponent(vc).getIcon() : <></>
     }
 
     return (
@@ -157,10 +125,11 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
                         relativeTime={relativeTime}
                         projectData={projectData}
                         onRefresh={updateProject}
-                        onSelectAll={onSelectAll}
-                        onUnselectAll={onUnselectAll}
-                        onSelectBuildJobs={onSelectBuildJobs}
-                        onSelectApprovalJobs={onSelectApprovalJobs}
+                        onSelectAll={jobVis.onSelectAll}
+                        onUnselectAll={jobVis.onUnselectAll}
+                        onSelectBuildJobs={jobVis.onSelectBuildJobs}
+                        onSelectApprovalJobs={jobVis.onSelectApprovalJobs}
+                        onSetSyncFrequency={() => setShowFrequencyModal(true)}
                         onExclude={props.onExclude}
                     />
                 </div>
@@ -171,12 +140,19 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
                         <ProjectJobListComponent
                             projectId={id}
                             projectData={projectData}
-                            hiddenJobs={hiddenJobs}
-                            onToggleJobVisibility={toggleJobVisibility}
+                            hiddenJobs={jobVis.hiddenJobs}
+                            onToggleJobVisibility={jobVis.toggleJobVisibility}
                         />
                     </div>
                 </div>
             </div>
+            <SyncFrequencyModalComponent
+                show={showFrequencyModal}
+                currentFrequency={props.project.syncFrequency ?? DEFAULT_SYNC_FREQUENCY_MS}
+                projectLabel={`${props.project.username}/${props.project.reponame}`}
+                onSave={handleSyncFrequencyChange}
+                onCancel={() => setShowFrequencyModal(false)}
+            />
         </div>
     )
 }

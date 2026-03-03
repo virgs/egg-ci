@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { SyncQueue } from './SyncQueue'
 import { ProjectService } from './ProjectService'
-import { TrackedProjectData } from '../domain-models/models'
+import { DEFAULT_SYNC_FREQUENCY_MS, TrackedProjectData } from '../domain-models/models'
 
 vi.mock('./ProjectRepository')
 vi.mock('../gateway/CircleCiClient', () => ({
@@ -54,7 +54,7 @@ describe('SyncQueue', () => {
             const nextSync = syncQueue.getNextSyncTime('github/org/repo-a')
             expect(nextSync).toBeDefined()
             expect(nextSync! - Date.now()).toBeGreaterThan(0)
-            expect(nextSync! - Date.now()).toBeLessThanOrEqual(30_000)
+            expect(nextSync! - Date.now()).toBeLessThanOrEqual(DEFAULT_SYNC_FREQUENCY_MS)
         })
 
         it('schedules a project with custom frequency', () => {

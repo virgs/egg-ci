@@ -79,11 +79,21 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 **React integration**:
 - `SyncQueueContext` (`src/contexts/SyncQueueContext.ts`) — provides the queue instance via React context.
 - `App.tsx` creates the `SyncQueue` in `useMemo`, populates it with enabled projects in `useEffect`, wraps the app in `SyncQueueContext.Provider`.
-- `useSyncCountdown` hook (`src/time/UseSyncCountdown.ts`) — combines `setInterval(1s)` + `syncQueue.subscribe()` to produce a live countdown string.
-- `ProjectItemComponent` shows countdown text (`"in 12s"`, `"syncing…"`) next to the project name when enabled.
+- `useSyncCountdown` hook (`src/time/UseSyncCountdown.ts`) — combines `setInterval(5s)` + `syncQueue.subscribe()` to produce a bucketed countdown label.
+- `ProjectItemComponent` shows countdown text (`"< 30s"`, `"< 1m"`, `"syncing…"`) next to the project name when enabled.
 - `ProjectItemComponent.onSwitchChange` adds/removes projects from the sync queue when toggling the enable switch.
 
 **ProjectsPage**: `useInterval` replaced with a one-time `useEffect` that fetches the project list on mount.
 
 **Trade-off**: Queue is ephemeral — rebuilt from scratch on page load. Projects whose sync time passed while the tab was closed sync immediately in queue order.
+
+## Sync Frequency UI & Bucketed Countdown
+
+**Countdown display**: Replaced per-second countdown (`in 12s`) with bucketed friendly labels (`< 30s`, `< 1m`, `< 2m`, `< 5m`, `< 10m`, `> 10m`, `syncing…`). Update interval changed from 1s to 5s. Pure function `formatCountdownLabel` exported for testing.
+
+**Sync frequency modal**: `SyncFrequencyModalComponent` — react-bootstrap `Modal` with `Form.Select` dropdown offering 30s, 1m, 2m, 5m, 10m options. Triggered from new "Set sync frequency" menu item in `ProjectMenuComponent` (placed between "Select approval jobs" and "Exclude project" with dividers).
+
+**Job visibility extraction**: `useJobVisibility` hook (`src/components/project/useJobVisibility.ts`) — extracted from `ProjectItemComponent` to keep file under 200 lines. Manages `hiddenJobs` state and all select/unselect/toggle handlers.
+
+**Wiring**: `ProjectItemComponent.handleSyncFrequencyChange` persists the new frequency via `ProjectService.setSyncFrequency`, updates the in-memory project, and re-adds the project to the `SyncQueue` with the new frequency.
 

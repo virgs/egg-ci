@@ -14,6 +14,7 @@ type Props = {
     onUnselectAll: () => void
     onSelectBuildJobs: () => void
     onSelectApprovalJobs: () => void
+    onSetSyncFrequency: () => void
     onExclude: () => void
 }
 
@@ -31,19 +32,21 @@ export const ProjectMenuComponent = (props: Props): ReactElement => {
             </Dropdown.Toggle>
             <Dropdown.Menu align="end">
                 {props.relativeTime && (
-                    <Dropdown.ItemText className="text-muted text-xs">
-                        Updated {props.relativeTime}
-                    </Dropdown.ItemText>
+                    <Dropdown.ItemText className="text-muted text-xs">Updated {props.relativeTime}</Dropdown.ItemText>
                 )}
                 <Dropdown.Item disabled={isDisabled} onClick={props.onRefresh}>
                     Refresh
                 </Dropdown.Item>
                 <Dropdown.Divider />
+                <Dropdown.Item disabled={isDisabled} onClick={props.onSetSyncFrequency}>
+                    Set sync frequency
+                </Dropdown.Item>
+                <Dropdown.Divider />
                 <Dropdown.Item disabled={isDisabled} onClick={props.onSelectAll}>
-                    Select all
+                    Select all jobs
                 </Dropdown.Item>
                 <Dropdown.Item disabled={isDisabled} onClick={props.onUnselectAll}>
-                    Unselect all
+                    Unselect all jobs
                 </Dropdown.Item>
                 <Dropdown.Item disabled={isDisabled} onClick={props.onSelectBuildJobs}>
                     Select build jobs

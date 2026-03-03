@@ -1,4 +1,4 @@
-export const DEFAULT_SYNC_FREQUENCY_MS = 30_000
+export const DEFAULT_SYNC_FREQUENCY_MS = 60_000
 
 export interface TrackedProjectData {
     enabled: boolean

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { formatDuration } from './Time'
+import { formatCountdownLabel } from './UseSyncCountdown'
 
 describe('formatDuration', () => {
     it('returns empty string for 0ms', () => {
@@ -45,3 +46,45 @@ describe('formatDuration', () => {
         expect(formatDuration(97200000)).toBe('1d 3h')
     })
 })
+
+describe('formatCountdownLabel', () => {
+    it('returns "syncing…" when remaining is 0', () => {
+        expect(formatCountdownLabel(0)).toBe('syncing…')
+    })
+
+    it('returns "syncing…" when remaining is negative', () => {
+        expect(formatCountdownLabel(-1000)).toBe('syncing…')
+    })
+
+    it('returns "< 30s" for values up to 30 seconds', () => {
+        expect(formatCountdownLabel(1)).toBe('< 30s')
+        expect(formatCountdownLabel(15_000)).toBe('< 30s')
+        expect(formatCountdownLabel(30_000)).toBe('< 30s')
+    })
+
+    it('returns "< 1m" for values between 30s and 1m', () => {
+        expect(formatCountdownLabel(30_001)).toBe('< 1m')
+        expect(formatCountdownLabel(60_000)).toBe('< 1m')
+    })
+
+    it('returns "< 2m" for values between 1m and 2m', () => {
+        expect(formatCountdownLabel(60_001)).toBe('< 2m')
+        expect(formatCountdownLabel(120_000)).toBe('< 2m')
+    })
+
+    it('returns "< 5m" for values between 2m and 5m', () => {
+        expect(formatCountdownLabel(120_001)).toBe('< 5m')
+        expect(formatCountdownLabel(300_000)).toBe('< 5m')
+    })
+
+    it('returns "< 10m" for values between 5m and 10m', () => {
+        expect(formatCountdownLabel(300_001)).toBe('< 10m')
+        expect(formatCountdownLabel(600_000)).toBe('< 10m')
+    })
+
+    it('returns "> 10m" for values above 10 minutes', () => {
+        expect(formatCountdownLabel(600_001)).toBe('> 10m')
+        expect(formatCountdownLabel(999_999_999)).toBe('> 10m')
+    })
+})
+
