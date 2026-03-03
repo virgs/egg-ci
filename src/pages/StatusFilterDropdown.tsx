@@ -71,13 +71,14 @@ export const StatusFilterDropdown = (): ReactElement => {
                     </Button>
                 </div>
                 <Dropdown.Divider />
-                <div className="status-filter-categories">
+                <div className="status-filter-grid">
                     {STATUS_CATEGORIES.map((cat) => (
                         <Button
                             key={cat.label}
                             size="sm"
-                            variant={isCategorySelected(statusFilters, cat) ? 'secondary' : 'outline-secondary'}
-                            className="status-filter-category-btn"
+                            variant="link"
+                            className="p-0 text-decoration-none status-filter-category-btn text-start"
+                            disabled={isCategorySelected(statusFilters, cat)}
                             onClick={() => handleStatusFiltersChange(selectCategory(statusFilters, cat))}
                         >
                             {cat.label}

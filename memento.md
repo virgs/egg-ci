@@ -105,5 +105,5 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **Categories** (`statusFilterUtils.ts`): `STATUS_CATEGORIES` array of `{ label, statuses[] }`. Categories: Successful, In progress, Scheduled, Failed, Canceled, Retried. Categories may overlap. Utility functions `selectCategory` (additive — merges into current) and `isCategorySelected` (true when all category statuses are present).
 
-**UI** (`StatusFilterDropdown.tsx`): Category quick-select buttons rendered as small `Button` components above the divider. Individual status checkboxes split into two columns via CSS grid (`status-filter-grid`). Category buttons highlight (`variant="secondary"`) when fully selected. Dropdown `min-width` increased to 320px.
+**UI** (`StatusFilterDropdown.tsx`): Category quick-select buttons use `variant="link"` (matching Select all / Clear all style) and are arranged in the same two-column CSS grid as the status checkboxes. Buttons are disabled when all their statuses are already selected. Individual status checkboxes split into two columns via CSS grid (`status-filter-grid`). Dropdown `min-width` set to 320px.
 

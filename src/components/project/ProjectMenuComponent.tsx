@@ -46,7 +46,7 @@ export const ProjectMenuComponent = (props: Props): ReactElement => {
                     Select all jobs
                 </Dropdown.Item>
                 <Dropdown.Item disabled={isDisabled} onClick={props.onUnselectAll}>
-                    Unselect all jobs
+                    Clear all jobs
                 </Dropdown.Item>
                 <Dropdown.Item disabled={isDisabled} onClick={props.onSelectBuildJobs}>
                     Select build jobs

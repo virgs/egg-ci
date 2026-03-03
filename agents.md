@@ -163,4 +163,4 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [ ] In the set frequency modal, display current frequency. In the workflows page filters menu, add more options to filter by status job status "category" (e.g. "select Scheduled", "select in progress status", "select succesfull status", "select Failed", and so on. It's ok to exist overlapping categories). Since the filter will have more options and it already has multiple status, it's ok to make the dropdown to have two or more columns, so the options are not too long and they are easier to read. Create a popup if you have to.
+1. [x] I don't like how the `status-filter-categories` buttons look. Let's maybe try to make them look like the SELECT ALL / CLEAR ALL buttons? And create two columns just like the status themselves are in two columns.

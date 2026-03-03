@@ -75,8 +75,8 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
 
     const handleSyncFrequencyChange = (frequency: number): void => {
         projectService.setSyncFrequency(props.project, frequency)
-        props.project.syncFrequency = frequency
-        if (props.project.enabled) syncQueue?.addProject(props.project)
+        const updated = { ...props.project, syncFrequency: frequency }
+        if (updated.enabled) syncQueue?.addProject(updated)
         setShowFrequencyModal(false)
     }
 
