@@ -121,6 +121,18 @@ export class ProjectRepository extends LocalStorageRepository {
         this.persist(TRACKED_PROJECTS_KEY, currentProjects)
     }
 
+    public setSyncFrequency(project: TrackedProjectData | ProjectData, syncFrequency: number): void {
+        const id = `${this.projectIdentifier(project)}`
+        let currentProjects = this.loadTrackedProjects() ?? []
+        currentProjects = currentProjects.map((trackedProject) => {
+            if (this.projectIdentifier(trackedProject) === id) {
+                trackedProject.syncFrequency = syncFrequency
+            }
+            return trackedProject
+        })
+        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+    }
+
     private projectIdentifier(project: TrackedProjectData | ProjectData): string {
         return `${project.vcsType}/${project.username}/${project.reponame}`
     }

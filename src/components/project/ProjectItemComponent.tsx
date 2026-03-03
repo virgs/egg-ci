@@ -1,6 +1,8 @@
 import React, { ReactElement, useCallback, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useRelativeTime } from '../../time/UseRelativeTime'
+import { useSyncCountdown } from '../../time/UseSyncCountdown'
+import { useSyncQueue } from '../../contexts/SyncQueueContext'
 import { ProjectData, TrackedProjectData } from '../../domain-models/models'
 import { emitNewNotification, useProjectSynchedListener } from '../../events/Events'
 import { ProjectService } from '../../project/ProjectService'
@@ -37,7 +39,9 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
     const [projectData, setProjectData] = useState<ProjectData | undefined>(initialData)
     const [isExpanded, setIsExpanded] = useState<boolean>(false)
     const relativeTime = useRelativeTime(lastSyncedAt)
+    const syncQueue = useSyncQueue()
     const id = getProjectLabel(props.project)
+    const countdown = useSyncCountdown(syncQueue, id)
 
     const updateSyncing = useCallback(() => {
         const loaded = projectService.loadProject(props.project)
@@ -58,9 +62,11 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
     const onSwitchChange = async () => {
         if (props.project.enabled) {
             projectService.disableProject(props.project)
+            syncQueue?.removeProject(id)
             props.onEnablingChange(false)
         } else {
             projectService.enableProject(props.project)
+            syncQueue?.addProject({ ...props.project, enabled: true }, true)
             updateProject()
         }
     }
@@ -140,6 +146,9 @@ export const ProjectItemComponent = (props: Props): ReactElement => {
                 <label className="form-check-label flex-grow-1 text-primary">
                     <span className="mx-2">{renderVersionControlIcon()}</span>
                     <span>{props.project.username}/{props.project.reponame}</span>
+                    {props.project.enabled && countdown && (
+                        <span className="ms-2 text-muted sync-countdown">{countdown}</span>
+                    )}
                 </label>
                 <div onClick={(e) => e.stopPropagation()}>
                     <ProjectMenuComponent

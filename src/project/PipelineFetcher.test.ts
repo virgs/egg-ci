@@ -36,7 +36,6 @@ function makeConfig(minPipelineNumber = 1): Config {
     return {
         jobExecutionsMaxHistory: 5,
         jobHistoryColumnsPerLine: 5,
-        autoSyncInterval: 20000,
         minPipelineNumber,
         pipelineWorkflowFetchSleepInMs: 0,
     }

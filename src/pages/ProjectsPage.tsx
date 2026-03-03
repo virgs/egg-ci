@@ -7,12 +7,9 @@ import { emitNewNotification, emitUserInformationChanged } from '../events/Event
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
-import { useInterval } from '../time/UseInterval'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
-
-const AUTO_SYNC_PERIOD_IN_MS = 30 * 1000
 
 const getProjectLabel = (project: TrackedProjectData): string =>
     `${project.vcsType}/${project.username}/${project.reponame}`
@@ -33,27 +30,28 @@ export const ProjectsPage = (): ReactElement => {
     const [dragIndex, setDragIndex] = useState<number | null>(null)
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
-    const syncProjects = async () => {
-        const token = settingsRepository.getApiToken()
-        if (!token) return
-        initializeCircleCiClient(token)
-        try {
-            const [newUserInformation, userProjects] = await Promise.all([
-                circleCiClient.getUserInformation(),
-                projectService.listUserProjects(),
-            ])
-            settingsRepository.setUserInformation(newUserInformation)
-            userProjects.forEach((project) => projectService.trackProject(project))
-            emitUserInformationChanged(newUserInformation)
-            const loaded = projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
-            setProjects(loaded)
-            setExcludedCount(computeExcludedCount())
-        } catch {
-            emitNewNotification({ message: 'Failed to sync projects' })
+    useEffect(() => {
+        const syncProjects = async () => {
+            const token = settingsRepository.getApiToken()
+            if (!token) return
+            initializeCircleCiClient(token)
+            try {
+                const [newUserInformation, userProjects] = await Promise.all([
+                    circleCiClient.getUserInformation(),
+                    projectService.listUserProjects(),
+                ])
+                settingsRepository.setUserInformation(newUserInformation)
+                userProjects.forEach((project) => projectService.trackProject(project))
+                emitUserInformationChanged(newUserInformation)
+                const loaded = projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
+                setProjects(loaded)
+                setExcludedCount(computeExcludedCount())
+            } catch {
+                emitNewNotification({ message: 'Failed to sync projects' })
+            }
         }
-    }
-
-    useInterval(syncProjects, AUTO_SYNC_PERIOD_IN_MS)
+        syncProjects()
+    }, [])
 
     const handleDragStart = (index: number) => (e: React.DragEvent) => {
         setDragIndex(index)

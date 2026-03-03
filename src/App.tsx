@@ -6,12 +6,13 @@ import { SettingsPage } from './pages/SettingsPage'
 import { ProjectsPage } from './pages/ProjectsPage'
 import { SettingsRepository } from './settings/SettingsRepository'
 
-import { ReactElement } from 'react'
+import { ReactElement, useEffect, useMemo } from 'react'
 import { Button } from 'react-bootstrap'
 import { Navigate, RouterProvider, createHashRouter, useRouteError } from 'react-router-dom'
 import { ToastsComponent } from './events/ToastsComponent'
 import { ProjectService } from './project/ProjectService'
-import { useInterval } from './time/UseInterval'
+import { SyncQueue } from './project/SyncQueue'
+import { SyncQueueContext } from './contexts/SyncQueueContext'
 import { ConfirmationModalProvider } from './components/ConfirmationModalProvider.tsx'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
@@ -94,22 +95,19 @@ const router = createHashRouter([
 const projectService = new ProjectService()
 
 export const App = (): ReactElement => {
-    const autoUpdate = async () => {
-        const trackedProjects = projectService.loadTrackedProjects().filter((project) => project.enabled)
-        for (const project of trackedProjects) {
-            await projectService.syncProject(project)
-        }
-    }
+    const syncQueue = useMemo(() => new SyncQueue(projectService), [])
 
-    useInterval(
-        () => autoUpdate(),
-        settingsRepository.getConfiguration().autoSyncInterval *
-            projectService.loadTrackedProjects().filter((project) => project.enabled).length
-    )
+    useEffect(() => {
+        const enabled = projectService.loadTrackedProjects().filter((p) => p.enabled && !p.excluded)
+        enabled.forEach((p) => syncQueue.addProject(p))
+        return () => syncQueue.stop()
+    }, [syncQueue])
 
     return (
-        <div id="app">
-            <RouterProvider router={router}></RouterProvider>
-        </div>
+        <SyncQueueContext.Provider value={syncQueue}>
+            <div id="app">
+                <RouterProvider router={router}></RouterProvider>
+            </div>
+        </SyncQueueContext.Provider>
     )
 }

@@ -1,3 +1,5 @@
+export const DEFAULT_SYNC_FREQUENCY_MS = 30_000
+
 export interface TrackedProjectData {
     enabled: boolean
     vcsType: string
@@ -9,6 +11,7 @@ export interface TrackedProjectData {
     hiddenJobs?: string[]
     collapsed?: boolean
     excluded?: boolean
+    syncFrequency?: number
 }
 
 export interface ProjectData {

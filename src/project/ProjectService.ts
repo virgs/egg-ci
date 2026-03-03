@@ -64,6 +64,10 @@ export class ProjectService {
         return this.projectRepository.unexcludeAllProjects()
     }
 
+    public setSyncFrequency(project: TrackedProjectData, syncFrequency: number): void {
+        return this.projectRepository.setSyncFrequency(project, syncFrequency)
+    }
+
     public async syncProject(project: TrackedProjectData | ProjectData): Promise<ProjectData> {
         const existingData = this.projectRepository.loadProject(project)
         const result: ProjectData = {

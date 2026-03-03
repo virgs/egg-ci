@@ -63,3 +63,27 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 **Change**: Wrapped `FontAwesomeIcon` icons (`faScrewdriverWrench` / `faThumbsUp`) with `OverlayTrigger` + `Tooltip` from react-bootstrap. Build jobs show "Build job", approval jobs show "Approval job".
 **Pattern**: Uses `<span>` wrapper around `FontAwesomeIcon` for proper ref forwarding to `OverlayTrigger`, consistent with existing tooltip patterns in the codebase.
 
+## Per-Project Sync Frequency & Queue
+
+**Removed**: Global `autoSyncInterval` from `Config` type and `defaultConfig`. Removed `useInterval`-based auto-sync from both `App.tsx` and `ProjectsPage.tsx`.
+
+**Model change**: Added optional `syncFrequency?: number` to `TrackedProjectData` (default: `DEFAULT_SYNC_FREQUENCY_MS = 30_000` from `models.ts`). Persisted in localStorage alongside other project fields.
+
+**SyncQueue** (`src/project/SyncQueue.ts`): Singleton queue that processes one project at a time. Uses `setTimeout`-based scheduling, not `setInterval`. Key design:
+- Sorted by `nextSyncAt` ascending — earliest project syncs first.
+- After sync completes (success or failure), project is re-enqueued with `nextSyncAt = now + syncFrequency`. This reschedules based on completion time, gracefully handling slow syncs.
+- Re-reads `loadTrackedProjects()` after each sync to pick up any changes to `syncFrequency`, `enabled`, or `excluded`.
+- Disabled/excluded projects are not re-enqueued after sync.
+- `subscribe(listener)` pattern allows React hooks to react to queue changes.
+
+**React integration**:
+- `SyncQueueContext` (`src/contexts/SyncQueueContext.ts`) — provides the queue instance via React context.
+- `App.tsx` creates the `SyncQueue` in `useMemo`, populates it with enabled projects in `useEffect`, wraps the app in `SyncQueueContext.Provider`.
+- `useSyncCountdown` hook (`src/time/UseSyncCountdown.ts`) — combines `setInterval(1s)` + `syncQueue.subscribe()` to produce a live countdown string.
+- `ProjectItemComponent` shows countdown text (`"in 12s"`, `"syncing…"`) next to the project name when enabled.
+- `ProjectItemComponent.onSwitchChange` adds/removes projects from the sync queue when toggling the enable switch.
+
+**ProjectsPage**: `useInterval` replaced with a one-time `useEffect` that fetches the project list on mount.
+
+**Trade-off**: Queue is ephemeral — rebuilt from scratch on page load. Projects whose sync time passed while the tab was closed sync immediately in queue order.
+

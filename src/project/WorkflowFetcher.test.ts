@@ -45,7 +45,6 @@ function makeConfig(overrides = {}) {
     return {
         jobExecutionsMaxHistory: 5,
         jobHistoryColumnsPerLine: 5,
-        autoSyncInterval: 20000,
         minPipelineNumber: 1,
         pipelineWorkflowFetchSleepInMs: 0,
         ...overrides,
