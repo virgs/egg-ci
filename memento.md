@@ -56,3 +56,10 @@ All vanilla Bootstrap JS imports replaced with react-bootstrap components. Key p
 
 Context type in `WorkflowsPageContext.tsx`, provider component in `WorkflowsPageProvider.tsx`.
 Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
+
+## Job Type Tooltips
+
+**Component**: `ProjectJobListComponent.tsx`
+**Change**: Wrapped `FontAwesomeIcon` icons (`faScrewdriverWrench` / `faThumbsUp`) with `OverlayTrigger` + `Tooltip` from react-bootstrap. Build jobs show "Build job", approval jobs show "Approval job".
+**Pattern**: Uses `<span>` wrapper around `FontAwesomeIcon` for proper ref forwarding to `OverlayTrigger`, consistent with existing tooltip patterns in the codebase.
+

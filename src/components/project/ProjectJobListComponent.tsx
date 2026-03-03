@@ -1,5 +1,5 @@
 import { ReactElement } from 'react'
-import { Form } from 'react-bootstrap'
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { ProjectData } from '../../domain-models/models'
 import { faScrewdriverWrench, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -38,9 +38,17 @@ export const ProjectJobListComponent = (props: Props): ReactElement => {
                         className="flex-grow-1"
                     />
                     {type === 'build' ? (
-                        <FontAwesomeIcon className="me-2 text-secondary" icon={faScrewdriverWrench} />
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Build job</Tooltip>}>
+                            <span>
+                                <FontAwesomeIcon className="me-2 text-secondary" icon={faScrewdriverWrench} />
+                            </span>
+                        </OverlayTrigger>
                     ) : (
-                        <FontAwesomeIcon className="me-2 text-info" icon={faThumbsUp} />
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Approval job</Tooltip>}>
+                            <span>
+                                <FontAwesomeIcon className="me-2 text-info" icon={faThumbsUp} />
+                            </span>
+                        </OverlayTrigger>
                     )}
                 </div>
             ))}
