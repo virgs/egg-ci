@@ -85,7 +85,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Publish docs to gh-pages
+          name: Publish docs to main/docs
           command: |
             if [ -z "$GITHUB_TOKEN" ]; then
               echo "GITHUB_TOKEN is not set"
@@ -97,24 +97,15 @@ jobs:
 
             REPO_URL="https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
 
-            rm -rf .publish
-            mkdir .publish
-            cp -R docs/. .publish/
-            cd .publish
-
-            touch .nojekyll
-            git init
-            git checkout -b gh-pages
-            git add -A
+            git add docs
 
             if git diff --cached --quiet; then
-              echo "No changes to publish"
+              echo "No docs changes to publish"
               exit 0
             fi
 
-            git commit -m "Deploy ${CIRCLE_SHA1}"
-            git remote add origin "$REPO_URL"
-            git push --force origin gh-pages
+            git commit -m "Publish docs for ${CIRCLE_SHA1} [skip ci]"
+            git push "$REPO_URL" HEAD:main
 
 workflows:
   ci:
