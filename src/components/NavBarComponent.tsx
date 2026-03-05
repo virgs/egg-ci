@@ -8,6 +8,7 @@ import { ProfileRepository } from '../profile/ProfileRepository'
 import logo from '/logo.png'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import './NavBarComponent.scss'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 const settingsRepository = new SettingsRepository()
 const profileRepository = new ProfileRepository()
@@ -43,22 +44,35 @@ export const NavBarComponent = (): ReactElement => {
                     Egg CI
                 </Navbar.Brand>
                 <Nav className="order-3 order-sm-2 me-sm-auto navbar-nav--wrap">
-                    <Nav.Link as={NavLink} to="/settings">Settings</Nav.Link>
-                    {hasApiToken
-                        ? <Nav.Link as={NavLink} to="/projects">Projects</Nav.Link>
-                        : <Nav.Link disabled>Projects</Nav.Link>}
-                    {hasApiToken
-                        ? <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
-                        : <Nav.Link disabled>Workflows</Nav.Link>}
+                    <Nav.Link as={NavLink} to="/settings">
+                        Settings
+                    </Nav.Link>
+                    {hasApiToken ? (
+                        <Nav.Link as={NavLink} to="/projects">
+                            Projects
+                        </Nav.Link>
+                    ) : (
+                        <Nav.Link disabled>Projects</Nav.Link>
+                    )}
+                    {hasApiToken ? (
+                        <Nav.Link as={NavLink} to="/workflows">
+                            Workflows
+                        </Nav.Link>
+                    ) : (
+                        <Nav.Link disabled>Workflows</Nav.Link>
+                    )}
                 </Nav>
                 <Dropdown align="end" className="order-2 order-sm-3 me-2">
                     <Dropdown.Toggle
                         size="sm"
                         variant="outline-light"
                         id="profile-dropdown"
-                        className="profile-toggle"
+                        className="profile-toggle d-flex justify-content-between align-items-center"
                     >
-                        {activeProfile.name}
+                        <span>
+                            <FontAwesomeIcon size="xl" className="me-2" icon={faUser} />
+                            {activeProfile.name}
+                        </span>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         {profiles.map((profile) => (

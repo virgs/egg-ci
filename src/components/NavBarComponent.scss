@@ -11,8 +11,16 @@
   }
 }
 
+#profile-dropdown {
+  min-width: 150px;
+}
+
 .profile-toggle {
   min-width: 120px;
+
+  &::after {
+    margin-left: 1.255em;
+  }
 }
 
 .navbar-nav--wrap {

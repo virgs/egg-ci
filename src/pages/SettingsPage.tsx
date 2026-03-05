@@ -74,53 +74,68 @@ export const SettingsPage = (): ReactElement => {
     return (
         <div className="px-3">
             <h3>Settings</h3>
-            <div className="mb-4">
-                <InputGroup className="w-100 d-flex align-items-center mb-2">
-                    <label htmlFor="circleci-api-token" className="form-label mb-0">
-                        <span>API Token</span>
-                        <OverlayTrigger
-                            placement="right"
-                            delay={{ show: 150, hide: 150 }}
-                            popperConfig={{ strategy: 'fixed' }}
-                            overlay={tokenTooltipOverlay}
-                        >
-                            <a
-                                className="ps-1 pe-3"
-                                href="https://app.circleci.com/settings/user/tokens"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <FontAwesomeIcon className="align-baseline text-info-emphasis" icon={faInfoCircle} />
-                            </a>
-                        </OverlayTrigger>
-                    </label>
-                    <Form.Control
-                        type="password"
-                        value={token}
-                        onChange={(e) => setToken(e.target.value)}
-                        className="py-2"
-                        id="circleci-api-token"
-                        readOnly={hasSavedToken}
-                    />
-                    {!hasSavedToken && (
-                        <Button disabled={!token} onClick={connect} variant="primary" className="py-2">
-                            <FontAwesomeIcon icon={faRightToBracket} />
-                        </Button>
-                    )}
-                </InputGroup>
-            </div>
-            {hasSavedToken && userInfo && (
-                <div className="d-flex align-items-center gap-2 text-success mb-4">
+
+            {/* Token Section */}
+            <h6 className="mt-4">Token</h6>
+            {hasSavedToken && userInfo ? (
+                <div className="d-flex align-items-center gap-2 text-success mb-3">
                     <FontAwesomeIcon icon={faCircleCheck} />
                     <span>
                         Signed in as <strong>{userInfo.name}</strong>{' '}
                         <small className="text-muted">@{userInfo.login}</small>
                     </span>
                 </div>
+            ) : (
+                <div className="d-flex align-items-center gap-2 text-warning mb-3">
+                    <span>Unsigned</span>
+                </div>
             )}
 
-            <ProfileSectionComponent />
+            <InputGroup className="mb-4">
+                <label htmlFor="circleci-api-token" className="form-label mb-0">
+                    <span>API Token</span>
+                    <OverlayTrigger
+                        placement="right"
+                        delay={{ show: 150, hide: 150 }}
+                        popperConfig={{ strategy: 'fixed' }}
+                        overlay={tokenTooltipOverlay}
+                    >
+                        <a
+                            className="ps-1 pe-3"
+                            href="https://app.circleci.com/settings/user/tokens"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <FontAwesomeIcon className="align-baseline text-info-emphasis" icon={faInfoCircle} />
+                        </a>
+                    </OverlayTrigger>
+                </label>
+                <Form.Control
+                    type="password"
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    className="py-2"
+                    id="circleci-api-token"
+                    readOnly={hasSavedToken}
+                />
+                {!hasSavedToken && (
+                    <Button disabled={!token} onClick={connect} variant="primary" className="py-2">
+                        <FontAwesomeIcon icon={faRightToBracket} />
+                    </Button>
+                )}
+            </InputGroup>
 
+            <hr />
+
+            {/* Profiles Section */}
+            <div className="mb-4">
+                <ProfileSectionComponent />
+            </div>
+
+            <hr />
+
+            {/* Danger Zone Section */}
+            <h6>Danger Zone</h6>
             <div className="d-grid gap-2">
                 <Button
                     variant="outline-danger"

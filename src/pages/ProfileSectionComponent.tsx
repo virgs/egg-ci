@@ -1,7 +1,7 @@
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
-import { Button, Form, FormControl, InputGroup } from 'react-bootstrap'
+import { Button, Form, FormControl } from 'react-bootstrap'
 import { emitNewNotification, emitProfileChanged } from '../events/Events'
 import { ProfileRepository } from '../profile/ProfileRepository'
 import { Profile } from '../profile/models'
@@ -33,15 +33,11 @@ export const ProfileSectionComponent = (): ReactElement => {
         setEditingName(profile.name)
     }
 
-    const handleCancelEdit = (): void => {
-        setEditingId(null)
-        setEditingName('')
-    }
-
     const handleSaveEdit = (profileId: string): void => {
         const trimmed = editingName.trim()
         if (!trimmed) {
             emitNewNotification({ message: 'Profile name cannot be empty' })
+            setEditingId(null)
             return
         }
 
@@ -91,11 +87,11 @@ export const ProfileSectionComponent = (): ReactElement => {
     }
 
     return (
-        <div className="profile-section mb-4">
-            <h5>Profiles</h5>
+        <>
+            <h6>Profiles</h6>
             <p className="text-muted mb-3">Each profile keeps its own workflow filters and project/job selections.</p>
 
-            <div className="profile-list mb-3">
+            <div className="profile-list mb-2">
                 {profiles.map((profile) => (
                     <div key={profile.id} className="profile-list__item">
                         <Form.Switch
@@ -106,27 +102,21 @@ export const ProfileSectionComponent = (): ReactElement => {
                         />
 
                         {editingId === profile.id ? (
-                            <InputGroup size="sm" className="profile-list__edit">
-                                <FormControl
-                                    value={editingName}
-                                    onChange={(e) => setEditingName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') handleSaveEdit(profile.id)
-                                        if (e.key === 'Escape') handleCancelEdit()
-                                    }}
-                                    autoFocus
-                                />
-                                <Button
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    onClick={() => handleSaveEdit(profile.id)}
-                                >
-                                    Save
-                                </Button>
-                                <Button variant="outline-secondary" size="sm" onClick={handleCancelEdit}>
-                                    Cancel
-                                </Button>
-                            </InputGroup>
+                            <FormControl
+                                size="sm"
+                                value={editingName}
+                                onChange={(e) => setEditingName(e.target.value)}
+                                onBlur={() => handleSaveEdit(profile.id)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSaveEdit(profile.id)
+                                    if (e.key === 'Escape') {
+                                        setEditingId(null)
+                                        setEditingName('')
+                                    }
+                                }}
+                                className="profile-list__edit"
+                                autoFocus
+                            />
                         ) : (
                             <span className="profile-list__name" onClick={() => handleStartEdit(profile)}>
                                 {profile.name}
@@ -146,10 +136,13 @@ export const ProfileSectionComponent = (): ReactElement => {
                 ))}
             </div>
 
-            <Button variant="outline-primary" size="sm" onClick={handleAddProfile} className="w-100">
-                + Add Profile
-            </Button>
-        </div>
+            <div className="text-end">
+                <Button variant="outline-secondary" size="sm" onClick={handleAddProfile}>
+                    <FontAwesomeIcon icon={faPlus} className="me-1" />
+                    Add Profile
+                </Button>
+            </div>
+        </>
     )
 }
 

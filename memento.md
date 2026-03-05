@@ -130,10 +130,17 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **UI entry points**:
 - Navbar: profile name dropdown left of GitHub icon with profile list and "Manage profiles" shortcut to Settings.
-- Settings: new `ProfileSectionComponent` between signed-in summary and destructive actions.
-- Profile list: flat list with slider + editable name + delete button (disabled when only 1 profile).
-- Adding profiles: plus button auto-generates "Egg profile (X)" with lowest available number.
-- Only one slider ON at a time: toggling ON another profile auto-turns OFF the current one.
+- Settings: structured into sections with dividers:
+  - **Token**: Signed-in status first (with "Unsigned" warning if no token), then API token input
+  - **Profiles**: Flat list with slider + inline-editable name (save on blur/Enter) + delete button
+  - **Danger Zone**: Clear API key and Clear all data buttons
+
+**Profile list behavior**:
+- Slider + editable name + delete button (disabled when only 1 profile)
+- Click name to edit inline, auto-saves on blur or Enter press (no Save/Cancel buttons)
+- Add Profile button: small, right-aligned below list, same size as other action buttons
+- Auto-generates "Egg profile (X)" with lowest available number (reuses gaps)
+- Only one slider ON at a time: toggling ON another profile auto-turns OFF the current one
 
 **Persistence scope**:
 - Global keys remain global: CircleCI API token and user info.
@@ -144,6 +151,5 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **Deletion cleanup**: deleting a profile removes its scoped project/filter storage entries; at least one profile must always exist.
 
-**Auto-generated names**: `getNextProfileName()` finds lowest available index, reusing gaps when profiles are deleted.
 
 **Unique name enforcement**: profile names are checked case-insensitively and must be unique across all profiles.
