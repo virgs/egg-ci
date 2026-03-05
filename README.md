@@ -36,6 +36,7 @@ EggCi brings that same at-a-glance visibility to CircleCI: one card per job, col
 
 - **Multi-project dashboard** — track as many CircleCI projects as you like in one view
 - **Per-job execution history** — see the last N runs of each job, color-coded by status
+- **Multiple workflow views** — switch between grid (4-5 per row), list (1 per row), and compact (header-only, 2 per row) views
 - **Profiles** — create and switch between named profiles; each profile keeps its own workflow filters and project/job selections
 - **Shareable workflow filters** — status filters are persisted locally per profile and mirrored in the URL so links open with the same filter state
 - **Auto-sync** — the dashboard refreshes automatically, so you can leave it open on a second monitor and feel productive

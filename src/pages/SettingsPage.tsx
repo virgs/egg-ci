@@ -76,7 +76,7 @@ export const SettingsPage = (): ReactElement => {
             <h3>Settings</h3>
 
             {/* Token Section */}
-            <h6 className="mt-4">Token</h6>
+            <h4 className="mt-4">Token</h4>
             {hasSavedToken && userInfo ? (
                 <div className="d-flex align-items-center gap-2 text-success mb-3">
                     <FontAwesomeIcon icon={faCircleCheck} />
@@ -91,7 +91,7 @@ export const SettingsPage = (): ReactElement => {
                 </div>
             )}
 
-            <InputGroup className="mb-4">
+            <InputGroup className="mb-4 align-items-center">
                 <label htmlFor="circleci-api-token" className="form-label mb-0">
                     <span>API Token</span>
                     <OverlayTrigger
@@ -135,7 +135,7 @@ export const SettingsPage = (): ReactElement => {
             <hr />
 
             {/* Danger Zone Section */}
-            <h6>Danger Zone</h6>
+            <h4>Danger Zone</h4>
             <div className="d-grid gap-2">
                 <Button
                     variant="outline-danger"

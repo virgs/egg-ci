@@ -19,7 +19,7 @@ type Props = {
 const renderProjectContent = (
     tracked: TrackedProjectData,
     data: ProjectData,
-    listView: boolean,
+    workflowView: 'grid' | 'list' | 'compact',
     onHideJob: (jobName: string) => void,
     statusFilters: WorkflowJobStatus[]
 ): ReactElement => {
@@ -40,7 +40,7 @@ const renderProjectContent = (
                 const workflow = data.workflows[workflowName]
                 const id = `workflow-${workflowName}-${index}-${workflow.latestId}`
                 return (
-                    <div key={id} id={id} className="py-1">
+                    <div key={id} id={id} className={workflowView === 'compact' ? 'py-0' : 'py-1'}>
                         <WorkflowComponent
                             project={data}
                             key={`workflow-child-${index}`}
@@ -48,7 +48,7 @@ const renderProjectContent = (
                             hiddenJobs={tracked.hiddenJobs ?? []}
                             onHideJob={onHideJob}
                             showProjectHeader={false}
-                            listView={listView}
+                            workflowView={workflowView}
                             statusFilters={statusFilters}
                         />
                     </div>
@@ -94,7 +94,7 @@ export const ProjectSectionComponent = ({ tracked, data, onHideJob, onToggleColl
             </div>
             <div className={`px-4 collapsible-grid${isCollapsed ? ' collapsible-grid--collapsed' : ''}`}>
                 <div className="collapsible-grid__inner">
-                    {renderProjectContent(tracked, data, workflowView === 'list', onHideJob, statusFilters)}
+                    {renderProjectContent(tracked, data, workflowView, onHideJob, statusFilters)}
                 </div>
             </div>
             <hr className="border border-primary border-1 opacity-25" />

@@ -29,7 +29,7 @@ const computeProjectPairs = (filterText: string): ProjectPair[] =>
 const WorkflowsPageInner = (): ReactElement => {
     const navigate = useNavigate()
     const [, startTransition] = useTransition()
-    const { filterText, activeProfileId } = useWorkflowsPage()
+    const { filterText, activeProfileId, workflowView } = useWorkflowsPage()
 
     const [configuration] = useState<Config>(settingsRepository.getConfiguration())
     const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
@@ -87,15 +87,32 @@ const WorkflowsPageInner = (): ReactElement => {
                 allCollapsed={allCollapsed}
                 onToggleAll={handleToggleAll}
             />
-            {projectPairs.map(({ tracked, data }) => (
-                <ProjectSectionComponent
-                    key={`${activeProfileId}:${data.vcsType}/${data.username}/${data.reponame}`}
-                    tracked={tracked}
-                    data={data}
-                    onHideJob={(jobName) => handleHideJob(tracked, jobName)}
-                    onToggleCollapsed={handleToggleCollapsed}
-                />
-            ))}
+            {workflowView === 'compact' ? (
+                <div className="row g-4 row-cols-1 row-cols-xxl-2">
+                    {projectPairs.map(({ tracked, data }) => (
+                        <div key={`${activeProfileId}:${data.vcsType}/${data.username}/${data.reponame}`} className="col">
+                            <ProjectSectionComponent
+                                tracked={tracked}
+                                data={data}
+                                onHideJob={(jobName) => handleHideJob(tracked, jobName)}
+                                onToggleCollapsed={handleToggleCollapsed}
+                            />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <>
+                    {projectPairs.map(({ tracked, data }) => (
+                        <ProjectSectionComponent
+                            key={`${activeProfileId}:${data.vcsType}/${data.username}/${data.reponame}`}
+                            tracked={tracked}
+                            data={data}
+                            onHideJob={(jobName) => handleHideJob(tracked, jobName)}
+                            onToggleCollapsed={handleToggleCollapsed}
+                        />
+                    ))}
+                </>
+            )}
         </ConfigContext.Provider>
     )
 }

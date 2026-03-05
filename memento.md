@@ -166,4 +166,52 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 **Purpose**: Provides community members an easy way to support development without leaving the dashboard.
 
+## Compact View for Workflows
+
+**Feature**: Added compact view mode (`'compact'`) to workflows page alongside grid and list views.
+
+**UI Entry**: Third button in the view toggle group (compress icon `faCompress`), labeled "Compact view" in tooltip.
+
+**Behavior**:
+- **Job cards**: Hides card body and footer, showing only header with job name and status
+- **Project layout**: On xxl+ screens, displays 2 projects per row; on smaller screens, 1 project per row
+- **Job card layout**: Always uses grid layout (4-5 per row within each project container)
+- **Card width**: Job cards keep original `max-width: 250px` (grid mode) or 100% (list mode)
+- **Spacing**: Tighter padding (`py-0`) between workflow sections in compact mode
+
+**Implementation**:
+- Updated `WorkflowView` type to include `'compact'`
+- `WorkflowsPage` wraps projects in a grid with `row-cols-1 row-cols-xxl-2` for compact view
+- `JobCardComponent` uses `WorkflowViewContext` to conditionally hide body/footer in compact mode
+- `WorkflowComponent` always uses standard grid layout for jobs (4-5 per row) regardless of view mode
+- Job card width remains constant; project container width changes based on view mode
+
+**Use Case**: Ideal for dashboards with many projects or users preferring a compact view of multiple projects side-by-side on large screens, while still seeing all job statuses clearly (header-only cards).
+
+
+
+## Props Drilling Elimination - WorkflowView Context
+
+**Problem**: `workflowView` mode (grid/list/compact) was being passed as props down multiple component levels: `ProjectSectionComponent` → `WorkflowComponent` → `JobCardComponent`, causing props drilling and unnecessary re-renders.
+
+**Solution**: Created `WorkflowViewContext` to provide `workflowView` mode through React Context instead of props.
+
+**Architecture**:
+- New `src/contexts/WorkflowViewContext.ts` with `WorkflowViewContext` and `useWorkflowView()` hook
+- `WorkflowComponent` provides context wrapping `JobCardComponent` rendering
+- `JobCardComponent` consumes context via `useWorkflowView()` instead of receiving props
+- Eliminated `listView` and `compactView` boolean props from JobCardComponent Props type
+- Simplified `JobCardComponent` Props: now only takes `job`, `jobOrder`, `projectUrl`, `onHideJob`
+
+**Benefits**:
+- Cleaner component interfaces (fewer props = easier to reason about)
+- Reduced unnecessary prop passing through intermediate components
+- Better encapsulation of view-related concerns in WorkflowComponent
+- Single source of truth for workflowView mode in the context
+- More maintainable and easier to extend in the future
+
+**Refactoring Changes**:
+- `ProjectSectionComponent`: Now passes `workflowView` mode (not booleans) to `renderProjectContent` and `WorkflowComponent`
+- `WorkflowComponent`: Provides `WorkflowViewContext` wrapping job cards, eliminates `listView` and `compactView` props
+- `JobCardComponent`: Uses `useWorkflowView()` hook to access view mode from context
 

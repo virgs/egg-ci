@@ -1,4 +1,11 @@
-import { faAnglesDown, faAnglesUp, faList, faSearch, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons'
+import {
+    faAnglesDown,
+    faAnglesUp,
+    faCompress,
+    faList,
+    faSearch,
+    faTableCellsLarge,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement } from 'react'
 import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
@@ -52,6 +59,14 @@ export const WorkflowsToolbarComponent = ({ workflowCount, allCollapsed, onToggl
                                 onClick={() => handleViewChange('list')}
                             >
                                 <FontAwesomeIcon icon={faList} />
+                            </Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Compact view</Tooltip>}>
+                            <Button
+                                variant={workflowView === 'compact' ? 'secondary' : 'outline-secondary'}
+                                onClick={() => handleViewChange('compact')}
+                            >
+                                <FontAwesomeIcon icon={faCompress} />
                             </Button>
                         </OverlayTrigger>
                     </div>

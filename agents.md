@@ -163,5 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] to the right side of the github icon, add a buy me a coffee icon. When users click on it, it should open a new tab with the buy me a coffee page. The url is https://buymeacoffee.com/virgs. This will help us to get some support from the community and keep improving the product.
+1. [x] I want to add another view to the workflows page. Currently, there are list/grid. I want to add a compact one to the same button group. This view mode will hide the card body and footer, showing only the header. It will also allow more cards per row, so you can see more jobs at a glance. This will be especially useful for users with many jobs or those who prefer a more minimalist dashboard. Keep the card width the same. If the screen is wide enough, show 2 workflows per row and make the main container as wide as the screen. This way, users can see more workflows without scrolling, while still having a clear view of each job's status. If the screen is narrower, keep the current behavior of showing 1 workflow per row. This will ensure that the dashboard remains usable and visually appealing on smaller screens, while maximizing the amount of information displayed on larger screens. Ask questions if you need clarification on the design or implementation details.
 2. [ ] Microsoft teams integration.

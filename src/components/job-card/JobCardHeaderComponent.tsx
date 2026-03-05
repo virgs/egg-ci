@@ -100,7 +100,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                 </div>
                 <div className="col-2">{renderInfoButton()}</div>
                 <div className="w-100 mb-2"></div>
-                <div className="col card-header-details">
+                <div className="col-3 card-header-details">
                     <a href=""></a>#{props.job.workflow.pipeline_number}
                 </div>
                 <div className="col card-header-details card-details-job-status">
@@ -111,7 +111,7 @@ export const JobCardHeaderComponent = (props: Props): ReactElement => {
                         <span>{getBadge(props.job)}</span>
                     </div>
                 </div>
-                <div className="col-4 card-header-details text-end">
+                <div className="col-3 card-header-details text-end">
                     <JobActionButton job={props.job}></JobActionButton>
                 </div>
             </div>

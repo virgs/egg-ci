@@ -88,7 +88,7 @@ export const ProfileSectionComponent = (): ReactElement => {
 
     return (
         <>
-            <h6>Profiles</h6>
+            <h4>Profiles</h4>
             <p className="text-muted mb-3">Each profile keeps its own workflow filters and project/job selections.</p>
 
             <div className="profile-list mb-2">

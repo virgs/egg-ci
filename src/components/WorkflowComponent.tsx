@@ -7,6 +7,7 @@ import { VersionControlComponent } from './VersionControlComponent'
 import { ProjectContext } from '../contexts/ProjectContext'
 import { matchesStatusFilter } from '../pages/statusFilterUtils'
 import './WorkflowComponent.scss'
+import { WorkflowViewContext } from '../contexts/WorkflowViewContext'
 
 type Props = {
     workflow: WorkflowData
@@ -14,7 +15,7 @@ type Props = {
     onHideJob: (jobName: string) => void
     showProjectHeader?: boolean
     hiddenJobs?: string[]
-    listView?: boolean
+    workflowView?: 'grid' | 'list' | 'compact'
     statusFilters?: WorkflowJobStatus[]
 }
 
@@ -53,24 +54,25 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                 </ol>
             </nav>
             <div
-                className={`row m-0 gx-2 gy-2 ${props.listView ? 'row-cols-1' : 'row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xxl-5'}`}
+                className={`row m-0 gx-2 gy-2 ${props.workflowView === 'list' ? 'row-cols-1' : props.workflowView === 'compact' ? 'row-cols-1 row-cols-md-2 row-cols-lg-3' : 'row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xxl-5'}`}
             >
-                <ProjectContext.Provider value={props.project}>
-                    {props.workflow.jobs.map((job, index) => {
-                        if ((props.hiddenJobs ?? []).includes(job.name)) return null
-                        if (!matchesStatusFilter(job.history[0]?.status, props.statusFilters ?? [])) return null
-                        return (
-                            <JobCardComponent
-                                key={`${props.workflow.latestId}.${index}`}
-                                job={job}
-                                jobOrder={index}
-                                projectUrl={projectUrl}
-                                onHideJob={props.onHideJob}
-                                listView={props.listView}
-                            />
-                        )
-                    })}
-                </ProjectContext.Provider>
+                <WorkflowViewContext.Provider value={{ workflowView: props.workflowView ?? 'grid' }}>
+                    <ProjectContext.Provider value={props.project}>
+                        {props.workflow.jobs.map((job, index) => {
+                            if ((props.hiddenJobs ?? []).includes(job.name)) return null
+                            if (!matchesStatusFilter(job.history[0]?.status, props.statusFilters ?? [])) return null
+                            return (
+                                <JobCardComponent
+                                    key={`${props.workflow.latestId}.${index}`}
+                                    job={job}
+                                    jobOrder={index}
+                                    projectUrl={projectUrl}
+                                    onHideJob={props.onHideJob}
+                                />
+                            )
+                        })}
+                    </ProjectContext.Provider>
+                </WorkflowViewContext.Provider>
             </div>
         </>
     )

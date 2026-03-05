@@ -4,7 +4,7 @@ import { WorkflowJobStatus } from '../gateway/models/ListWorkflowJobsResponse'
 import { ProfileRepository } from '../profile/ProfileRepository'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 
-export type WorkflowView = 'grid' | 'list'
+export type WorkflowView = 'grid' | 'list' | 'compact'
 
 const WORKFLOW_VIEW_KEY = 'workflowView'
 const WORKFLOW_FILTER_TEXT_KEY = 'workflowFilterText'
