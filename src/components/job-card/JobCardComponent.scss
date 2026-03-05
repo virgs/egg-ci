@@ -1,6 +1,7 @@
 .card {
     max-width: 250px;
-    box-shadow: 0 0 1px 0.5px var(--status-color);
+    border-width: 1px;
+    box-shadow: none;
 }
 
 .card--list {
@@ -9,6 +10,10 @@
 
 .card--compact {
     max-width: 100%;
+
+    .card-header {
+        border-bottom: 0;
+    }
 }
 
 .card-details {
