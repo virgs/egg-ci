@@ -163,5 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] Add badges to the README to whatever is important. Like: version, build status, coverage, dependencies, etc.
+1. [ ] Changing the profile name should only be possible when there's a user signed in. Also, when trying to go to the workflow page with no projects selected in the projects page, it should stay in the workflow page and show a message like "Enable projects" ou "No projects enabled yet" (something like this) instead of going back to the projects page. 
 2. [ ] Microsoft teams integration.

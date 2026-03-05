@@ -8,7 +8,15 @@ import { ListWorkflowRecentRunsResponse } from './models/ListWorkflowRecentRunsR
 import { UserInformationResponse } from './models/UserInformationResponse'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
 
-const baseUrl = import.meta.env.DEV ? '' : 'https://circleci.com'
+const normalizeBaseUrl = (value: string): string => value.replace(/\/+$/, '')
+
+export const resolveCircleCiBaseUrl = (isDev: boolean, proxyUrl?: string): string => {
+    if (isDev) return ''
+    if (proxyUrl && proxyUrl.trim()) return normalizeBaseUrl(proxyUrl.trim())
+    return 'https://circleci.com'
+}
+
+const baseUrl = resolveCircleCiBaseUrl(import.meta.env.DEV, import.meta.env.VITE_CORS_PROXY_URL)
 const apiV1 = `${baseUrl}/api/v1.1`
 const apiV2 = `${baseUrl}/api/v2`
 

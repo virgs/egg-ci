@@ -2,7 +2,7 @@ import { faCircleCheck, faInfoCircle, faRightToBracket } from '@fortawesome/free
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
 import { Button, Form, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { emitLoggedOut, emitNewNotification, emitUserInformationChanged } from '../events/Events'
+import { emitLoggedOut, emitNewNotification, emitProfileChanged, emitUserInformationChanged } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
 import { UserInformationResponse } from '../gateway/models/UserInformationResponse'
 import { ProjectService } from '../project/ProjectService'
@@ -69,6 +69,7 @@ export const SettingsPage = (): ReactElement => {
         setToken('')
         setUserInfo(undefined)
         setHasSavedToken(false)
+        emitProfileChanged('')
     }
 
     return (
@@ -129,7 +130,7 @@ export const SettingsPage = (): ReactElement => {
 
             {/* Profiles Section */}
             <div className="mb-4">
-                <ProfileSectionComponent />
+                <ProfileSectionComponent isSignedIn={hasSavedToken} />
             </div>
 
             <hr />

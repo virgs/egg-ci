@@ -2,14 +2,18 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
 import { Button, Form, FormControl } from 'react-bootstrap'
-import { emitNewNotification, emitProfileChanged } from '../events/Events'
+import { emitNewNotification, emitProfileChanged, useProfileChangedListener } from '../events/Events'
 import { ProfileRepository } from '../profile/ProfileRepository'
 import { Profile } from '../profile/models'
 import './ProfileSectionComponent.scss'
 
 const profileRepository = new ProfileRepository()
 
-export const ProfileSectionComponent = (): ReactElement => {
+type ProfileSectionProps = {
+    isSignedIn: boolean
+}
+
+export const ProfileSectionComponent = ({ isSignedIn }: ProfileSectionProps): ReactElement => {
     const [profiles, setProfiles] = useState<Profile[]>(() => profileRepository.getProfiles())
     const [activeProfileId, setActiveProfileId] = useState<string>(() => profileRepository.getActiveProfile().id)
     const [editingId, setEditingId] = useState<string | null>(null)
@@ -21,6 +25,8 @@ export const ProfileSectionComponent = (): ReactElement => {
         setActiveProfileId(profileRepository.getActiveProfile().id)
     }
 
+    useProfileChangedListener(() => refreshProfiles())
+
     const handleToggleProfile = (profileId: string): void => {
         if (profileId === activeProfileId) return
         profileRepository.setActiveProfile(profileId)
@@ -29,8 +35,10 @@ export const ProfileSectionComponent = (): ReactElement => {
     }
 
     const handleStartEdit = (profile: Profile): void => {
-        setEditingId(profile.id)
-        setEditingName(profile.name)
+        if (isSignedIn) {
+            setEditingId(profile.id)
+            setEditingName(profile.name)
+        }
     }
 
     const handleSaveEdit = (profileId: string): void => {
@@ -137,7 +145,7 @@ export const ProfileSectionComponent = (): ReactElement => {
             </div>
 
             <div className="text-end">
-                <Button variant="outline-secondary" size="sm" onClick={handleAddProfile}>
+                <Button variant="outline-secondary" size="sm" onClick={handleAddProfile} disabled={!isSignedIn}>
                     <FontAwesomeIcon icon={faPlus} className="me-1" />
                     Add Profile
                 </Button>
@@ -145,4 +153,3 @@ export const ProfileSectionComponent = (): ReactElement => {
         </>
     )
 }
-

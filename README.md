@@ -78,6 +78,9 @@ Plus, you know, eggs are delicious.
 **My new pipeline isn't showing up. What gives?**
 Two things compound here: the sync interval fires every 20s × number of enabled projects (so 3 projects = up to 60s), and it doesn't fire immediately on page load. On top of that, freshly-queued jobs have no **started_at** yet and are filtered out until they actually start running. Give it a minute, or hit the sync button on the Projects page to force an immediate refresh.
 
+**Why does Workflows show "No projects enabled yet"?**
+You have no enabled projects in the current profile. Go to **Projects** and enable at least one project. EggCi now keeps you on the Workflows page and shows this prompt instead of redirecting.
+
 **I reran a job but nothing changed on the dashboard.**
 EggCi detects reruns by comparing workflow IDs on each sync. If the rerun happened right after a sync, you'll see it on the next one. Again, the Projects page sync button is your friend for immediate results.
 

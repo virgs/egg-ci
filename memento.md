@@ -1,5 +1,32 @@
 # Memento — egg-ci Architectural Decisions
 
+## CircleCI CORS Strategy (GitHub Pages)
+
+**Constraint**: CircleCI API does not allow browser CORS from GitHub Pages origins. This cannot be bypassed with query params or frontend-only request tweaks.
+
+**Implementation**:
+- `CircleCiClient` now resolves base URL with `resolveCircleCiBaseUrl(isDev, proxyUrl)`.
+- Development keeps using Vite proxy via relative `/api` URLs.
+- Production uses `VITE_CORS_PROXY_URL` when provided; otherwise it falls back to `https://circleci.com` (which will fail with CORS in browser deployments).
+
+**Proxy**:
+- Existing Cloudflare Worker in `cors-proxy/worker.js` is the recommended production path.
+- Worker now enforces an origin allowlist and supports both GitHub Pages and local dev origins.
+
+## Workflows Empty State (No Enabled Projects)
+
+**Behavior change**: Navigating to `/workflows` with no enabled (and non-excluded) projects no longer redirects to `/projects`.
+
+**UI**: Workflows page now shows an inline info alert with:
+- Title: "No projects enabled yet"
+- Hint text explaining to enable a project on the Projects page
+- CTA button: "Enable projects" (navigates to `/projects`)
+
+**Implementation**:
+- Added `hasEnabledProjects(projects)` in `src/pages/workflowsPageUtils.ts`
+- `WorkflowsPage` now computes page state (`projectPairs` + `hasEnabledProjects`) and renders an empty-state block when needed
+- Added coverage in `src/pages/workflowsPageUtils.test.ts`
+
 ## CircleCI Publish Job (GitHub Pages)
 
 **Final choices (updated)**:
@@ -240,4 +267,3 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 - Deployment target (GitHub Pages)
 
 **Reasoning**: Improves first-glance discoverability for maintainers and contributors without changing runtime behavior.
-
