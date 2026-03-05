@@ -72,6 +72,49 @@ jobs:
       - store_artifacts:
           path: docs
           destination: build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docs
+
+  publish:
+    docker:
+      - image: cimg/node:22.12
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Publish docs to gh-pages
+          command: |
+            if [ -z "$GITHUB_TOKEN" ]; then
+              echo "GITHUB_TOKEN is not set"
+              exit 1
+            fi
+
+            git config user.name "${GIT_USER_NAME:-egg-ci-bot}"
+            git config user.email "${GIT_USER_EMAIL:-egg-ci-bot@users.noreply.github.com}"
+
+            REPO_URL="https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git"
+
+            rm -rf .publish
+            mkdir .publish
+            cp -R docs/. .publish/
+            cd .publish
+
+            touch .nojekyll
+            git init
+            git checkout -b gh-pages
+            git add -A
+
+            if git diff --cached --quiet; then
+              echo "No changes to publish"
+              exit 0
+            fi
+
+            git commit -m "Deploy ${CIRCLE_SHA1}"
+            git remote add origin "$REPO_URL"
+            git push --force origin gh-pages
 
 workflows:
   ci:
@@ -90,3 +133,10 @@ workflows:
           requires:
             - lint
             - test
+      - publish:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
