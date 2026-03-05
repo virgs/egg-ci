@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useTransition, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
-import { useProjectSynchedListener } from '../events/Events'
+import { useProfileChangedListener, useProjectSynchedListener } from '../events/Events'
 import { Config } from '../config'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import { ConfigContext } from '../contexts/ConfigContext'
@@ -29,7 +29,7 @@ const computeProjectPairs = (filterText: string): ProjectPair[] =>
 const WorkflowsPageInner = (): ReactElement => {
     const navigate = useNavigate()
     const [, startTransition] = useTransition()
-    const { filterText } = useWorkflowsPage()
+    const { filterText, activeProfileId } = useWorkflowsPage()
 
     const [configuration] = useState<Config>(settingsRepository.getConfiguration())
     const [projectPairs, setProjectPairs] = useState<ProjectPair[]>(() => computeProjectPairs(''))
@@ -44,6 +44,7 @@ const WorkflowsPageInner = (): ReactElement => {
     }, [navigate])
 
     useProjectSynchedListener(() => setProjectPairs(computeProjectPairs(filterText)))
+    useProfileChangedListener(() => setProjectPairs(computeProjectPairs(filterText)))
 
     useEffect(() => {
         setProjectPairs(computeProjectPairs(filterText))
@@ -88,7 +89,7 @@ const WorkflowsPageInner = (): ReactElement => {
             />
             {projectPairs.map(({ tracked, data }) => (
                 <ProjectSectionComponent
-                    key={`${data.vcsType}/${data.username}/${data.reponame}`}
+                    key={`${activeProfileId}:${data.vcsType}/${data.username}/${data.reponame}`}
                     tracked={tracked}
                     data={data}
                     onHideJob={(jobName) => handleHideJob(tracked, jobName)}

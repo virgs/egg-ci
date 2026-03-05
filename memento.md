@@ -1,5 +1,16 @@
 # Memento — egg-ci Architectural Decisions
 
+## CircleCI Publish Job (GitHub Pages)
+
+**Final choices (updated)**:
+- Publish target: `main` branch `/docs` (no separate deploy branch).
+- Auth: GitHub fine-grained PAT with `Contents: Read and write`, stored as CircleCI `GITHUB_TOKEN`.
+- Workflow dependency: `publish` waits only for `build`.
+
+**Failure learned**: The previous `gh-pages` flow initialized a separate `.publish` git repo and failed with "Author identity unknown" when commit identity was not configured there.
+
+**Current deploy mechanism**: Build output (`docs/`) is persisted from `build` to workspace, then `publish` commits `docs/` in the checked-out repository and pushes `HEAD:main` with `[skip ci]` to avoid pipeline loops.
+
 ## Homepage (TODO #1)
 
 **Route**: `/home` — always accessible, default for `/*` redirect.
@@ -112,3 +123,27 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 **Bug**: "Updated X ago" text in the project menu was stale — only computed once on mount/timestamp change via `setTimeout(0)`, never refreshed.
 
 **Fix**: `UseRelativeTime.ts` now uses `setInterval(10s)` alongside `setTimeout(0)` for the initial computation. The `computeRelativeTime` helper was extracted for reuse. The `useState` initializer also calls `computeRelativeTime` so the first render is immediate without a synchronous `setState` in the effect (which would violate `react-hooks/set-state-in-effect`).
+
+## Profiles + Persistent Workflow Filters
+
+**Profile model**: Added `ProfileRepository` and `src/profile/models.ts` with a guaranteed `Default` profile. Users can create, edit (name only), delete (except last profile), and switch active profile.
+
+**UI entry points**:
+- Navbar: profile name dropdown left of GitHub icon with profile list and "Manage profiles" shortcut to Settings.
+- Settings: new `ProfileSectionComponent` between signed-in summary and destructive actions.
+- Profile list: flat list with slider + editable name + delete button (disabled when only 1 profile).
+- Adding profiles: plus button auto-generates "Egg profile (X)" with lowest available number.
+- Only one slider ON at a time: toggling ON another profile auto-turns OFF the current one.
+
+**Persistence scope**:
+- Global keys remain global: CircleCI API token and user info.
+- Profile-scoped keys: tracked projects, project cached data, workflow view, workflow text filter, workflow status filters.
+- Scoped key format: `<baseKey>:profile:<profileId>`.
+
+**Workflow filter behavior**: status filters are mirrored in URL (`statuses=...`) and also persisted to profile-scoped local storage so shared links and personal defaults both work.
+
+**Deletion cleanup**: deleting a profile removes its scoped project/filter storage entries; at least one profile must always exist.
+
+**Auto-generated names**: `getNextProfileName()` finds lowest available index, reusing gaps when profiles are deleted.
+
+**Unique name enforcement**: profile names are checked case-insensitively and must be unique across all profiles.

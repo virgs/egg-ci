@@ -23,3 +23,4 @@ export const { useWorkflowSynchedListener, emitWorkflowSynched } =
 export const { useProjectSynchedListener, emitProjectSynched } = createEvent('project-synched')<ProjectSynchedEvent>()
 export const { useNewNotificationListener, emitNewNotification } = createEvent('new-notification')<NotificationEvent>()
 export const { useLoggedOutListener, emitLoggedOut } = createEvent('logged-out')<void>()
+export const { useProfileChangedListener, emitProfileChanged } = createEvent('profile-changed')<string>()

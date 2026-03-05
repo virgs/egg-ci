@@ -1,20 +1,33 @@
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReactElement, useState } from 'react'
-import { Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
+import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { emitProfileChanged, useLoggedOutListener, useProfileChangedListener, useUserInformationChangedListener } from '../events/Events'
+import { ProfileRepository } from '../profile/ProfileRepository'
 import logo from '/logo.png'
-import { useLoggedOutListener, useUserInformationChangedListener } from '../events/Events'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import './NavBarComponent.scss'
 
 const settingsRepository = new SettingsRepository()
+const profileRepository = new ProfileRepository()
 
 export const NavBarComponent = (): ReactElement => {
+    const navigate = useNavigate()
     const [hasApiToken, setHasApiToken] = useState(() => !!settingsRepository.getApiToken())
+    const [, setProfileRefreshTick] = useState(0)
+
+    const profiles = profileRepository.getProfiles()
+    const activeProfile = profileRepository.getActiveProfile()
 
     useUserInformationChangedListener(() => setHasApiToken(!!settingsRepository.getApiToken()))
     useLoggedOutListener(() => setHasApiToken(false))
+    useProfileChangedListener(() => setProfileRefreshTick((prev) => prev + 1))
+
+    const handleProfileSwitch = (profileId: string): void => {
+        profileRepository.setActiveProfile(profileId)
+        emitProfileChanged(profileRepository.getActiveProfile().id)
+    }
 
     return (
         <Navbar expand bg="primary" sticky="top" className="border-bottom" data-bs-theme="dark">
@@ -38,6 +51,29 @@ export const NavBarComponent = (): ReactElement => {
                         ? <Nav.Link as={NavLink} to="/workflows">Workflows</Nav.Link>
                         : <Nav.Link disabled>Workflows</Nav.Link>}
                 </Nav>
+                <Dropdown align="end" className="order-2 order-sm-3 me-2">
+                    <Dropdown.Toggle
+                        size="sm"
+                        variant="outline-light"
+                        id="profile-dropdown"
+                        className="profile-toggle"
+                    >
+                        {activeProfile.name}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                        {profiles.map((profile) => (
+                            <Dropdown.Item
+                                key={profile.id}
+                                active={profile.id === activeProfile.id}
+                                onClick={() => handleProfileSwitch(profile.id)}
+                            >
+                                {profile.name}
+                            </Dropdown.Item>
+                        ))}
+                        <Dropdown.Divider />
+                        <Dropdown.Item onClick={() => navigate('/settings')}>Manage profiles</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
                 <a
                     className="nav-link github-link order-2 order-sm-4"
                     href="https://github.com/virgs/egg-ci"

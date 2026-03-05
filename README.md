@@ -36,6 +36,8 @@ EggCi brings that same at-a-glance visibility to CircleCI: one card per job, col
 
 - **Multi-project dashboard** — track as many CircleCI projects as you like in one view
 - **Per-job execution history** — see the last N runs of each job, color-coded by status
+- **Profiles** — create and switch between named profiles; each profile keeps its own workflow filters and project/job selections
+- **Shareable workflow filters** — status filters are persisted locally per profile and mirrored in the URL so links open with the same filter state
 - **Auto-sync** — the dashboard refreshes automatically, so you can leave it open on a second monitor and feel productive
 - **Job actions** — approve hold jobs, rerun, or cancel directly from the dashboard
 - **Configurable** — adjust the projects, number of pipelines to scan, and whether to show build jobs alongside approval gates
@@ -48,9 +50,10 @@ EggCi brings that same at-a-glance visibility to CircleCI: one card per job, col
 1. Open **[EggCi](https://virgs.github.io/egg-ci)**
 2. Go to **Settings**
 3. Paste your [CircleCI personal API token](https://app.circleci.com/settings/user/tokens)
-4. Go to **Projects** and add the projects you want to track
-5. Enable them and wait for the first sync
-6. Go to **Workflows** and have fun watching your CI in real time!
+4. (Optional) In the **Profiles** section, create additional profiles and customize names
+5. Go to **Projects** and add the projects you want to track
+6. Enable them and wait for the first sync
+7. Go to **Workflows** and have fun watching your CI in real time!
 
 That's it. No install, no account, no "sign in with GitHub" OAuth dance.
 
@@ -97,3 +100,14 @@ To avoid throttling and overloading CircleCI servers, each enabled project adds 
 ## License
 
 Do whatever you want with it. If CircleCI somehow improves their dashboard to make this obsolete, that's a win too.
+
+## CI Publish Setup (GitHub Pages)
+
+The CircleCI workflow includes a `publish` job that deploys the built `docs/` folder by committing it to the `main` branch. The deploy waits only for `build`.
+
+1. In GitHub, create a **fine-grained personal access token** scoped to this repository with **Contents: Read and write**.
+2. In CircleCI project settings, add environment variable `GITHUB_TOKEN` with that token value.
+3. (Optional) Add `GIT_USER_NAME` and `GIT_USER_EMAIL` to customize deploy commit author.
+   - Defaults are `egg-ci-bot` and `egg-ci-bot@users.noreply.github.com`.
+4. In GitHub repository settings, set Pages source to **Deploy from a branch** and select branch `main` with folder `/docs`.
+5. Keep `.circleci/config.yml` publish filter on `main`.

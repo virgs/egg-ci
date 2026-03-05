@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { ProfileRepository } from '../profile/ProfileRepository'
 import { ProjectRepository } from './ProjectRepository'
 import type { TrackedProjectData } from '../domain-models/models'
 
@@ -19,6 +20,7 @@ describe('ProjectRepository', () => {
 
     beforeEach(() => {
         localStorage.clear()
+        new ProfileRepository() // Initialize default profile in localStorage
         repo = new ProjectRepository()
     })
 
@@ -55,8 +57,8 @@ describe('ProjectRepository', () => {
     })
 
     describe('loadTrackedProjects', () => {
-        it('returns undefined when empty', () => {
-            expect(repo.loadTrackedProjects()).toBeUndefined()
+        it('returns an empty array when no projects are tracked', () => {
+            expect(repo.loadTrackedProjects()).toEqual([])
         })
     })
 
@@ -127,10 +129,12 @@ describe('ProjectRepository', () => {
             expect(repo.loadProject(project)!.defaultBranch).toBe('develop')
         })
 
-        it('uses the key format project:vcsType/username/reponame', () => {
+        it('uses the profile-scoped key format project:profile:<id>:vcsType/username/reponame', () => {
             const project = makeProject('my-repo')
             repo.persistProject(project)
-            const expectedKey = 'project:github/testuser/my-repo'
+            const profileRepository = new ProfileRepository()
+            const scopedProjectPrefix = profileRepository.scopedKey('project')
+            const expectedKey = `${scopedProjectPrefix}:github/testuser/my-repo`
             const raw = localStorage.getItem(expectedKey)
             expect(raw).not.toBeNull()
             expect(JSON.parse(raw!)).toEqual(project)

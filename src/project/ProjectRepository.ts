@@ -1,8 +1,11 @@
 import { LocalStorageRepository } from '../db/LocalStorageRepository'
 import { ProjectData, TrackedProjectData } from '../domain-models/models'
+import { ProfileRepository } from '../profile/ProfileRepository'
 
 const TRACKED_PROJECTS_KEY = 'trackedProjects'
 const PROJECT_PREFIX_KEY = 'project'
+
+const profileRepository = new ProfileRepository()
 
 export class ProjectRepository extends LocalStorageRepository {
     public trackProject(project: TrackedProjectData) {
@@ -12,7 +15,7 @@ export class ProjectRepository extends LocalStorageRepository {
             return
         }
         currentProjects.push(project)
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public enableProject(project: TrackedProjectData | ProjectData) {
@@ -25,7 +28,7 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public disableProject(project: TrackedProjectData | ProjectData) {
@@ -38,7 +41,7 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public setProjectIncludeBuildJobs(project: TrackedProjectData | ProjectData, value: boolean) {
@@ -51,15 +54,21 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public loadTrackedProjects(): TrackedProjectData[] {
-        return this.load(TRACKED_PROJECTS_KEY) as TrackedProjectData[]
+        const scoped = this.load(this.trackedProjectsKey()) as TrackedProjectData[] | undefined
+        if (scoped) return scoped
+
+        if (profileRepository.getActiveProfile().id === 'default') {
+            return (this.load(TRACKED_PROJECTS_KEY) as TrackedProjectData[] | undefined) ?? []
+        }
+        return []
     }
 
     public persistProject(project: TrackedProjectData | ProjectData): void {
-        const key = `${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`
+        const key = this.projectDataKey(project)
         return this.persist(key, project)
     }
 
@@ -73,7 +82,7 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public setProjectHiddenJobs(project: TrackedProjectData | ProjectData, hiddenJobs: string[]): void {
@@ -86,18 +95,23 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public loadProject(project: TrackedProjectData | ProjectData): ProjectData | undefined {
-        const key = `${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`
-        return this.load(key) as ProjectData | undefined
+        const scoped = this.load(this.projectDataKey(project)) as ProjectData | undefined
+        if (scoped) return scoped
+
+        if (profileRepository.getActiveProfile().id === 'default') {
+            return this.load(`${PROJECT_PREFIX_KEY}:${this.projectIdentifier(project)}`) as ProjectData | undefined
+        }
+        return undefined
     }
 
     public reorderProjects(orderedNonExcluded: TrackedProjectData[]): void {
         const currentProjects = this.loadTrackedProjects() ?? []
         const excluded = currentProjects.filter((p) => p.excluded)
-        this.persist(TRACKED_PROJECTS_KEY, [...orderedNonExcluded, ...excluded])
+        this.persist(this.trackedProjectsKey(), [...orderedNonExcluded, ...excluded])
     }
 
     public excludeProject(project: TrackedProjectData | ProjectData): void {
@@ -109,7 +123,7 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public unexcludeAllProjects(): void {
@@ -118,7 +132,7 @@ export class ProjectRepository extends LocalStorageRepository {
             trackedProject.excluded = undefined
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     public setSyncFrequency(project: TrackedProjectData | ProjectData, syncFrequency: number): void {
@@ -130,10 +144,18 @@ export class ProjectRepository extends LocalStorageRepository {
             }
             return trackedProject
         })
-        this.persist(TRACKED_PROJECTS_KEY, currentProjects)
+        this.persist(this.trackedProjectsKey(), currentProjects)
     }
 
     private projectIdentifier(project: TrackedProjectData | ProjectData): string {
         return `${project.vcsType}/${project.username}/${project.reponame}`
+    }
+
+    private trackedProjectsKey(): string {
+        return profileRepository.scopedKey(TRACKED_PROJECTS_KEY)
+    }
+
+    private projectDataKey(project: TrackedProjectData | ProjectData): string {
+        return `${profileRepository.scopedKey(PROJECT_PREFIX_KEY)}:${this.projectIdentifier(project)}`
     }
 }

@@ -3,13 +3,15 @@ import { Badge, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { ProjectItemComponent } from '../components/project/ProjectItemComponent'
 import { TrackedProjectData } from '../domain-models/models'
-import { emitNewNotification, emitUserInformationChanged } from '../events/Events'
+import { emitNewNotification, emitUserInformationChanged, useProfileChangedListener } from '../events/Events'
 import { circleCiClient, initializeCircleCiClient } from '../gateway/CircleCiClient'
+import { ProfileRepository } from '../profile/ProfileRepository'
 import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
+const profileRepository = new ProfileRepository()
 
 const getProjectLabel = (project: TrackedProjectData): string =>
     `${project.vcsType}/${project.username}/${project.reponame}`
@@ -29,7 +31,7 @@ export const ProjectsPage = (): ReactElement => {
     const [excludedCount, setExcludedCount] = useState<number>(computeExcludedCount)
     const [dragIndex, setDragIndex] = useState<number | null>(null)
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-
+    const [activeProfileId, setActiveProfileId] = useState(() => profileRepository.getActiveProfile().id)
     useEffect(() => {
         const syncProjects = async () => {
             const token = settingsRepository.getApiToken()
@@ -52,6 +54,15 @@ export const ProjectsPage = (): ReactElement => {
         }
         syncProjects()
     }, [])
+
+    useProfileChangedListener((profileId) => {
+        setActiveProfileId(profileId)
+        const loaded = projectService.loadTrackedProjects()?.filter((p) => !p.excluded) ?? []
+        setProjects(loaded)
+        setExcludedCount(computeExcludedCount())
+        setDragIndex(null)
+        setDragOverIndex(null)
+    })
 
     const handleDragStart = (index: number) => (e: React.DragEvent) => {
         setDragIndex(index)
@@ -120,7 +131,7 @@ export const ProjectsPage = (): ReactElement => {
             <div className="accordion">
                 {projects.map((project, index) => (
                     <ProjectItemComponent
-                        key={`project-${getProjectLabel(project)}`}
+                        key={`${activeProfileId}:project-${getProjectLabel(project)}`}
                         onEnablingChange={updateProjectList}
                         project={project}
                         onExclude={() => handleExclude(project)}

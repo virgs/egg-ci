@@ -6,6 +6,7 @@ export type WorkflowsPageContextType = {
     workflowView: WorkflowView
     filterText: string
     statusFilters: WorkflowJobStatus[]
+    activeProfileId: string
     handleViewChange: (view: WorkflowView) => void
     handleFilterChange: (text: string) => void
     handleStatusFiltersChange: (statuses: WorkflowJobStatus[]) => void

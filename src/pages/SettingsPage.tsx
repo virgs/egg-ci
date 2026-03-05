@@ -9,6 +9,7 @@ import { ProjectService } from '../project/ProjectService'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import './SettingsPage.scss'
 import { useConfirmationModal } from '../components/useConfirmationModal.tsx'
+import { ProfileSectionComponent } from './ProfileSectionComponent'
 
 const settingsRepository: SettingsRepository = new SettingsRepository()
 const projectService: ProjectService = new ProjectService()
@@ -117,6 +118,9 @@ export const SettingsPage = (): ReactElement => {
                     </span>
                 </div>
             )}
+
+            <ProfileSectionComponent />
+
             <div className="d-grid gap-2">
                 <Button
                     variant="outline-danger"
