@@ -42,6 +42,7 @@ EggCi brings that same at-a-glance visibility to CircleCI: one card per job, col
 - **Job actions** — approve hold jobs, rerun, or cancel directly from the dashboard
 - **Configurable** — adjust the projects, number of pipelines to scan, and whether to show build jobs alongside approval gates
 - **No backend** — runs entirely in the browser; your CircleCI API token stays local
+- **Community support** — optional Buy Me a Coffee link in the navbar for those who want to support development
 
 ---
 

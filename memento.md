@@ -153,3 +153,17 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 
 
 **Unique name enforcement**: profile names are checked case-insensitively and must be unique across all profiles.
+
+## Buy Me a Coffee Integration
+
+**Location**: NavBar component, far right after GitHub icon.
+
+**Icon**: FontAwesome `faMugHot` (coffee mug icon) at 2xl size.
+
+**Link**: https://buymeacoffee.com/virgs — opens in new tab.
+
+**Styling**: Matches GitHub link styling (white icon, hover transition to secondary color).
+
+**Purpose**: Provides community members an easy way to support development without leaving the dashboard.
+
+

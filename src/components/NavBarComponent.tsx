@@ -8,7 +8,7 @@ import { ProfileRepository } from '../profile/ProfileRepository'
 import logo from '/logo.png'
 import { SettingsRepository } from '../settings/SettingsRepository'
 import './NavBarComponent.scss'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faMugHot, faUser } from '@fortawesome/free-solid-svg-icons'
 
 const settingsRepository = new SettingsRepository()
 const profileRepository = new ProfileRepository()
@@ -96,6 +96,15 @@ export const NavBarComponent = (): ReactElement => {
                     title="View on GitHub"
                 >
                     <FontAwesomeIcon icon={faGithub} size="2xl" />
+                </a>
+                <a
+                    className="nav-link coffee-link order-2 order-sm-5 mb-1"
+                    href="https://buymeacoffee.com/virgs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Buy me a coffee"
+                >
+                    <FontAwesomeIcon icon={faMugHot} size="2xl" />
                 </a>
             </Container>
         </Navbar>
