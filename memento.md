@@ -227,3 +227,17 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 - `src/components/job-card/JobCardHeaderComponent.scss`: added `.job-menu .dropdown-menu { z-index: 1080; }` for reliable stacking over adjacent sections.
 
 **Result**: Job options menu is fully visible across views, including compact mode near section boundaries.
+
+## README Badges
+
+**Added**: A top-level badge row in `README.md` for quick project health visibility.
+
+**Badges included**:
+- Version (`github/package-json`)
+- Build status (CircleCI main branch)
+- License (GitHub license)
+- Dependencies (`libraries.io`)
+- Deployment target (GitHub Pages)
+
+**Reasoning**: Improves first-glance discoverability for maintainers and contributors without changing runtime behavior.
+

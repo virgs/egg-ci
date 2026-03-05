@@ -1,5 +1,10 @@
 [![EggCi](./public/logo.png)](https://virgs.github.io/egg-ci)
 
+[![Version](https://img.shields.io/github/package-json/v/virgs/egg-ci?label=version)](./package.json)
+[![Build](https://dl.circleci.com/status-badge/img/gh/virgs/egg-ci/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/virgs/egg-ci)
+[![License](https://img.shields.io/github/license/virgs/egg-ci)](./LICENSE)
+[![Deployment](https://img.shields.io/badge/deploy-github%20pages-222?logo=github)](https://virgs.github.io/egg-ci)
+
 A dashboard monitor for CircleCI pipelines.
 
 [//]: # (homepage placeholder)

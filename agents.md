@@ -163,5 +163,5 @@ Build incrementally and safely.
 
 # TODO list
 
-1. [x] In the workflow page, when the compact view is selected, when the job options is clicked, the menu that appears is not fully visible. Its bottom part is being overlaid by the next project section. It also maybe a problem in the other views, but doesn't show up because the card is tall enough to show the full menu is the next section is not close enough. It seems to be az-index problem, but it may not.
+1. [x] Add badges to the README to whatever is important. Like: version, build status, coverage, dependencies, etc.
 2. [ ] Microsoft teams integration.
