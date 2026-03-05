@@ -47,5 +47,9 @@ body {
 }
 
 .collapsible-grid__inner {
+    overflow: visible;
+}
+
+.collapsible-grid--collapsed .collapsible-grid__inner {
     overflow: hidden;
 }

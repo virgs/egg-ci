@@ -13,7 +13,7 @@ const STATUS_PARAM = 'statuses'
 
 const computeInitialStatuses = (param: string | null): WorkflowJobStatus[] => {
     if (param !== null) return parseStatusFilters(param)
-    return settingsRepository.getWorkflowStatusFilters() ?? ALL_JOB_STATUSES
+    return settingsRepository.getWorkflowStatusFilters() ?? [...ALL_JOB_STATUSES]
 }
 
 export const WorkflowsPageProvider = ({ children }: { children: ReactNode }): ReactElement => {
@@ -60,7 +60,7 @@ export const WorkflowsPageProvider = ({ children }: { children: ReactNode }): Re
         setWorkflowView(settingsRepository.getWorkflowView())
         setFilterText(settingsRepository.getWorkflowFilterText())
 
-        const stored = settingsRepository.getWorkflowStatusFilters() ?? ALL_JOB_STATUSES
+        const stored = settingsRepository.getWorkflowStatusFilters() ?? [...ALL_JOB_STATUSES]
         setSearchParams(
             (prev) => {
                 const next = new URLSearchParams(prev)

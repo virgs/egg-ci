@@ -45,20 +45,20 @@ export const WorkflowsToolbarComponent = ({ workflowCount, allCollapsed, onToggl
                 <div className="col-12 col-xl-auto d-flex justify-content-end gap-2">
                     <StatusFilterDropdown />
                     <div className="btn-group btn-group-sm">
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Grid view</Tooltip>}>
-                            <Button
-                                variant={workflowView === 'grid' ? 'secondary' : 'outline-secondary'}
-                                onClick={() => handleViewChange('grid')}
-                            >
-                                <FontAwesomeIcon icon={faTableCellsLarge} />
-                            </Button>
-                        </OverlayTrigger>
                         <OverlayTrigger placement="top" overlay={<Tooltip>List view</Tooltip>}>
                             <Button
                                 variant={workflowView === 'list' ? 'secondary' : 'outline-secondary'}
                                 onClick={() => handleViewChange('list')}
                             >
                                 <FontAwesomeIcon icon={faList} />
+                            </Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Grid view</Tooltip>}>
+                            <Button
+                                variant={workflowView === 'grid' ? 'secondary' : 'outline-secondary'}
+                                onClick={() => handleViewChange('grid')}
+                            >
+                                <FontAwesomeIcon icon={faTableCellsLarge} />
                             </Button>
                         </OverlayTrigger>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Compact view</Tooltip>}>

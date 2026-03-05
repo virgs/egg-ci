@@ -215,3 +215,15 @@ Required by `react-refresh/only-export-components` ESLint rule (fast refresh).
 - `WorkflowComponent`: Provides `WorkflowViewContext` wrapping job cards, eliminates `listView` and `compactView` props
 - `JobCardComponent`: Uses `useWorkflowView()` hook to access view mode from context
 
+## Workflow Job Menu Clipping Fix
+
+**Issue**: In compact view, job options dropdown (`JobCardHeaderComponent`) could be clipped by the next project section.
+
+**Root cause**: `.collapsible-grid__inner` used `overflow: hidden` even when expanded, so dropdown menus extending outside card bounds were cut off.
+
+**Fix**:
+- `src/scss/styles.scss`: set `.collapsible-grid__inner { overflow: visible; }`
+- `src/scss/styles.scss`: keep clipping only in collapsed state via `.collapsible-grid--collapsed .collapsible-grid__inner { overflow: hidden; }`
+- `src/components/job-card/JobCardHeaderComponent.scss`: added `.job-menu .dropdown-menu { z-index: 1080; }` for reliable stacking over adjacent sections.
+
+**Result**: Job options menu is fully visible across views, including compact mode near section boundaries.

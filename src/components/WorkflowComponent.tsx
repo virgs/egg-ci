@@ -40,7 +40,7 @@ export const WorkflowComponent = (props: Props): ReactElement => {
                             </a>
                         </li>
                     )}
-                    <li className="breadcrumb-item d-flex align-items-center fs-5 active">
+                    <li className="breadcrumb-item d-flex align-items-center fs-6 active">
                         {props.workflow.name}
                         <a href={workflowUrl}>
                             <small className="ms-1 fs-6">(#{props.workflow.latestBuildNumber})</small>

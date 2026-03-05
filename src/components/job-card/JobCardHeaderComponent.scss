@@ -28,3 +28,11 @@
     display: inline-flex;
     align-items: center;
 }
+
+.job-menu {
+    position: relative;
+}
+
+.job-menu .dropdown-menu {
+    z-index: 1080;
+}
